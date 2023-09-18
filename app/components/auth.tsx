@@ -9,12 +9,12 @@ import Locale from "../locales";
 import BotIcon from "../icons/bot.svg";
 import { useEffect } from "react";
 import { getClientConfig } from "../config/client";
+import { SignIn } from "./auth/SignIn";
 
 export function AuthPage() {
   const navigate = useNavigate();
   const access = useAccessStore();
 
-  const goHome = () => navigate(Path.Home);
   const resetAccessCode = () => access.updateCode(""); // Reset access code to empty string
 
   useEffect(() => {
@@ -33,27 +33,7 @@ export function AuthPage() {
       <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
       <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
 
-      <input
-        className={styles["auth-input"]}
-        type="password"
-        placeholder={Locale.Auth.Input}
-        value={access.accessCode}
-        onChange={(e) => {
-          access.updateCode(e.currentTarget.value);
-        }}
-      />
-
-      <div className={styles["auth-actions"]}>
-        <IconButton
-          text={Locale.Auth.Confirm}
-          type="primary"
-          onClick={goHome}
-        />
-        <IconButton text={Locale.Auth.Later} onClick={() => {
-          resetAccessCode();
-          goHome();
-        }} />
-      </div>
+      <SignIn />
     </div>
   );
 }

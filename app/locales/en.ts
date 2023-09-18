@@ -16,7 +16,7 @@ const en: LocaleType = {
     Title: "Need Access Code",
     Tips: "Please enter access code below",
     Input: "access code",
-    Confirm: "Confirm",
+    Confirm: "Login",
     Later: "Later",
   },
   ChatItem: {
@@ -125,6 +125,7 @@ const en: LocaleType = {
     DeleteChat: "Confirm to delete the selected conversation?",
     DeleteToast: "Chat Deleted",
     Revert: "Revert",
+    Logout: "Logout",
   },
   Settings: {
     Title: "Settings",

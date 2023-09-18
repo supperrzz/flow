@@ -21,7 +21,12 @@
   }
 
   .auth-input {
-    margin: 3vh 0;
+    margin: 2vh 0;
+  }
+
+  .auth-inputs {
+    display: flex;
+    gap: 16px;
   }
 
   .auth-actions {

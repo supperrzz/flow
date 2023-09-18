@@ -2,7 +2,7 @@
 
 require("../polyfill");
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 
 import styles from "./home.module.scss";
 
@@ -29,6 +29,7 @@ import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
+import useSession from "../hooks/useSession";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -122,13 +123,19 @@ const loadAsyncGoogleFont = () => {
 function Screen() {
   const config = useAppConfig();
   const location = useLocation();
+  const { session } = useSession();
+  console.log("session", session);
   const isHome = location.pathname === Path.Home;
-  const isAuth = location.pathname === Path.Auth;
+  const [isAuth, setIsAuth] = useState<boolean>(false);
   const isMobileScreen = useMobileScreen();
 
   useEffect(() => {
     loadAsyncGoogleFont();
   }, []);
+
+  useEffect(() => {
+    setIsAuth(!session);
+  }, [session]);
 
   return (
     <div

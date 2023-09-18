@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from "react";
+import { supabase } from "../utils/supabaseClient";
 
 import styles from "./home.module.scss";
 
@@ -11,6 +12,7 @@ import CloseIcon from "../icons/close.svg";
 import MaskIcon from "../icons/mask.svg";
 import PluginIcon from "../icons/plugin.svg";
 import DragIcon from "../icons/drag.svg";
+import LogoutIcon from "../icons/logout.svg";
 
 import Locale from "../locales";
 
@@ -118,6 +120,14 @@ export function SideBar(props: { className?: string }) {
 
   useHotKey();
 
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error signing out:", error.message);
+    }
+    console.log("Signed out successfully");
+  };
+
   return (
     <div
       className={`${styles.sidebar} ${props.className} ${
@@ -126,10 +136,10 @@ export function SideBar(props: { className?: string }) {
     >
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
         <div className={styles["sidebar-title"]} data-tauri-drag-region>
-          ChatGPT Next
+          Flow by 🗨
         </div>
         <div className={styles["sidebar-sub-title"]}>
-          Build your own AI assistant.
+          Empowering Lives Through AI Innovation
         </div>
         <div className={styles["sidebar-logo"] + " no-dark"}>
           <ChatGptIcon />
@@ -184,6 +194,19 @@ export function SideBar(props: { className?: string }) {
           <div className={styles["sidebar-action"]}>
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
               <IconButton icon={<GithubIcon />} shadow />
+            </a>
+          </div>
+          <div className={styles["sidebar-action"]}>
+            <a
+              onClick={handleSignOut}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconButton
+                icon={<LogoutIcon />}
+                text={Locale.Home.Logout}
+                shadow
+              />
             </a>
           </div>
         </div>
