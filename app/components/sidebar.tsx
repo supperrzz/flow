@@ -176,6 +176,19 @@ export function SideBar(props: { className?: string }) {
 
       <div className={styles["sidebar-tail"]}>
         <div className={styles["sidebar-actions"]}>
+          <div className={styles["sidebar-action"]}>
+            <a
+              onClick={handleSignOut}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconButton
+                icon={<LogoutIcon />}
+                // text={Locale.Home.Logout}
+                shadow
+              />
+            </a>
+          </div>
           <div className={styles["sidebar-action"] + " " + styles.mobile}>
             <IconButton
               icon={<CloseIcon />}
@@ -194,19 +207,6 @@ export function SideBar(props: { className?: string }) {
           <div className={styles["sidebar-action"]}>
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
               <IconButton icon={<GithubIcon />} shadow />
-            </a>
-          </div>
-          <div className={styles["sidebar-action"]}>
-            <a
-              onClick={handleSignOut}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <IconButton
-                icon={<LogoutIcon />}
-                text={Locale.Home.Logout}
-                shadow
-              />
             </a>
           </div>
         </div>

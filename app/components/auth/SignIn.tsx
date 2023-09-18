@@ -27,9 +27,7 @@ type SignInFormData = {
 };
 
 export const SignIn = () => {
-  const navigate = useNavigate();
-  const goHome = () => navigate(Path.Home);
-
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
   const {
     register,
     handleSubmit,
@@ -37,13 +35,6 @@ export const SignIn = () => {
   } = useForm<SignInFormData>({
     resolver: yupResolver(signInSchema),
   });
-  // const router = useRouter();
-  const [user, setUser] = useState<any>();
-  // useEffect(() => {
-  //   if (user) {
-  //     router.push("/dashboard");
-  //   }
-  // }, [user]);
 
   const onSubmit = async (data: SignInFormData) => {
     const { email, password } = data;
@@ -53,22 +44,25 @@ export const SignIn = () => {
     });
     if (res.error) {
       console.error("Error signing in");
-    } else {
-      setUser(res.data.user);
     }
   };
 
-  //      <input
-  //       className={styles["auth-input"]}
-  //       type="password"
-  //       placeholder={Locale.Auth.Input}
-  //       value={access.accessCode}
-  //       {...register("password")}
-  //       onChange={(e) => {
-  //         access.updateCode(e.currentTarget.value);
-  //       }}
-  //     />
+  const onSignup = async (data: SignInFormData) => {
+    const { email, password } = data;
+    const res = await supabase.auth.signUp({ email, password });
+    if (res.error) {
+      console.error("Error signing up", res.error);
+    } else {
+      setSignUpSuccess(true);
+    }
+  };
 
+  if (signUpSuccess)
+    return (
+      <div className={styles["auth-signup-success"]}>
+        {Locale.Auth.SignUpSuccess}
+      </div>
+    );
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="">
       <div className={styles["auth-inputs"]}>
@@ -102,7 +96,7 @@ export const SignIn = () => {
             type="primary"
             onClick={handleSubmit(onSubmit)}
           />
-          <IconButton text={Locale.Auth.Later} onClick={goHome} />
+          <IconButton text={"Sign Up"} onClick={handleSubmit(onSignup)} />
         </div>
       </div>
     </form>

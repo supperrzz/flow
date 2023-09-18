@@ -124,7 +124,6 @@ function Screen() {
   const config = useAppConfig();
   const location = useLocation();
   const { session } = useSession();
-  console.log("session", session);
   const isHome = location.pathname === Path.Home;
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const isMobileScreen = useMobileScreen();
