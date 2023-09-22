@@ -142,8 +142,8 @@ export function ChatList(props: { narrow?: boolean }) {
                 }}
                 onDelete={async () => {
                   if (
-                    !props.narrow ||
-                    (await showConfirm(Locale.Home.DeleteChat))
+                    // !props.narrow ||
+                    await showConfirm(Locale.Home.DeleteChat)
                   ) {
                     chatStore.deleteSession(i);
                   }
