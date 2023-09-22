@@ -388,10 +388,10 @@ const en: LocaleType = {
   },
   NewChat: {
     Return: "Return",
-    Skip: "Just Start",
+    Skip: "Start Chat",
     Title: "Pick a Mask",
-    SubTitle: "Chat with the Soul behind the Mask",
-    More: "Find More",
+    SubTitle: "Chat with the Model behind the Mask",
+    More: "View Masks",
     NotShow: "Never Show Again",
     ConfirmNoShow: "Confirm to disable？You can enable it in settings later.",
   },
