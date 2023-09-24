@@ -53,6 +53,7 @@ import {
   selectOrCopy,
   autoGrowTextArea,
   useMobileScreen,
+  useWindowSize,
 } from "../utils";
 
 import dynamic from "next/dynamic";
@@ -616,6 +617,9 @@ function _Chat() {
   const { scrollRef, setAutoScroll, scrollDomToBottom } = useScrollToBottom();
   const [hitBottom, setHitBottom] = useState(true);
   const isMobileScreen = useMobileScreen();
+  console.log("[Chat] isMobileScreen = ", isMobileScreen);
+  const windowWidth = useWindowSize().width;
+  console.log("[Chat] windowWidth = ", windowWidth);
   const navigate = useNavigate();
 
   // prompt hints
