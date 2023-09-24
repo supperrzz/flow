@@ -617,6 +617,7 @@ function _Chat() {
   const { scrollRef, setAutoScroll, scrollDomToBottom } = useScrollToBottom();
   const [hitBottom, setHitBottom] = useState(true);
   const isMobileScreen = useMobileScreen();
+  console.log("isMobileScreen", isMobileScreen);
   const windowWidth = useWindowSize().width;
   const navigate = useNavigate();
 
@@ -1038,7 +1039,7 @@ function _Chat() {
     <div className={styles.chat} key={session.id}>
       <div className="window-header" data-tauri-drag-region>
         <h3>Window Width: {windowWidth}</h3>
-        <h3>IsMobileScreen: {isMobileScreen}</h3>
+        <h3>IsMobileScreen: {isMobileScreen ? "yes" : "no"}</h3>
         {isMobileScreen && (
           <div className="window-actions">
             <div className={"window-action-button"}>

@@ -99,7 +99,7 @@ export function useWindowSize() {
 export const MOBILE_MAX_WIDTH = 600;
 export function useMobileScreen() {
   const { width } = useWindowSize();
-
+  console.log(width <= MOBILE_MAX_WIDTH);
   return width <= MOBILE_MAX_WIDTH;
 }
 
