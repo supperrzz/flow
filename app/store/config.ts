@@ -29,9 +29,9 @@ export const DEFAULT_CONFIG = {
 
   submitKey: SubmitKey.CtrlEnter as SubmitKey,
   avatar: "1f603",
-  fontSize: 14,
+  fontSize: 16,
   theme: Theme.Auto as Theme,
-  tightBorder: !!getClientConfig()?.isApp,
+  tightBorder: true,
   sendPreviewBubble: true,
   enableAutoGenerateTitle: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,

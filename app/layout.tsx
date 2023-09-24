@@ -7,7 +7,7 @@ import { type Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
-  title: "Flow by 🗨",
+  title: "Flow",
   description: "Your personal ChatGPT Chat Bot.",
   viewport: {
     width: "device-width",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     { media: "(prefers-color-scheme: dark)", color: "#151515" },
   ],
   appleWebApp: {
-    title: "Flow by 🗨",
+    title: "Flow",
     statusBarStyle: "default",
   },
 };
