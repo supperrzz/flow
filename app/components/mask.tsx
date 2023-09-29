@@ -144,7 +144,7 @@ export function MaskConfig(props: {
         >
           <input
             type="checkbox"
-            checked={props.mask.hideContext}
+            checked={props.mask.hideContext ?? true}
             onChange={(e) => {
               props.updateMask((mask) => {
                 mask.hideContext = e.currentTarget.checked;
@@ -195,13 +195,15 @@ export function MaskConfig(props: {
         ) : null}
       </List>
 
-      <List>
-        <ModelConfigList
-          modelConfig={{ ...props.mask.modelConfig }}
-          updateConfig={updateConfig}
-        />
-        {props.extraListItems}
-      </List>
+      {!props.mask.syncGlobalConfig && (
+        <List>
+          <ModelConfigList
+            modelConfig={{ ...props.mask.modelConfig }}
+            updateConfig={updateConfig}
+          />
+          {props.extraListItems}
+        </List>
+      )}
     </>
   );
 }

@@ -36,6 +36,7 @@ export const createEmptyMask = () =>
     modelConfig: { ...useAppConfig.getState().modelConfig },
     lang: getLang(),
     builtin: false,
+    hideContext: true,
     createdAt: Date.now(),
   }) as Mask;
 
