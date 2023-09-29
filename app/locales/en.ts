@@ -1,11 +1,8 @@
 import { getClientConfig } from "../config/client";
 import { SubmitKey } from "../store/config";
-import { LocaleType } from "./index";
-
-// if you are adding a new translation, please use PartialLocaleType instead of LocaleType
 
 const isApp = !!getClientConfig()?.isApp;
-const en: LocaleType = {
+const en = {
   WIP: "Coming Soon...",
   Error: {
     Unauthorized: isApp
@@ -172,12 +169,15 @@ const en: LocaleType = {
       FoundUpdate: (x: string) => `Found new version: ${x}`,
       GoToUpdate: "Update",
     },
-    SendKey: "Send Key",
+    SendKey: {
+      title: "Submit Key",
+      subTitle: "Send message with this key",
+    },
     Theme: "Theme",
     TightBorder: "Tight Border",
     SendPreviewBubble: {
-      Title: "Send Preview Bubble",
-      SubTitle: "Preview markdown in bubble",
+      Title: "Preview Message",
+      SubTitle: "Show preview message before sending",
     },
     AutoGenerateTitle: {
       Title: "Auto Generate Title",
@@ -229,12 +229,12 @@ const en: LocaleType = {
     },
     Mask: {
       Splash: {
-        Title: "Mask Splash Screen",
-        SubTitle: "Show a mask splash screen before starting new chat",
+        Title: "Presets Splash Screen",
+        SubTitle: "Show a presets splash screen before starting new chat",
       },
       Builtin: {
-        Title: "Hide Builtin Masks",
-        SubTitle: "Hide builtin masks in mask list",
+        Title: "Hide System Presets",
+        SubTitle: "Hide system presets in presets list",
       },
     },
     Prompt: {
@@ -419,5 +419,13 @@ const en: LocaleType = {
     Settings: "Detected settings from url, confirm to apply?",
   },
 };
+
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
+export type LocaleType = typeof en;
+export type PartialLocaleType = DeepPartial<typeof en>;
 
 export default en;
