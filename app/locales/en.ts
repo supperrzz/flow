@@ -369,7 +369,7 @@ const en = {
     },
     Config: {
       Avatar: "Chat Avatar",
-      Name: "Chat Name",
+      Name: "Preset Name",
       Sync: {
         Title: "Use Global Config",
         SubTitle: "Use global config in this chat",
