@@ -426,6 +426,6 @@ type DeepPartial<T> = T extends object
     }
   : T;
 export type LocaleType = typeof en;
-export type PartialLocaleType = DeepPartial<typeof en>;
+export type PartialLocaleType = any;
 
 export default en;

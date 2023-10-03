@@ -81,7 +81,7 @@ export const DEFAULT_MODELS = [
     available: true,
   },
   {
-    name: "gpt-3.5",
+    name: "gpt-3.5-turbo",
     available: true,
   },
 ] as const;
