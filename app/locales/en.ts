@@ -45,7 +45,7 @@ const en = {
     },
     Commands: {
       new: "Start a new chat",
-      newm: "Start a new chat with preset",
+      newm: "Start a new chat with mask",
       next: "Next Chat",
       prev: "Previous Chat",
       clear: "Clear Context",
@@ -60,7 +60,7 @@ const en = {
         dark: "Dark Theme",
       },
       Prompt: "Prompts",
-      Masks: "Presets",
+      Masks: "Masks",
       Clear: "Clear Context",
       Settings: "Chat Settings",
     },
@@ -76,7 +76,7 @@ const en = {
     Send: "Send",
     Config: {
       Reset: "Reset to Default",
-      SaveAs: "Save as Preset",
+      SaveAs: "Save as Mask",
     },
     IsContext: "Contextual Prompt",
   },
@@ -93,7 +93,7 @@ const en = {
     },
     IncludeContext: {
       Title: "Including Context",
-      SubTitle: "Export context prompts in preset or not",
+      SubTitle: "Export context prompts in mask or not",
     },
     Steps: {
       Select: "Select",
@@ -223,18 +223,18 @@ const en = {
 
       LocalState: "Local Data",
       Overview: (overview: any) => {
-        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} presets`;
+        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} masks`;
       },
       ImportFailed: "Failed to import from file",
     },
     Mask: {
       Splash: {
-        Title: "Presets Splash Screen",
-        SubTitle: "Show a presets splash screen before starting new chat",
+        Title: "Masks Splash Screen",
+        SubTitle: "Show a masks splash screen before starting new chat",
       },
       Builtin: {
-        Title: "Hide System Presets",
-        SubTitle: "Hide system presets in presets list",
+        Title: "Hide System Masks",
+        SubTitle: "Hide system masks in masks list",
       },
     },
     Prompt: {
@@ -346,11 +346,11 @@ const en = {
     Sysmessage: "You are an assistant that",
   },
   Mask: {
-    Name: "Browse Presets",
+    Name: "Browse Masks",
     Page: {
-      Title: "Presets Library",
-      SubTitle: (count: number) => `${count} presets`,
-      Search: "Search Presets",
+      Title: "Masks Library",
+      SubTitle: (count: number) => `${count} masks`,
+      Search: "Search Masks",
       Create: "Create",
     },
     Item: {
@@ -369,7 +369,7 @@ const en = {
     },
     Config: {
       Avatar: "Chat Avatar",
-      Name: "Preset Name",
+      Name: "Mask Name",
       Sync: {
         Title: "Use Global Config",
         SubTitle: "Use global config in this chat",
@@ -380,8 +380,8 @@ const en = {
         SubTitle: "Do not show in-context prompts in chat",
       },
       Share: {
-        Title: "Share This Preset",
-        SubTitle: "Generate a link to this preset",
+        Title: "Share This Mask",
+        SubTitle: "Generate a link to this mask",
         Action: "Copy Link",
       },
     },
@@ -389,9 +389,9 @@ const en = {
   NewChat: {
     Return: "Return",
     Skip: "Start Chat",
-    Title: "Pick a Preset",
-    SubTitle: "Chat with the Model behind the Preset",
-    More: "View Presets",
+    Title: "Pick a Mask",
+    SubTitle: "Chat with the Model behind the Mask",
+    More: "View Masks",
     NotShow: "Never Show Again",
     ConfirmNoShow: "Confirm to disable？You can enable it in settings later.",
   },
