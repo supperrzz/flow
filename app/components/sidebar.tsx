@@ -152,21 +152,23 @@ export function SideBar(props: { className?: string }) {
       }`}
     >
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
-        <div className={styles["sidebar-title"]} data-tauri-drag-region>
-          Welcome to Flow
-        </div>
-        <div className={styles["sidebar-sub-title"]}>
-          Developed by{" "}
-          <a
-            href="https://www.mygptech.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            GPTech
-          </a>
-        </div>
         <div className={styles["sidebar-logo"] + " no-dark"}>
           <ChatGptIcon />
+        </div>
+        <div>
+          <div className={styles["sidebar-title"]} data-tauri-drag-region>
+            Welcome to Flow
+          </div>
+          <div className={styles["sidebar-sub-title"]}>
+            Developed by{" "}
+            <a
+              href="https://www.mygptech.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GPTech
+            </a>
+          </div>
         </div>
       </div>
 
@@ -201,7 +203,7 @@ export function SideBar(props: { className?: string }) {
         <div className={styles["sidebar-actions"]}>
           <div className={styles["sidebar-action"]}>
             <a
-              onClick={() => navigate(Path.Dashboard)}
+              onClick={handleSignOut}
               target="_blank"
               rel="noopener noreferrer"
             >

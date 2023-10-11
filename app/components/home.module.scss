@@ -135,14 +135,18 @@
 
 .sidebar-header {
   position: relative;
-  padding-top: 20px;
   padding-bottom: 20px;
+  display: flex;
+  gap: .75rem;
+  align-items: center;
 }
 
 .sidebar-logo {
-  position: absolute;
-  right: 0;
-  bottom: 18px;
+  padding: 4px;
+  width: 30px;
+  height: 30px;
+  background: var(--primary);
+  border-radius: 8px;
 }
 
 .sidebar-title {
@@ -156,6 +160,7 @@
   font-weight: 400;
   animation: slide-in ease 0.3s;
   a {
+    color: var(--primary);
     text-decoration: none;
   }
 }
@@ -237,6 +242,10 @@
   .sidebar-title,
   .sidebar-sub-title {
     display: none;
+  }
+  .sidebar-header {
+    gap: 0;
+    justify-content: center;
   }
   .sidebar-logo {
     position: relative;
