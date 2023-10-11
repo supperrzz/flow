@@ -162,7 +162,7 @@ export function SideBar(props: { className?: string }) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            MyGPTech
+            GPTech
           </a>
         </div>
         <div className={styles["sidebar-logo"] + " no-dark"}>
@@ -201,15 +201,11 @@ export function SideBar(props: { className?: string }) {
         <div className={styles["sidebar-actions"]}>
           <div className={styles["sidebar-action"]}>
             <a
-              onClick={handleSignOut}
+              onClick={() => navigate(Path.Dashboard)}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <IconButton
-                icon={<LogoutIcon />}
-                // text={Locale.Home.Logout}
-                shadow
-              />
+              <IconButton icon={<LogoutIcon />} shadow />
             </a>
           </div>
           <div className={styles["sidebar-action"] + " " + styles.mobile}>
