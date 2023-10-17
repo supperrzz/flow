@@ -11,8 +11,12 @@ import mermaid from "mermaid";
 
 import LoadingIcon from "../icons/three-dots.svg";
 import React from "react";
-import { useDebouncedCallback, useThrottledCallback } from "use-debounce";
-import { showImageModal } from "./ui-lib";
+import { useDebouncedCallback } from "use-debounce";
+import { showImageModal, showToast } from "./ui-lib";
+import { useMaskStore } from "../store/mask";
+import { EmojiAvatar } from "./emoji";
+import { IconButton } from "./button";
+import AddIcon from "../icons/add.svg";
 
 export function Mermaid(props: { code: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -99,7 +103,46 @@ export function PreCode(props: { children: any }) {
   );
 }
 
+const MaskPreview = (props: { mask: any }) => {
+  const maskStore = useMaskStore();
+  const { mask } = props;
+  const { name, abilities, avatar } = JSON.parse(mask);
+  return (
+    <div className="mask-preview">
+      <div>
+        <span>
+          <EmojiAvatar avatar={avatar} size={48} />
+        </span>
+        <h3 style={{ margin: "0 0 .5rem" }}>{name}</h3>
+      </div>
+      <h4 style={{ margin: "0 0 .5rem" }}>Mask Abilities:</h4>
+      <ul>
+        {abilities?.map((ability: any) => <li key={ability}>{ability}</li>)}
+      </ul>
+      <IconButton
+        text="Save Mask"
+        icon={<AddIcon />}
+        className="btn btn-primary"
+        onClick={() => {
+          setTimeout(() => {
+            try {
+              maskStore.create(JSON.parse(mask));
+              showToast("Mask saved");
+            } catch (e) {
+              console.error(e);
+            }
+          }, 500);
+        }}
+      />
+    </div>
+  );
+};
+
 function _MarkDownContent(props: { content: string }) {
+  const mask = props.content.match(/```json([\s\S]*)```/)?.[1];
+  const MASK_KEYS = ["name", "abilities", "avatar", "modelConfig", "context"];
+  const isMask = mask && MASK_KEYS.every((key) => mask.includes(key));
+  if (isMask) return <MaskPreview mask={mask} />;
   return (
     <ReactMarkdown
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
