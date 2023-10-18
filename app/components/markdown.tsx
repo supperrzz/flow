@@ -103,22 +103,12 @@ export function PreCode(props: { children: any }) {
   );
 }
 
-const MaskPreview = (props: { mask: any }) => {
+const SaveMaskButton = (props: { mask: any }) => {
   const maskStore = useMaskStore();
   const { mask } = props;
   const { name, abilities, avatar } = JSON.parse(mask);
   return (
     <div className="mask-preview">
-      <div>
-        <span>
-          <EmojiAvatar avatar={avatar} size={48} />
-        </span>
-        <h3 style={{ margin: "0 0 .5rem" }}>{name}</h3>
-      </div>
-      <h4 style={{ margin: "0 0 .5rem" }}>Mask Abilities:</h4>
-      <ul>
-        {abilities?.map((ability: any) => <li key={ability}>{ability}</li>)}
-      </ul>
       <IconButton
         text="Save Mask"
         icon={<AddIcon />}
@@ -139,10 +129,6 @@ const MaskPreview = (props: { mask: any }) => {
 };
 
 function _MarkDownContent(props: { content: string }) {
-  const mask = props.content.match(/```json([\s\S]*)```/)?.[1];
-  const MASK_KEYS = ["name", "abilities", "avatar", "modelConfig", "context"];
-  const isMask = mask && MASK_KEYS.every((key) => mask.includes(key));
-  if (isMask) return <MaskPreview mask={mask} />;
   return (
     <ReactMarkdown
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
@@ -184,6 +170,9 @@ export function Markdown(
   } & React.DOMAttributes<HTMLDivElement>,
 ) {
   const mdRef = useRef<HTMLDivElement>(null);
+  const mask = props.content.match(/```json([\s\S]*)```/)?.[1];
+  const MASK_KEYS = ["name", "abilities", "avatar", "modelConfig", "context"];
+  const isMask = mask && MASK_KEYS.every((key) => mask.includes(key));
 
   return (
     <div
@@ -199,7 +188,10 @@ export function Markdown(
       {props.loading ? (
         <LoadingIcon />
       ) : (
-        <MarkdownContent content={props.content} />
+        <>
+          <MarkdownContent content={props.content} />
+          {isMask && <SaveMaskButton mask={mask} />}
+        </>
       )}
     </div>
   );
