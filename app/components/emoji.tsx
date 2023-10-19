@@ -43,7 +43,9 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
 
   return (
     <div className="user-avatar">
-      {props.avatar && <EmojiAvatar avatar={props.avatar} />}
+      {props.avatar && (
+        <EmojiAvatar avatar={props.avatar.toLocaleLowerCase()} />
+      )}
     </div>
   );
 }
