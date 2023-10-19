@@ -45,7 +45,7 @@ const en = {
     },
     Commands: {
       new: "Start a new chat",
-      newm: "Start a new chat with mask",
+      newm: "Start a new chat with Virtual Assistants",
       next: "Next Chat",
       prev: "Previous Chat",
       clear: "Clear Context",
@@ -60,7 +60,7 @@ const en = {
         dark: "Dark Theme",
       },
       Prompt: "Prompts",
-      Masks: "Masks",
+      Masks: "Virtual Assistants",
       Clear: "Clear Context",
       Settings: "Chat Settings",
     },
@@ -76,7 +76,7 @@ const en = {
     Send: "Send",
     Config: {
       Reset: "Reset to Default",
-      SaveAs: "Save as Mask",
+      SaveAs: "Save as Virtual Assistants",
     },
     IsContext: "Contextual Prompt",
   },
@@ -93,7 +93,7 @@ const en = {
     },
     IncludeContext: {
       Title: "Including Context",
-      SubTitle: "Export context prompts in mask or not",
+      SubTitle: "Export context prompts in Virtual Assistant or not",
     },
     Steps: {
       Select: "Select",
@@ -223,18 +223,19 @@ const en = {
 
       LocalState: "Local Data",
       Overview: (overview: any) => {
-        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} masks`;
+        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} Virtual Assistants`;
       },
       ImportFailed: "Failed to import from file",
     },
     Mask: {
       Splash: {
-        Title: "Masks Splash Screen",
-        SubTitle: "Show a masks splash screen before starting new chat",
+        Title: "Virtual Assistants Splash Screen",
+        SubTitle:
+          "Show a Virtual Assistants splash screen before starting new chat",
       },
       Builtin: {
-        Title: "Hide System Masks",
-        SubTitle: "Hide system masks in masks list",
+        Title: "Hide System Virtual Assistants",
+        SubTitle: "Hide system Virtual Assistants in Virtual Assistants list",
       },
     },
     Prompt: {
@@ -346,11 +347,11 @@ const en = {
     Sysmessage: "You are an assistant that",
   },
   Mask: {
-    Name: "Browse Masks",
+    Name: "Browse Virtual Assistants",
     Page: {
-      Title: "Masks Library",
-      SubTitle: (count: number) => `${count} masks`,
-      Search: "Search Masks",
+      Title: "Virtual Assistants Library",
+      SubTitle: (count: number) => `${count} Virtual Assistants`,
+      Search: "Search Virtual Assistants",
       Create: "Create",
     },
     Item: {
@@ -369,7 +370,7 @@ const en = {
     },
     Config: {
       Avatar: "Chat Avatar",
-      Name: "Mask Name",
+      Name: "Virtual Assistant Name",
       Sync: {
         Title: "Use Global Config",
         SubTitle: "Use global config in this chat",
@@ -380,8 +381,8 @@ const en = {
         SubTitle: "Do not show in-context prompts in chat",
       },
       Share: {
-        Title: "Share This Mask",
-        SubTitle: "Generate a link to this mask",
+        Title: "Share This Virtual Assistants",
+        SubTitle: "Generate a link to this Virtual Assistants",
         Action: "Copy Link",
       },
     },
@@ -389,9 +390,9 @@ const en = {
   NewChat: {
     Return: "Return",
     Skip: "Start Chat",
-    Title: "Pick a Mask",
-    SubTitle: "Chat with the Model behind the Mask",
-    More: "View Masks",
+    Title: "Pick a Virtual Assistants",
+    SubTitle: "Chat with the Model behind the Virtual Assistants",
+    More: "View Virtual Assistants",
     NotShow: "Never Show Again",
     ConfirmNoShow: "Confirm to disable？You can enable it in settings later.",
   },

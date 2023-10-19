@@ -110,14 +110,14 @@ const SaveMaskButton = (props: { mask: any }) => {
   return (
     <div className="mask-preview">
       <IconButton
-        text="Save Mask"
+        text="Save Virtual Assistant"
         icon={<AddIcon />}
         className="btn btn-primary"
         onClick={() => {
           setTimeout(() => {
             try {
               maskStore.create(JSON.parse(mask));
-              showToast("Mask saved");
+              showToast("Virtual Assistant saved");
             } catch (e) {
               console.error(e);
             }
