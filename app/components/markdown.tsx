@@ -4,7 +4,7 @@ import RemarkMath from "remark-math";
 import RemarkBreaks from "remark-breaks";
 import RemarkGfm from "remark-gfm";
 import RehypeHighlight from "rehype-highlight";
-import { useRef, useState, RefObject, useEffect } from "react";
+import { useRef, useState, RefObject, useEffect, useCallback } from "react";
 import { copyToClipboard, downloadAs } from "../utils";
 import mermaid from "mermaid";
 // @ts-ignore
@@ -28,6 +28,14 @@ import AddIcon from "../icons/add.svg";
 import { useChatStore } from "../store";
 import { useNavigate } from "react-router-dom";
 import { Path } from "../constant";
+
+interface DocumentDefinition {
+  watermark?: {
+    text: string;
+    color: string;
+    opacity: number;
+  };
+}
 
 const vaPreviewHeaderStyle = {
   marginTop: 0,
@@ -130,48 +138,52 @@ export const VaContent = ({ code }: { code: string }) => {
   );
 };
 
-export const HtmlContent = ({ code }: { code: string }) => {
-  const handleDownload = () => {
-    const opt = {
-      margin: 10,
-      filename: "document.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
-    const trimmer = code.replace(/```html/g, "").replace(/```/g, "");
-    html2pdf().from(trimmer).set(opt).save();
-  };
-  const isFinished = code.includes("</html>");
-  return (
-    <>
-      {!isFinished && <div>⌛ Please wait while we load your document...</div>}
-      {isFinished && (
-        <div
-          style={{ marginBottom: "1rem" }}
-          dangerouslySetInnerHTML={{ __html: code }}
-        />
-      )}
-      {isFinished && (
-        <IconButton
-          text="Download PDF"
-          icon={<AddIcon />}
-          className="btn btn-primary"
-          onClick={handleDownload}
-        />
-      )}
-    </>
-  );
-};
-
+// export const HtmlContent = ({ code }: { code: string }) => {
+//   const handleDownload = () => {
+//     const opt = {
+//       margin: 10,
+//       filename: "document.pdf",
+//       image: { type: "jpeg", quality: 0.98 },
+//       html2canvas: { scale: 2 },
+//       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+//     };
+//     const trimmer = code.replace(/```html/g, "").replace(/```/g, "");
+//     html2pdf().from(trimmer).set(opt).save();
+//   };
+//   const isFinished = code.includes("</html>");
+//   return (
+//     <>
+//       {!isFinished && <div>⌛ Please wait while we load your document...</div>}
+//       {isFinished && (
+//         <div
+//           style={{ marginBottom: "1rem" }}
+//           dangerouslySetInnerHTML={{ __html: code }}
+//         />
+//       )}
+//       {isFinished && (
+//         <IconButton
+//           text="Download PDF"
+//           icon={<AddIcon />}
+//           className="btn btn-primary"
+//           onClick={handleDownload}
+//         />
+//       )}
+//     </>
+//   );
+// };
 export const PdfMakeContent = ({ code }: { code: string }) => {
   const [pdfPreview, setPdfPreview] = useState<string | null>(null);
   const [isFinished, setIsFinished] = useState(false);
-  const documentDefinitionRef = useRef({});
+  const documentDefinitionRef = useRef<DocumentDefinition>({});
 
   React.useEffect(() => {
     try {
       documentDefinitionRef.current = JSON.parse(code);
+      documentDefinitionRef.current.watermark = {
+        text: "GPTech",
+        color: "lightgrey",
+        opacity: 0.1,
+      };
     } catch (e) {
       return;
     }
@@ -206,7 +218,7 @@ export function PreCode(props: { children: any }) {
   const VA_KEYS = ["avatar", "abilities", "name"];
   const isVaContent =
     vaContent && VA_KEYS.every((key) => vaContent.includes(key));
-  const [htmlCode, setHtmlCode] = useState<string | null>(null);
+  // const [htmlCode, setHtmlCode] = useState<string | null>(null);
   const [pdfMakeCode, setPdfMakeCode] = useState<string | null>(null);
   const renderMermaid = useDebouncedCallback(() => {
     if (!ref.current) return;
@@ -228,30 +240,28 @@ export function PreCode(props: { children: any }) {
       setVaContent(vaDom.innerText);
     }
 
-    const htmlDom = ref.current.querySelector("code.language-html");
-    if (
-      htmlDom instanceof HTMLElement &&
-      htmlDom.parentElement instanceof HTMLElement
-    ) {
-      htmlDom.parentElement.style.display = "none";
-      setHtmlCode(htmlDom.innerText);
-    }
+    // const htmlDom = ref.current.querySelector("code.language-html");
+    // if (
+    //   htmlDom instanceof HTMLElement &&
+    //   htmlDom.parentElement instanceof HTMLElement
+    // ) {
+    //   htmlDom.parentElement.style.display = "none";
+    //   setHtmlCode(htmlDom.innerText);
+    // }
 
     const pdfMakeDom = ref.current.querySelector("code.language-json-pdfmake");
     if (
       pdfMakeDom instanceof HTMLElement &&
       pdfMakeDom.parentElement instanceof HTMLElement
     ) {
-      console.log("is pdfmake");
       pdfMakeDom.parentElement.style.display = "none";
       setPdfMakeCode(pdfMakeDom.innerText);
     }
   }, 600);
 
   useEffect(() => {
-    setTimeout(renderMermaid, 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refText, renderMermaid]);
+    renderMermaid();
+  }, [refText]);
 
   return (
     <>
@@ -262,7 +272,7 @@ export function PreCode(props: { children: any }) {
       {vaContent &&
         !isVaContent &&
         "⌛ Please wait while we load your Virtual Assistant..."}
-      {htmlCode && <HtmlContent code={htmlCode} />}
+      {/* {htmlCode && <HtmlContent code={htmlCode} />} */}
       {pdfMakeCode && <PdfMakeContent code={pdfMakeCode} />}
       <pre ref={ref}>
         <span
