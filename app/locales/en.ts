@@ -76,7 +76,7 @@ const en = {
     Send: "Send",
     Config: {
       Reset: "Reset to Default",
-      SaveAs: "Save as Virtual Assistants",
+      SaveAs: "Save as Virtual Assistant",
     },
     IsContext: "Contextual Prompt",
   },

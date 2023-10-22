@@ -2,12 +2,20 @@ import ReactMarkdown from "react-markdown";
 import "katex/dist/katex.min.css";
 import RemarkMath from "remark-math";
 import RemarkBreaks from "remark-breaks";
-import RehypeKatex from "rehype-katex";
 import RemarkGfm from "remark-gfm";
 import RehypeHighlight from "rehype-highlight";
 import { useRef, useState, RefObject, useEffect } from "react";
-import { copyToClipboard } from "../utils";
+import { copyToClipboard, downloadAs } from "../utils";
 import mermaid from "mermaid";
+// @ts-ignore
+import html2pdf from "html2pdf.js";
+// @ts-ignore
+import pdfMake from "pdfmake/build/pdfmake";
+// @ts-ignore
+import pdfFonts from "pdfmake/build/vfs_fonts";
+
+// Set the fonts to use
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 import LoadingIcon from "../icons/three-dots.svg";
 import React from "react";
@@ -17,8 +25,21 @@ import { useMaskStore } from "../store/mask";
 import { EmojiAvatar } from "./emoji";
 import { IconButton } from "./button";
 import AddIcon from "../icons/add.svg";
+import { useChatStore } from "../store";
+import { useNavigate } from "react-router-dom";
+import { Path } from "../constant";
 
-export function Mermaid(props: { code: string }) {
+const vaPreviewHeaderStyle = {
+  marginTop: 0,
+  marginBottom: "1rem",
+};
+
+const vaSubHeaderStyle = {
+  marginBottom: "0.5rem",
+  marginTop: "0.5rem",
+};
+
+export const Mermaid = (props: { code: string }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [hasError, setHasError] = useState(false);
 
@@ -62,31 +83,187 @@ export function Mermaid(props: { code: string }) {
       {props.code}
     </div>
   );
-}
+};
+
+export const VaContent = ({ code }: { code: string }) => {
+  const vaStore = useMaskStore();
+  const parsedVa = JSON.parse(code);
+  const { avatar, abilities, name } = parsedVa;
+  const chatStore = useChatStore();
+  const navigate = useNavigate();
+  const handleSaveVirtualAssistant = () => {
+    setTimeout(() => {
+      try {
+        vaStore.create(parsedVa);
+        showToast("Virtual Assistant saved");
+        chatStore.newSession(parsedVa);
+        navigate(Path.Chat);
+      } catch (e) {
+        console.error(e);
+      }
+    }, 500);
+  };
+
+  return (
+    <div className="va-preview">
+      <div className="va-preview-header">
+        <h3 style={vaPreviewHeaderStyle}>
+          <EmojiAvatar avatar={avatar.toLocaleLowerCase()} />{" "}
+          <span className="va-preview-header-name">{name}</span>
+        </h3>
+        <h4 style={vaSubHeaderStyle}>Abilities</h4>
+        <ul className="va-preview-header-abilities">
+          {abilities.map((ability: any) => (
+            <li key={ability} className="va-preview-header-ability">
+              {ability}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <IconButton
+        text="Save Virtual Assistant"
+        icon={<AddIcon />}
+        className="btn btn-primary"
+        onClick={handleSaveVirtualAssistant}
+      />
+    </div>
+  );
+};
+
+export const HtmlContent = ({ code }: { code: string }) => {
+  const handleDownload = () => {
+    const opt = {
+      margin: 10,
+      filename: "document.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    };
+    const trimmer = code.replace(/```html/g, "").replace(/```/g, "");
+    html2pdf().from(trimmer).set(opt).save();
+  };
+  const isFinished = code.includes("</html>");
+  return (
+    <>
+      {!isFinished && <div>⌛ Please wait while we load your document...</div>}
+      {isFinished && (
+        <div
+          style={{ marginBottom: "1rem" }}
+          dangerouslySetInnerHTML={{ __html: code }}
+        />
+      )}
+      {isFinished && (
+        <IconButton
+          text="Download PDF"
+          icon={<AddIcon />}
+          className="btn btn-primary"
+          onClick={handleDownload}
+        />
+      )}
+    </>
+  );
+};
+
+export const PdfMakeContent = ({ code }: { code: string }) => {
+  const [pdfPreview, setPdfPreview] = useState<string | null>(null);
+  const [isFinished, setIsFinished] = useState(false);
+  const documentDefinitionRef = useRef({});
+
+  React.useEffect(() => {
+    try {
+      documentDefinitionRef.current = JSON.parse(code);
+    } catch (e) {
+      return;
+    }
+    setIsFinished(true);
+    pdfMake
+      .createPdf(documentDefinitionRef.current)
+      .getDataUrl((dataUrl: any) => {
+        setPdfPreview(dataUrl);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code]);
+  return (
+    <>
+      {!isFinished && <div>⌛ Please wait, writing your document...</div>}
+      {isFinished && (
+        <div style={{ width: "1000px", maxWidth: "100%" }}>
+          <iframe
+            src={`${pdfPreview}#toolbar=`}
+            style={{ width: "100%", height: "300px" }}
+          ></iframe>
+        </div>
+      )}
+    </>
+  );
+};
 
 export function PreCode(props: { children: any }) {
   const ref = useRef<HTMLPreElement>(null);
   const refText = ref.current?.innerText;
   const [mermaidCode, setMermaidCode] = useState("");
-
+  const [vaContent, setVaContent] = useState<string | null>(null);
+  const VA_KEYS = ["avatar", "abilities", "name"];
+  const isVaContent =
+    vaContent && VA_KEYS.every((key) => vaContent.includes(key));
+  const [htmlCode, setHtmlCode] = useState<string | null>(null);
+  const [pdfMakeCode, setPdfMakeCode] = useState<string | null>(null);
   const renderMermaid = useDebouncedCallback(() => {
     if (!ref.current) return;
     const mermaidDom = ref.current.querySelector("code.language-mermaid");
-    if (mermaidDom) {
-      setMermaidCode((mermaidDom as HTMLElement).innerText);
+    if (
+      mermaidDom instanceof HTMLElement &&
+      mermaidDom.parentElement instanceof HTMLElement
+    ) {
+      mermaidDom.parentElement.style.display = "none";
+      setMermaidCode(mermaidDom.innerText);
+    }
+
+    const vaDom = ref.current.querySelector("code.language-json-va");
+    if (
+      vaDom instanceof HTMLElement &&
+      vaDom.parentElement instanceof HTMLElement
+    ) {
+      vaDom.parentElement.style.display = "none";
+      setVaContent(vaDom.innerText);
+    }
+
+    const htmlDom = ref.current.querySelector("code.language-html");
+    if (
+      htmlDom instanceof HTMLElement &&
+      htmlDom.parentElement instanceof HTMLElement
+    ) {
+      htmlDom.parentElement.style.display = "none";
+      setHtmlCode(htmlDom.innerText);
+    }
+
+    const pdfMakeDom = ref.current.querySelector("code.language-json-pdfmake");
+    if (
+      pdfMakeDom instanceof HTMLElement &&
+      pdfMakeDom.parentElement instanceof HTMLElement
+    ) {
+      console.log("is pdfmake");
+      pdfMakeDom.parentElement.style.display = "none";
+      setPdfMakeCode(pdfMakeDom.innerText);
     }
   }, 600);
 
   useEffect(() => {
     setTimeout(renderMermaid, 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refText]);
+  }, [refText, renderMermaid]);
 
   return (
     <>
       {mermaidCode.length > 0 && (
         <Mermaid code={mermaidCode} key={mermaidCode} />
       )}
+      {vaContent && isVaContent && <VaContent code={vaContent} />}
+      {vaContent &&
+        !isVaContent &&
+        "⌛ Please wait while we load your Virtual Assistant..."}
+      {htmlCode && <HtmlContent code={htmlCode} />}
+      {pdfMakeCode && <PdfMakeContent code={pdfMakeCode} />}
       <pre ref={ref}>
         <span
           className="copy-code-button"
@@ -103,37 +280,11 @@ export function PreCode(props: { children: any }) {
   );
 }
 
-const SaveMaskButton = (props: { mask: any }) => {
-  const maskStore = useMaskStore();
-  const { mask } = props;
-  const { name, abilities, avatar } = JSON.parse(mask);
-  return (
-    <div className="mask-preview">
-      <IconButton
-        text="Save Virtual Assistant"
-        icon={<AddIcon />}
-        className="btn btn-primary"
-        onClick={() => {
-          setTimeout(() => {
-            try {
-              maskStore.create(JSON.parse(mask));
-              showToast("Virtual Assistant saved");
-            } catch (e) {
-              console.error(e);
-            }
-          }, 500);
-        }}
-      />
-    </div>
-  );
-};
-
 function _MarkDownContent(props: { content: string }) {
   return (
     <ReactMarkdown
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       rehypePlugins={[
-        RehypeKatex,
         [
           RehypeHighlight,
           {
@@ -170,10 +321,6 @@ export function Markdown(
   } & React.DOMAttributes<HTMLDivElement>,
 ) {
   const mdRef = useRef<HTMLDivElement>(null);
-  const mask = props.content.match(/```json([\s\S]*)```/)?.[1];
-  const MASK_KEYS = ["name", "abilities", "avatar", "modelConfig", "context"];
-  const isMask = mask && MASK_KEYS.every((key) => mask.includes(key));
-
   return (
     <div
       className="markdown-body"
@@ -190,7 +337,6 @@ export function Markdown(
       ) : (
         <>
           <MarkdownContent content={props.content} />
-          {isMask && <SaveMaskButton mask={mask} />}
         </>
       )}
     </div>

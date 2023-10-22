@@ -749,6 +749,7 @@ function _Chat() {
     }
   };
   const onRightClick = (e: any, message: ChatMessage) => {
+    return;
     // copy to clipboard
     if (selectOrCopy(e.currentTarget, message.content)) {
       if (userInput.length === 0) {
@@ -1048,7 +1049,7 @@ function _Chat() {
               />
             </div>
           )}
-          <div className="window-action-button">
+          {/* <div className="window-action-button">
             <IconButton
               icon={<ExportIcon />}
               bordered
@@ -1057,7 +1058,7 @@ function _Chat() {
                 setShowExport(true);
               }}
             />
-          </div>
+          </div> */}
           {showMaxIcon && (
             <div className="window-action-button">
               <IconButton

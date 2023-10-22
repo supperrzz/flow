@@ -70,10 +70,11 @@ export const OpenaiPath = {
 
 export const DEFAULT_INPUT_TEMPLATE = `{{input}}`; // input / time / model / lang
 export const DEFAULT_SYSTEM_TEMPLATE = `
-You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2021-09
+You are Flow, a large language model trained by GPTech.
 Current model: {{model}}
-Current time: {{time}}`;
+Current time: {{time}}
+You can create flow charts, mindmaps, etc by returning its content in mermaid format.
+`;
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
 
