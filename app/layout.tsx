@@ -7,7 +7,7 @@ import { type Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
-  title: "Flow: AI-Powered Chat Application for Business & Personal Life",
+  title: "Flow",
   description:
     "Flow is a state-of-the-art, AI-powered chat application designed for both business and personal use. Seamlessly integrating advanced generative language models, Flow enhances communication, collaboration, and productivity.",
   keywords:
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     { media: "(prefers-color-scheme: dark)", color: "#151515" },
   ],
   appleWebApp: {
-    title: "Flow: AI-Powered Chat Application for Business & Personal Life",
+    title: "Flow: AI-Powered Chat Application",
     statusBarStyle: "default",
   },
 };
