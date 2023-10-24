@@ -179,11 +179,12 @@ export const PdfMakeContent = ({ code }: { code: string }) => {
   React.useEffect(() => {
     try {
       documentDefinitionRef.current = JSON.parse(code);
-      documentDefinitionRef.current.watermark = {
-        text: "GPTech",
-        color: "lightgrey",
-        opacity: 0.1,
-      };
+      // Watermark generated pdfs
+      // documentDefinitionRef.current.watermark = {
+      //   text: "GPTech",
+      //   color: "lightgrey",
+      //   opacity: 0.1,
+      // };
     } catch (e) {
       return;
     }

@@ -482,7 +482,7 @@ function SyncItems() {
   return (
     <>
       <List>
-        <ListItem
+        {/* <ListItem
           title={Locale.Settings.Sync.CloudState}
           subTitle={
             syncStore.lastProvider
@@ -516,7 +516,7 @@ function SyncItems() {
               />
             )}
           </div>
-        </ListItem>
+        </ListItem> */}
 
         <ListItem
           title={Locale.Settings.Sync.LocalState}
@@ -670,6 +670,31 @@ export function Settings() {
             </Popover>
           </ListItem>
 
+          {/* <ListItem
+            title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
+            subTitle={
+              checkingUpdate
+                ? Locale.Settings.Update.IsChecking
+                : hasNewVersion
+                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
+                : Locale.Settings.Update.IsLatest
+            }
+          >
+            {checkingUpdate ? (
+              <LoadingIcon />
+            ) : hasNewVersion ? (
+              <Link href={updateUrl} target="_blank" className="link">
+                {Locale.Settings.Update.GoToUpdate}
+              </Link>
+            ) : (
+              <IconButton
+                icon={<ResetIcon></ResetIcon>}
+                text={Locale.Settings.Update.CheckUpdate}
+                onClick={() => checkUpdate(true)}
+              />
+            )}
+          </ListItem> */}
+
           <ListItem
             title={Locale.Settings.SendKey.title}
             subTitle={Locale.Settings.SendKey.subTitle}
@@ -739,6 +764,138 @@ export function Settings() {
               }
             ></input>
           </ListItem>
+        </List>
+
+        <SyncItems />
+
+        {/* Mask Splash */}
+        {/* <List>
+          <ListItem
+            title={Locale.Settings.Mask.Splash.Title}
+            subTitle={Locale.Settings.Mask.Splash.SubTitle}
+          >
+            <input
+              type="checkbox"
+              checked={!config.dontShowMaskSplashScreen}
+              onChange={(e) =>
+                updateConfig(
+                  (config) =>
+                    (config.dontShowMaskSplashScreen =
+                      !e.currentTarget.checked),
+                )
+              }
+            ></input>
+          </ListItem>
+
+          <ListItem
+            title={Locale.Settings.Mask.Builtin.Title}
+            subTitle={Locale.Settings.Mask.Builtin.SubTitle}
+          >
+            <input
+              type="checkbox"
+              checked={config.hideBuiltinMasks}
+              onChange={(e) =>
+                updateConfig(
+                  (config) =>
+                    (config.hideBuiltinMasks = e.currentTarget.checked),
+                )
+              }
+            ></input>
+          </ListItem>
+        </List> */}
+
+        <List>
+          {showAccessCode ? (
+            <ListItem
+              title={Locale.Settings.AccessCode.Title}
+              subTitle={Locale.Settings.AccessCode.SubTitle}
+            >
+              <PasswordInput
+                value={accessStore.accessCode}
+                type="text"
+                placeholder={Locale.Settings.AccessCode.Placeholder}
+                onChange={(e) => {
+                  accessStore.updateCode(e.currentTarget.value);
+                }}
+              />
+            </ListItem>
+          ) : (
+            <></>
+          )}
+
+          {!accessStore.hideUserApiKey ? (
+            <>
+              {/* <ListItem
+                title={Locale.Settings.Endpoint.Title}
+                subTitle={Locale.Settings.Endpoint.SubTitle}
+              >
+                <input
+                  type="text"
+                  value={accessStore.openaiUrl}
+                  placeholder="https://api.openai.com/"
+                  onChange={(e) =>
+                    accessStore.updateOpenAiUrl(e.currentTarget.value)
+                  }
+                ></input>
+              </ListItem> */}
+              <ListItem
+                title={Locale.Settings.Token.Title}
+                subTitle={Locale.Settings.Token.SubTitle}
+              >
+                <PasswordInput
+                  value={accessStore.token}
+                  type="text"
+                  placeholder={Locale.Settings.Token.Placeholder}
+                  onChange={(e) => {
+                    accessStore.updateToken(e.currentTarget.value);
+                  }}
+                />
+              </ListItem>
+            </>
+          ) : null}
+
+          {!accessStore.hideBalanceQuery ? (
+            <ListItem
+              title={Locale.Settings.Usage.Title}
+              subTitle={
+                showUsage
+                  ? loadingUsage
+                    ? Locale.Settings.Usage.IsChecking
+                    : Locale.Settings.Usage.SubTitle(
+                        usage?.used ?? "[?]",
+                        usage?.subscription ?? "[?]",
+                      )
+                  : Locale.Settings.Usage.NoAccess
+              }
+            >
+              {!showUsage || loadingUsage ? (
+                <div />
+              ) : (
+                <IconButton
+                  icon={<ResetIcon></ResetIcon>}
+                  text={Locale.Settings.Usage.Check}
+                  onClick={() => checkUsage(true)}
+                />
+              )}
+            </ListItem>
+          ) : null}
+
+          {/* Custon Model */}
+          {/* <ListItem
+            title={Locale.Settings.CustomModel.Title}
+            subTitle={Locale.Settings.CustomModel.SubTitle}
+          >
+            <input
+              type="text"
+              value={config.customModels}
+              placeholder="model1,model2,model3"
+              onChange={(e) =>
+                config.update(
+                  (config) => (config.customModels = e.currentTarget.value),
+                )
+              }
+            ></input>
+          </ListItem> */}
         </List>
 
         <List>

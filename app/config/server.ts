@@ -47,6 +47,7 @@ export const getServerSideConfig = () => {
     isVercel: !!process.env.VERCEL,
     hideUserApiKey: !!process.env.HIDE_USER_API_KEY,
     disableGPT4: !!process.env.DISABLE_GPT4,
-    hideBalanceQuery: !!process.env.HIDE_BALANCE_QUERY,
+    // BalanceQuery no longer works
+    hideBalanceQuery: true,
   };
 };
