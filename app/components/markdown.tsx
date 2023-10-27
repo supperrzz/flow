@@ -250,7 +250,7 @@ export function PreCode(props: { children: any }) {
     //   setHtmlCode(htmlDom.innerText);
     // }
 
-    const pdfMakeDom = ref.current.querySelector("code.language-json-pdfmake");
+    const pdfMakeDom = ref.current.querySelector("code.language-pdfmake");
     if (
       pdfMakeDom instanceof HTMLElement &&
       pdfMakeDom.parentElement instanceof HTMLElement

@@ -8,8 +8,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "Flow",
-  description:
-    "Flow is a state-of-the-art, AI-powered chat application designed for both business and personal use. Seamlessly integrating advanced generative language models, Flow enhances communication, collaboration, and productivity.",
+  description: "AI-Powered Chat Application for Business & Life",
   keywords:
     "AI, Chat Application, Business, Personal, Generative Language Model, Communication, Collaboration, Productivity",
   viewport: {

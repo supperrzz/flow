@@ -69,9 +69,9 @@ const en = {
     Input: (submitKey: string) => {
       var inputHints = `${submitKey} to send`;
       if (submitKey === String(SubmitKey.Enter)) {
-        inputHints += ", Shift + Enter to wrap";
+        inputHints;
       }
-      return inputHints + ", / to search prompts, : to use commands";
+      return inputHints;
     },
     Send: "Send",
     Config: {
@@ -317,7 +317,7 @@ const en = {
     },
   },
   Store: {
-    DefaultTopic: "New Conversation",
+    DefaultTopic: "New Virtual Assistant",
     BotHello: "Hello! How can I assist you today?",
     Error: "Something went wrong, please try again later.",
     Prompt: {
