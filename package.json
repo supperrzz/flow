@@ -27,7 +27,7 @@
     "html-to-image": "^1.11.11",
     "html2pdf.js": "^0.10.1",
     "pdfmake": "^0.2.7",
-    "mermaid": "^10.3.1",
+    "mermaid": "^10.6.0",
     "nanoid": "^4.0.2",
     "next": "^13.4.9",
     "node-fetch": "^3.3.1",
