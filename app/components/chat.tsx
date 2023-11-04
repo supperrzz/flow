@@ -1205,6 +1205,7 @@ function _Chat() {
                       fontSize={fontSize}
                       parentRef={scrollRef}
                       defaultShow={i >= messages.length - 6}
+                      isTyping={message.streaming === true}
                     />
                   </div>
 
