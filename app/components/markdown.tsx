@@ -1,10 +1,8 @@
 import ReactMarkdown from "react-markdown";
-import "katex/dist/katex.min.css";
-import RemarkMath from "remark-math";
 import RemarkBreaks from "remark-breaks";
 import RemarkGfm from "remark-gfm";
 import RehypeHighlight from "rehype-highlight";
-import { useRef, useState, RefObject, useEffect, useCallback } from "react";
+import { useRef, useState, RefObject, useEffect } from "react";
 import { copyToClipboard, downloadAs } from "../utils";
 import mermaid from "mermaid";
 // @ts-ignore
@@ -19,6 +17,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 import LoadingIcon from "../icons/three-dots.svg";
 import React from "react";
+// How was this used before???
 import { useDebouncedCallback } from "use-debounce";
 import { showImageModal, showToast } from "./ui-lib";
 import { useMaskStore } from "../store/mask";
@@ -95,10 +94,29 @@ export const Mermaid = (props: { code: string }) => {
 
 export const VaContent = ({ code }: { code: string }) => {
   const vaStore = useMaskStore();
-  const parsedVa = JSON.parse(code);
-  const { avatar, abilities, name } = parsedVa;
   const chatStore = useChatStore();
   const navigate = useNavigate();
+  let parsedVa: any = null;
+
+  try {
+    parsedVa = JSON.parse(code);
+  } catch (e) {
+    return (
+      <div>
+        There was an error creating your Virtual Assistant. You can try again by
+        clicking the <strong>Retry</strong> button.
+      </div>
+    );
+  }
+
+  const VA_KEYS = ["avatar", "abilities", "name"];
+  const isVaContent = VA_KEYS.every((key) => parsedVa.hasOwnProperty(key));
+  if (!isVaContent) {
+    return "⌛ Please wait while we load your Virtual Assistant...";
+  }
+
+  const { avatar, abilities, name } = parsedVa;
+
   const handleSaveVirtualAssistant = () => {
     setTimeout(() => {
       try {
@@ -113,7 +131,7 @@ export const VaContent = ({ code }: { code: string }) => {
   };
 
   return (
-    <div className="va-preview">
+    <div style={vaPreviewHeaderStyle} className="va-preview">
       <div className="va-preview-header">
         <h3 style={vaPreviewHeaderStyle}>
           <EmojiAvatar avatar={avatar.toLocaleLowerCase()} />{" "}
@@ -138,43 +156,63 @@ export const VaContent = ({ code }: { code: string }) => {
   );
 };
 
-// export const HtmlContent = ({ code }: { code: string }) => {
-//   const handleDownload = () => {
-//     const opt = {
-//       margin: 10,
-//       filename: "document.pdf",
-//       image: { type: "jpeg", quality: 0.98 },
-//       html2canvas: { scale: 2 },
-//       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-//     };
-//     const trimmer = code.replace(/```html/g, "").replace(/```/g, "");
-//     html2pdf().from(trimmer).set(opt).save();
-//   };
-//   const isFinished = code.includes("</html>");
-//   return (
-//     <>
-//       {!isFinished && <div>⌛ Please wait while we load your document...</div>}
-//       {isFinished && (
-//         <div
-//           style={{ marginBottom: "1rem" }}
-//           dangerouslySetInnerHTML={{ __html: code }}
-//         />
-//       )}
-//       {isFinished && (
-//         <IconButton
-//           text="Download PDF"
-//           icon={<AddIcon />}
-//           className="btn btn-primary"
-//           onClick={handleDownload}
-//         />
-//       )}
-//     </>
-//   );
-// };
+export const HtmlContent = ({ code }: { code: string }) => {
+  const handleDownload = () => {
+    const opt = {
+      margin: 10,
+      filename: "document.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    };
+    const trimmer = code.replace(/```html/g, "").replace(/```/g, "");
+    html2pdf().from(trimmer).set(opt).save();
+  };
+  const htmlDocTemplate = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Generated Document</title>
+      <style>
+        body {
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          color: #000;
+          margin: 0;
+        }
+      </style>
+    </head>
+    <body>
+      ${code}
+    </body>
+  </html>
+  `;
+  return (
+    <div style={{ marginBottom: "1rem" }}>
+      <div className="browser-mockup">
+        <iframe
+          srcDoc={htmlDocTemplate}
+          style={{
+            width: "100%",
+            height: "450px",
+            border: "none",
+            borderRadius: "0 0 8px 8px",
+          }}
+        />
+      </div>
+      <IconButton
+        text="Download Mockup as PDF"
+        icon={<AddIcon />}
+        className="btn btn-primary"
+        onClick={handleDownload}
+      />
+    </div>
+  );
+};
+
 export const PdfMakeContent = ({ code }: { code: string }) => {
   const [pdfPreview, setPdfPreview] = useState<string | null>(null);
-  const [isFinished, setIsFinished] = useState(false);
   const documentDefinitionRef = useRef<DocumentDefinition>({});
+  const [error, setError] = useState<boolean>(false);
 
   React.useEffect(() => {
     try {
@@ -186,9 +224,10 @@ export const PdfMakeContent = ({ code }: { code: string }) => {
       //   opacity: 0.1,
       // };
     } catch (e) {
+      setError(true);
       return;
     }
-    setIsFinished(true);
+
     pdfMake
       .createPdf(documentDefinitionRef.current)
       .getDataUrl((dataUrl: any) => {
@@ -196,85 +235,65 @@ export const PdfMakeContent = ({ code }: { code: string }) => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code]);
+
+  if (error)
+    return (
+      <div>
+        There was an error creating your document. You can try again by clicking
+        the <strong>Retry</strong> button.
+      </div>
+    );
   return (
-    <>
-      {!isFinished && <div>⌛ Please wait, writing your document...</div>}
-      {isFinished && (
-        <div style={{ width: "1000px", maxWidth: "100%" }}>
-          <iframe
-            src={`${pdfPreview}#toolbar=`}
-            style={{ width: "100%", height: "300px" }}
-          ></iframe>
-        </div>
-      )}
-    </>
+    <div style={{ width: "1000px", maxWidth: "100%" }}>
+      <iframe
+        src={`${pdfPreview}#toolbar=`}
+        style={{ width: "100%", height: "300px" }}
+      ></iframe>
+    </div>
   );
 };
 
 export function PreCode(props: { children: any }) {
   const ref = useRef<HTMLPreElement>(null);
-  const refText = ref.current?.innerText;
-  const [mermaidCode, setMermaidCode] = useState("");
-  const [vaContent, setVaContent] = useState<string | null>(null);
-  const VA_KEYS = ["avatar", "abilities", "name"];
-  const isVaContent =
-    vaContent && VA_KEYS.every((key) => vaContent.includes(key));
-  // const [htmlCode, setHtmlCode] = useState<string | null>(null);
-  const [pdfMakeCode, setPdfMakeCode] = useState<string | null>(null);
-  const renderMermaid = useDebouncedCallback(() => {
+  const [content, setContent] = useState<{
+    mermaid: string;
+    html: string;
+    pdfMake: string;
+    va: string;
+  }>({
+    mermaid: "",
+    html: "",
+    pdfMake: "",
+    va: "",
+  });
+
+  const renderContent = (type: string) => {
     if (!ref.current) return;
-    const mermaidDom = ref.current.querySelector("code.language-mermaid");
+    const dom = ref.current.querySelector(`code.language-${type}`);
+    console.log({ dom });
     if (
-      mermaidDom instanceof HTMLElement &&
-      mermaidDom.parentElement instanceof HTMLElement
+      dom instanceof HTMLElement &&
+      dom.parentElement instanceof HTMLElement
     ) {
-      mermaidDom.parentElement.style.display = "none";
-      setMermaidCode(mermaidDom.innerText);
+      dom.parentElement.style.display = "none";
+      setContent((prevContent) => ({ ...prevContent, [type]: dom.innerText }));
     }
-
-    const vaDom = ref.current.querySelector("code.language-json-va");
-    if (
-      vaDom instanceof HTMLElement &&
-      vaDom.parentElement instanceof HTMLElement
-    ) {
-      vaDom.parentElement.style.display = "none";
-      setVaContent(vaDom.innerText);
-    }
-
-    // const htmlDom = ref.current.querySelector("code.language-html");
-    // if (
-    //   htmlDom instanceof HTMLElement &&
-    //   htmlDom.parentElement instanceof HTMLElement
-    // ) {
-    //   htmlDom.parentElement.style.display = "none";
-    //   setHtmlCode(htmlDom.innerText);
-    // }
-
-    const pdfMakeDom = ref.current.querySelector("code.language-pdfmake");
-    if (
-      pdfMakeDom instanceof HTMLElement &&
-      pdfMakeDom.parentElement instanceof HTMLElement
-    ) {
-      pdfMakeDom.parentElement.style.display = "none";
-      setPdfMakeCode(pdfMakeDom.innerText);
-    }
-  }, 600);
+  };
 
   useEffect(() => {
-    renderMermaid();
-  }, [refText]);
+    ["mermaid", "va", "html", "pdfMake"].forEach(renderContent);
+  }, [ref.current?.innerText]);
 
   return (
     <>
-      {mermaidCode.length > 0 && (
-        <Mermaid code={mermaidCode} key={mermaidCode} />
+      {content.mermaid.length > 0 && (
+        <Mermaid code={content.mermaid} key={content.mermaid} />
       )}
-      {vaContent && isVaContent && <VaContent code={vaContent} />}
-      {vaContent &&
-        !isVaContent &&
-        "⌛ Please wait while we load your Virtual Assistant..."}
-      {/* {htmlCode && <HtmlContent code={htmlCode} />} */}
-      {pdfMakeCode && <PdfMakeContent code={pdfMakeCode} />}
+      {content.va && <VaContent code={content.va} key={content.va} />}
+      {content.html && <HtmlContent code={content.html} key={content.html} />}
+      {content.pdfMake && (
+        <PdfMakeContent code={content.pdfMake} key={content.pdfMake} />
+      )}
       <pre ref={ref}>
         <span
           className="copy-code-button"
@@ -291,10 +310,10 @@ export function PreCode(props: { children: any }) {
   );
 }
 
-function _MarkDownContent(props: { content: string }) {
+function _MarkDownContent(props: { content: string; isTyping: boolean }) {
   return (
     <ReactMarkdown
-      remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
+      remarkPlugins={[RemarkGfm, RemarkBreaks]}
       rehypePlugins={[
         [
           RehypeHighlight,
@@ -305,7 +324,12 @@ function _MarkDownContent(props: { content: string }) {
         ],
       ]}
       components={{
-        pre: PreCode,
+        pre: (preProps) => (
+          <>
+            {props.isTyping && <p>⌛ Please wait loading your content...</p>}
+            {!props.isTyping && <PreCode>{preProps.children}</PreCode>}
+          </>
+        ),
         p: (pProps) => <p {...pProps} dir="auto" />,
         a: (aProps) => {
           const href = aProps.href || "";
@@ -324,6 +348,7 @@ export const MarkdownContent = React.memo(_MarkDownContent);
 
 export function Markdown(
   props: {
+    isTyping?: boolean;
     content: string;
     loading?: boolean;
     fontSize?: number;
@@ -347,7 +372,10 @@ export function Markdown(
         <LoadingIcon />
       ) : (
         <>
-          <MarkdownContent content={props.content} />
+          <MarkdownContent
+            content={props.content}
+            isTyping={props.isTyping === true}
+          />
         </>
       )}
     </div>
