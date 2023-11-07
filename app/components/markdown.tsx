@@ -338,13 +338,13 @@ export function PreCode(props: { children: any }) {
     mermaid: string;
     html: string;
     pdfMake: string;
-    va: string;
+    "json-va": string;
     pptxGen: string;
   }>({
     mermaid: "",
     html: "",
     pdfMake: "",
-    va: "",
+    "json-va": "",
     pptxGen: "",
   });
 
@@ -362,7 +362,7 @@ export function PreCode(props: { children: any }) {
   };
 
   useEffect(() => {
-    ["mermaid", "va", "html", "pdfMake", "pptxGen"].forEach(renderContent);
+    ["mermaid", "json-va", "html", "pdfMake", "pptxGen"].forEach(renderContent);
   }, [ref.current?.innerText]);
 
   return (
@@ -370,7 +370,9 @@ export function PreCode(props: { children: any }) {
       {content.mermaid.length > 0 && (
         <Mermaid code={content.mermaid} key={content.mermaid} />
       )}
-      {content.va && <VaContent code={content.va} key={content.va} />}
+      {content["json-va"] && (
+        <VaContent code={content["json-va"]} key={content["json-va"]} />
+      )}
       {content.html && <HtmlContent code={content.html} key={content.html} />}
       {content.pdfMake && (
         <PdfMakeContent code={content.pdfMake} key={content.pdfMake} />
@@ -397,7 +399,7 @@ export function PreCode(props: { children: any }) {
 function _MarkDownContent(props: { content: string; isTyping: boolean }) {
   const INTERACTIVE_TYPES = [
     "```mermaid",
-    "```va",
+    "```json-va",
     "```html",
     "```pdfMake",
     "```pptxGen",
@@ -405,7 +407,7 @@ function _MarkDownContent(props: { content: string; isTyping: boolean }) {
   const isInteractive = INTERACTIVE_TYPES.some((type) =>
     props.content.includes(type),
   );
-  console.log({ isInteractive });
+
   return (
     <ReactMarkdown
       remarkPlugins={[RemarkGfm, RemarkBreaks]}
