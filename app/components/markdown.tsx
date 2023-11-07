@@ -5,6 +5,8 @@ import RehypeHighlight from "rehype-highlight";
 import { useRef, useState, RefObject, useEffect } from "react";
 import { copyToClipboard, downloadAs } from "../utils";
 import mermaid from "mermaid";
+import pptxgen from "pptxgenjs";
+
 // @ts-ignore
 import html2pdf from "html2pdf.js";
 // @ts-ignore
@@ -24,6 +26,7 @@ import { useMaskStore } from "../store/mask";
 import { EmojiAvatar } from "./emoji";
 import { IconButton } from "./button";
 import AddIcon from "../icons/add.svg";
+import DownloadIcon from "../icons/download.svg";
 import { useChatStore } from "../store";
 import { useNavigate } from "react-router-dom";
 import { Path } from "../constant";
@@ -200,8 +203,8 @@ export const HtmlContent = ({ code }: { code: string }) => {
         />
       </div>
       <IconButton
-        text="Download Mockup as PDF"
-        icon={<AddIcon />}
+        text="Download as PDF"
+        icon={<DownloadIcon />}
         className="btn btn-primary"
         onClick={handleDownload}
       />
@@ -253,6 +256,82 @@ export const PdfMakeContent = ({ code }: { code: string }) => {
   );
 };
 
+type Slide = {
+  title: string;
+  content: string;
+};
+type PresentationDefinition = {
+  title: string;
+  slides: Slide[];
+  primaryColor: string;
+};
+export const PptxGenContent = ({ code }: { code: string }) => {
+  let parsedPptxGen: any = null;
+  try {
+    parsedPptxGen = JSON.parse(code);
+  } catch (e) {
+    return (
+      <div>
+        There was an error creating your Presentation. You can try again by
+        clicking the <strong>Retry</strong> button.
+      </div>
+    );
+  }
+  const presentationDefinition: PresentationDefinition = JSON.parse(code);
+  let pres = new pptxgen();
+
+  presentationDefinition.slides.forEach((slide: any) => {
+    let newSlide = pres.addSlide();
+
+    // Add title
+    newSlide.addText(slide.title, {
+      x: "10%",
+      y: "5%",
+      w: "80%",
+      h: "10%",
+      align: "center",
+      fontSize: 24,
+      bold: true,
+    });
+
+    // Add body text
+    if (slide.body.type === "list") {
+      slide.body.value.forEach((item: string, index: number) => {
+        newSlide.addText(item, {
+          x: "10%",
+          y: `${15 + index * 5}%`,
+          w: "80%",
+          h: "5%",
+          bullet: { code: "2022" },
+        });
+      });
+    } else {
+      newSlide.addText(slide.body.value, {
+        x: "10%",
+        y: "15%",
+        w: "80%",
+        h: "25%",
+        align: "justify",
+      });
+    }
+  });
+
+  const handleDownload = () => {
+    pres.writeFile({ fileName: `${presentationDefinition.title}.pptx` });
+  };
+
+  return (
+    <div>
+      <IconButton
+        text="Download Presentation"
+        icon={<DownloadIcon />}
+        className="btn btn-primary"
+        onClick={handleDownload}
+      />
+    </div>
+  );
+};
+
 export function PreCode(props: { children: any }) {
   const ref = useRef<HTMLPreElement>(null);
   const [content, setContent] = useState<{
@@ -260,11 +339,13 @@ export function PreCode(props: { children: any }) {
     html: string;
     pdfMake: string;
     va: string;
+    pptxGen: string;
   }>({
     mermaid: "",
     html: "",
     pdfMake: "",
     va: "",
+    pptxGen: "",
   });
 
   const renderContent = (type: string) => {
@@ -281,7 +362,7 @@ export function PreCode(props: { children: any }) {
   };
 
   useEffect(() => {
-    ["mermaid", "va", "html", "pdfMake"].forEach(renderContent);
+    ["mermaid", "va", "html", "pdfMake", "pptxGen"].forEach(renderContent);
   }, [ref.current?.innerText]);
 
   return (
@@ -293,6 +374,9 @@ export function PreCode(props: { children: any }) {
       {content.html && <HtmlContent code={content.html} key={content.html} />}
       {content.pdfMake && (
         <PdfMakeContent code={content.pdfMake} key={content.pdfMake} />
+      )}
+      {content.pptxGen && (
+        <PptxGenContent code={content.pptxGen} key={content.pptxGen} />
       )}
       <pre ref={ref}>
         <span
@@ -311,6 +395,17 @@ export function PreCode(props: { children: any }) {
 }
 
 function _MarkDownContent(props: { content: string; isTyping: boolean }) {
+  const INTERACTIVE_TYPES = [
+    "```mermaid",
+    "```va",
+    "```html",
+    "```pdfMake",
+    "```pptxGen",
+  ];
+  const isInteractive = INTERACTIVE_TYPES.some((type) =>
+    props.content.includes(type),
+  );
+  console.log({ isInteractive });
   return (
     <ReactMarkdown
       remarkPlugins={[RemarkGfm, RemarkBreaks]}
@@ -324,12 +419,20 @@ function _MarkDownContent(props: { content: string; isTyping: boolean }) {
         ],
       ]}
       components={{
-        pre: (preProps) => (
-          <>
-            {props.isTyping && <p>⌛ Please wait loading your content...</p>}
-            {!props.isTyping && <PreCode>{preProps.children}</PreCode>}
-          </>
-        ),
+        pre: (preProps) => {
+          if (isInteractive) {
+            return (
+              <>
+                {props.isTyping ? (
+                  <p>⌛ Please wait, loading your content...</p>
+                ) : (
+                  <PreCode>{preProps.children}</PreCode>
+                )}
+              </>
+            );
+          }
+          return <PreCode>{preProps.children}</PreCode>;
+        },
         p: (pProps) => <p {...pProps} dir="auto" />,
         a: (aProps) => {
           const href = aProps.href || "";
