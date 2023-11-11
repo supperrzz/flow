@@ -182,7 +182,17 @@ export const HtmlContent = ({ code }: { code: string }) => {
           color: #000;
           margin: 0;
         }
+        body * {
+          box-sizing: border-box;
+        }
       </style>
+      <script>
+        document.addEventListener("click", function (e) {
+          if (e.target.tagName === "A" || e.target.tagName === "BUTTON") {
+            e.preventDefault();
+          }
+        });
+      </script>
     </head>
     <body>
       ${code}
@@ -227,6 +237,7 @@ export const PdfMakeContent = ({ code }: { code: string }) => {
       //   opacity: 0.1,
       // };
     } catch (e) {
+      console.error(e);
       setError(true);
       return;
     }
@@ -250,7 +261,7 @@ export const PdfMakeContent = ({ code }: { code: string }) => {
     <div style={{ width: "1000px", maxWidth: "100%" }}>
       <iframe
         src={`${pdfPreview}#toolbar=`}
-        style={{ width: "100%", height: "300px" }}
+        style={{ width: "100%", height: "600px" }}
       ></iframe>
     </div>
   );

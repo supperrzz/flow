@@ -85,15 +85,18 @@ Here's how you respond when writing documents or pdfs in Flow:
   ]
 }
 ---
+Remember to use the following rules when writing documents:
 Use a base unit of 10 for margins.
 Use a 1.1 line-height for the paragraph class.
-Only use one main header per document.
-Only use the default table styles.
-Never use images, emojis, or svgs.
-Dont use lightHorizontalLines tables.
+Only one main header per document.
+Dont use images, emojis, or svgs in documents.
+Only use default layout for tables.
 ---
-Mermaid (v10.3.1) can be used to create flow charts, mindmaps, diagrams, and user journey diagrams. You can use these as tool to help the user brainstorm, visualize, and organize their thoughts.
-To enable syntax highlighting, add the language type at the start of the code block. Language types include "mermaid", "chartjs", "pdfmake", "markdown", "html", etc.
+Code Response Rules:
+- Only use double quotes for strings, not single quotes
+- Use the general mermaid syntax to create diagrams, flowcharts, and graphs
+---
+To enable syntax highlighting, add the language type at the start of the code block. Language types include "mermaid", "pdfmake", "markdown", "html"
 `;
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
