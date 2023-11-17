@@ -130,6 +130,7 @@ const en = {
     Title: "Settings",
     SubTitle: "All Settings",
     Danger: {
+      Logout: "Logout",
       Reset: {
         Title: "Reset All Settings",
         SubTitle: "Reset all setting items to default",

@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import ACTIONS, { ACTION_ICONS } from "../config/actions";
 import { actionState, activeCategoryMenuState } from "../state";
 import { camelToTitle } from "../utils-2";
+import styles from "./category.module.scss";
 
 const Category = ({ category }: { category: string }) => {
   const [currentAction, setAction] = useRecoilState(actionState);
@@ -18,9 +19,9 @@ const Category = ({ category }: { category: string }) => {
           }
           setActiveMenu(category);
         }}
-        className={expanded ? "expanded" : ""}
+        className={styles["category"]}
       >
-        <div>
+        <div className={styles["category-title"]}>
           <h3>
             <span>{ACTION_ICONS[category]}</span>
             {camelToTitle(category)}
@@ -28,12 +29,17 @@ const Category = ({ category }: { category: string }) => {
           {expanded ? "-" : "+"}
         </div>
       </button>
-      <div className={expanded ? "block" : "hidden"}>
+      <div
+        className={`${styles["category-content"]} ${
+          expanded && styles["category-content-expanded"]
+        }`}
+      >
         {Object.values(ACTIONS[category]).map((action) => (
           <button
             key={action.name}
             onClick={() => setAction(action.name)}
-            className={action.name === currentAction ? "active-action" : ""}
+            className={styles["category-item"]}
+            // className={action.name === currentAction ? "active-action" : ""}
             disabled={action.name === currentAction}
           >
             {camelToTitle(action.name)}

@@ -14,6 +14,7 @@ import DownloadIcon from "../icons/download.svg";
 import UploadIcon from "../icons/upload.svg";
 import ConfigIcon from "../icons/config.svg";
 import ConfirmIcon from "../icons/confirm.svg";
+import LogoutIcon from "../icons/logout.svg";
 
 import ConnectionIcon from "../icons/connection.svg";
 import CloudSuccessIcon from "../icons/cloud-success.svg";
@@ -61,6 +62,7 @@ import { useSyncStore } from "../store/sync";
 import { nanoid } from "nanoid";
 import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
+import { supabase } from "../utils/supabaseClient";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -219,9 +221,22 @@ function UserPromptModal(props: { onClose?: () => void }) {
 function DangerItems() {
   const chatStore = useChatStore();
   const appConfig = useAppConfig();
-
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error signing out:", error.message);
+    }
+    console.log("Signed out successfully");
+  };
   return (
     <List>
+      <ListItem title={Locale.Settings.Danger.Logout}>
+        <IconButton
+          text={Locale.Settings.Danger.Logout}
+          onClick={handleSignOut}
+          type="danger"
+        />
+      </ListItem>
       <ListItem
         title={Locale.Settings.Danger.Reset.Title}
         subTitle={Locale.Settings.Danger.Reset.SubTitle}

@@ -1,16 +1,15 @@
 import { useEffect, useRef } from "react";
-import { supabase } from "../utils/supabaseClient";
 
 import styles from "./home.module.scss";
 
 import { IconButton } from "./button";
-import SettingsIcon from "../icons/settings.svg";
+import SettingsIcon from "../icons/config.svg";
 import ChatGptIcon from "../icons/chatgpt.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
 import PluginIcon from "../icons/plugin.svg";
 import DragIcon from "../icons/drag.svg";
-import LogoutIcon from "../icons/logout.svg";
+import ChatIcon from "../icons/chat.svg";
 
 import Locale from "../locales";
 
@@ -140,14 +139,6 @@ export function SideBar(props: { className?: string }) {
 
   useHotKey();
 
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Error signing out:", error.message);
-    }
-    console.log("Signed out successfully");
-  };
-
   return (
     <div
       className={`${styles.sidebar} ${props.className} ${
@@ -207,13 +198,12 @@ export function SideBar(props: { className?: string }) {
       <div className={styles["sidebar-tail"]}>
         <div className={styles["sidebar-actions"]}>
           <div className={styles["sidebar-action"]}>
-            <a
-              onClick={handleSignOut}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <IconButton icon={<LogoutIcon />} shadow />
-            </a>
+            <IconButton
+              onClick={() => setShowChat(!showChat)}
+              icon={showChat ? <PluginIcon /> : <ChatIcon />}
+              text={showChat ? "Prompts" : "Chat"}
+              shadow
+            />
           </div>
           <div className={styles["sidebar-action"] + " " + styles.mobile}>
             <IconButton
@@ -225,34 +215,31 @@ export function SideBar(props: { className?: string }) {
               }}
             />
           </div>
-          <div className={styles["sidebar-action"]}>
-            <Link onClick={() => setShowChat(true)} to={Path.Settings}>
-              <IconButton icon={<SettingsIcon />} shadow />
-            </Link>
-          </div>
-          <div className={styles["sidebar-action"]}>
+          {showChat && (
+            <div className={styles["sidebar-action"]}>
+              <Link onClick={() => setShowChat(true)} to={Path.Settings}>
+                <IconButton icon={<SettingsIcon />} shadow />
+              </Link>
+            </div>
+          )}
+        </div>
+        {showChat && (
+          <div>
             <IconButton
-              onClick={() => setShowChat(!showChat)}
-              icon={<PluginIcon />}
+              icon={<AddIcon />}
+              text={shouldNarrow ? undefined : Locale.Home.NewChat}
+              onClick={() => {
+                if (config.dontShowMaskSplashScreen) {
+                  chatStore.newSession();
+                  navigate(Path.Chat);
+                } else {
+                  navigate(Path.NewChat);
+                }
+              }}
               shadow
             />
           </div>
-        </div>
-        <div>
-          <IconButton
-            icon={<AddIcon />}
-            text={shouldNarrow ? undefined : Locale.Home.NewChat}
-            onClick={() => {
-              if (config.dontShowMaskSplashScreen) {
-                chatStore.newSession();
-                navigate(Path.Chat);
-              } else {
-                navigate(Path.NewChat);
-              }
-            }}
-            shadow
-          />
-        </div>
+        )}
       </div>
 
       <div
