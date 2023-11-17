@@ -29,6 +29,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
 import { showConfirm, showToast } from "./ui-lib";
+import { useRecoilState } from "recoil";
+import { showChatState } from "../state";
+import { Menu } from "./document";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
   loading: () => null,
@@ -127,9 +130,9 @@ function useDragSideBar() {
   };
 }
 
-export function SideBar(props: { className?: string; showChat: any }) {
+export function SideBar(props: { className?: string }) {
   const chatStore = useChatStore();
-
+  const [showChat, setShowChat] = useRecoilState(showChatState);
   // drag side bar
   const { onDragStart, shouldNarrow } = useDragSideBar();
   const navigate = useNavigate();
@@ -173,30 +176,32 @@ export function SideBar(props: { className?: string; showChat: any }) {
       </div>
 
       <div className={styles["sidebar-header-bar"]}>
-        <IconButton
-          icon={<PluginIcon />}
-          text={shouldNarrow ? undefined : Locale.Mask.Name}
-          className={styles["sidebar-bar-button"]}
-          onClick={() => {
-            if (config.dontShowMaskSplashScreen !== true) {
-              navigate(Path.NewChat, { state: { fromHome: true } });
-            } else {
-              navigate(Path.Masks, { state: { fromHome: true } });
-            }
-          }}
-          shadow
-        />
+        {showChat && (
+          <IconButton
+            icon={<PluginIcon />}
+            text={shouldNarrow ? undefined : Locale.Mask.Name}
+            className={styles["sidebar-bar-button"]}
+            onClick={() => {
+              if (config.dontShowMaskSplashScreen !== true) {
+                navigate(Path.NewChat, { state: { fromHome: true } });
+              } else {
+                navigate(Path.Masks, { state: { fromHome: true } });
+              }
+            }}
+            shadow
+          />
+        )}
       </div>
 
       <div
         className={styles["sidebar-body"]}
         onClick={(e) => {
-          if (e.target === e.currentTarget) {
+          if (showChat && e.target === e.currentTarget) {
             navigate(Path.Home);
           }
         }}
       >
-        <ChatList narrow={shouldNarrow} />
+        {showChat ? <ChatList /> : <Menu />}
       </div>
 
       <div className={styles["sidebar-tail"]}>
@@ -226,7 +231,11 @@ export function SideBar(props: { className?: string; showChat: any }) {
             </Link>
           </div>
           <div className={styles["sidebar-action"]}>
-            <IconButton onClick={props.showChat} icon={<PluginIcon />} shadow />
+            <IconButton
+              onClick={() => setShowChat(!showChat)}
+              icon={<PluginIcon />}
+              shadow
+            />
           </div>
         </div>
         <div>

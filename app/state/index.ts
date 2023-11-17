@@ -38,3 +38,8 @@ export const activeCategoryMenuState = atom({
   key: "activeCategoryMenuState",
   default: null as string | null,
 });
+
+export const showChatState = atom({
+  key: "showChat",
+  default: false,
+});

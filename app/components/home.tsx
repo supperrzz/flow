@@ -31,7 +31,8 @@ import { api } from "../client/api";
 import { useAccessStore } from "../store";
 import useSession from "../hooks/useSession";
 import Document from "../components/document";
-import { RecoilRoot } from "recoil";
+import { MutableSnapshot, RecoilRoot, useRecoilState } from "recoil";
+import { showChatState } from "../state";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -126,6 +127,7 @@ const loadAsyncGoogleFont = () => {
 };
 
 function Screen() {
+  const [showChat, setShowChat] = useRecoilState(showChatState);
   const config = useAppConfig();
   const location = useLocation();
   const { session } = useSession();
@@ -142,7 +144,7 @@ function Screen() {
   useEffect(() => {
     setIsAuth(!session);
   }, [session]);
-  const [showChat, setShowChat] = useState<boolean>(true);
+
   return (
     <div
       className={
@@ -151,33 +153,22 @@ function Screen() {
       }
     >
       {isAuth ? (
-        <>
-          <AuthPage />
-        </>
+        <AuthPage />
       ) : (
         <>
+          <SideBar className={isHome ? styles["sidebar-show"] : ""} />
           {showChat ? (
-            <>
-              <SideBar
-                showChat={() => setShowChat(false)}
-                className={isHome ? styles["sidebar-show"] : ""}
-              />
-              <div className={styles["window-content"]} id={SlotID.AppBody}>
-                <Routes>
-                  <Route path={Path.Home} element={<Chat />} />
-                  <Route path={Path.NewChat} element={<NewChat />} />
-                  <Route path={Path.Masks} element={<MaskPage />} />
-                  <Route path={Path.Chat} element={<Chat />} />
-                  <Route path={Path.Settings} element={<Settings />} />
-                </Routes>
-              </div>
-            </>
+            <div className={styles["window-content"]} id={SlotID.AppBody}>
+              <Routes>
+                <Route path={Path.Home} element={<Chat />} />
+                <Route path={Path.NewChat} element={<NewChat />} />
+                <Route path={Path.Masks} element={<MaskPage />} />
+                <Route path={Path.Chat} element={<Chat />} />
+                <Route path={Path.Settings} element={<Settings />} />
+              </Routes>
+            </div>
           ) : (
-            <>
-              <RecoilRoot>
-                <Document showChat={() => setShowChat(true)} />
-              </RecoilRoot>
-            </>
+            <Document showChat={() => setShowChat(true)} />
           )}
         </>
       )}
@@ -213,9 +204,11 @@ export function Home() {
 
   return (
     <ErrorBoundary>
-      <Router>
-        <Screen />
-      </Router>
+      <RecoilRoot>
+        <Router>
+          <Screen />
+        </Router>
+      </RecoilRoot>
     </ErrorBoundary>
   );
 }
