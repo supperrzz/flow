@@ -30,6 +30,8 @@ import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
 import useSession from "../hooks/useSession";
+import Document from "../components/document";
+import { RecoilRoot } from "recoil";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -140,7 +142,7 @@ function Screen() {
   useEffect(() => {
     setIsAuth(!session);
   }, [session]);
-
+  const [showChat, setShowChat] = useState<boolean>(true);
   return (
     <div
       className={
@@ -154,17 +156,29 @@ function Screen() {
         </>
       ) : (
         <>
-          <SideBar className={isHome ? styles["sidebar-show"] : ""} />
-
-          <div className={styles["window-content"]} id={SlotID.AppBody}>
-            <Routes>
-              <Route path={Path.Home} element={<Chat />} />
-              <Route path={Path.NewChat} element={<NewChat />} />
-              <Route path={Path.Masks} element={<MaskPage />} />
-              <Route path={Path.Chat} element={<Chat />} />
-              <Route path={Path.Settings} element={<Settings />} />
-            </Routes>
-          </div>
+          {showChat ? (
+            <>
+              <SideBar
+                showChat={() => setShowChat(false)}
+                className={isHome ? styles["sidebar-show"] : ""}
+              />
+              <div className={styles["window-content"]} id={SlotID.AppBody}>
+                <Routes>
+                  <Route path={Path.Home} element={<Chat />} />
+                  <Route path={Path.NewChat} element={<NewChat />} />
+                  <Route path={Path.Masks} element={<MaskPage />} />
+                  <Route path={Path.Chat} element={<Chat />} />
+                  <Route path={Path.Settings} element={<Settings />} />
+                </Routes>
+              </div>
+            </>
+          ) : (
+            <>
+              <RecoilRoot>
+                <Document showChat={() => setShowChat(true)} />
+              </RecoilRoot>
+            </>
+          )}
         </>
       )}
     </div>

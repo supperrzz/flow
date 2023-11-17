@@ -948,7 +948,9 @@ function _Chat() {
   const clientConfig = useMemo(() => getClientConfig(), []);
 
   const autoFocus = !isMobileScreen; // wont auto focus on mobile screen
-  const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+
+  // Hide max icon permanantly
+  const showMaxIcon = false;
 
   useCommand({
     fill: setUserInput,
@@ -1043,6 +1045,7 @@ function _Chat() {
           {!isMobileScreen && (
             <div className="window-action-button">
               <IconButton
+                text="Chat Messages"
                 icon={<RenameIcon />}
                 bordered
                 onClick={() => setIsEditingMessage(true)}

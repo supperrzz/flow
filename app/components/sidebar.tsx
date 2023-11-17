@@ -127,7 +127,7 @@ function useDragSideBar() {
   };
 }
 
-export function SideBar(props: { className?: string }) {
+export function SideBar(props: { className?: string; showChat: any }) {
   const chatStore = useChatStore();
 
   // drag side bar
@@ -225,11 +225,9 @@ export function SideBar(props: { className?: string }) {
               <IconButton icon={<SettingsIcon />} shadow />
             </Link>
           </div>
-          {/* <div className={styles["sidebar-action"]}>
-            <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
-              <IconButton icon={<GithubIcon />} shadow />
-            </a>
-          </div> */}
+          <div className={styles["sidebar-action"]}>
+            <IconButton onClick={props.showChat} icon={<PluginIcon />} shadow />
+          </div>
         </div>
         <div>
           <IconButton
