@@ -336,7 +336,7 @@ const en = {
   Context: {
     Toast: (x: any) => `With ${x} contextual prompts`,
     Edit: "Current Chat Settings",
-    Add: "Add a Prompt",
+    Add: "Add a message",
     Clear: "Context Cleared",
     Revert: "Revert",
   },
