@@ -15,6 +15,8 @@ import pageActions from "../actions";
 import styles from "../components/document.module.scss";
 import { IconButton } from "./button";
 import ChatGptIcon from "../icons/chatgpt.svg";
+import CopyIcon from "../icons/copy.svg";
+import ClearIcon from "../icons/clear.svg";
 
 export default function Generator() {
   const tone = useRecoilValue(toneState);
@@ -117,23 +119,28 @@ export default function Generator() {
         />
         {/* output here */}
         {output && (
-          <>
+          <div className={styles["output"]} style={{ marginTop: "20px" }}>
             <div className={loading ? "hidden" : "block"}>
-              <p>{output}</p>
               <div
-                style={{ whiteSpace: "pre-line" }}
+                style={{ whiteSpace: "pre-line", userSelect: "text" }}
                 dangerouslySetInnerHTML={{ __html: output }}
               />
             </div>
             <div>
-              <div>
-                <button onClick={() => setOutput("")}>Clear</button>
-                <button onClick={handleCopy}>
-                  {isCopy ? "Copied" : "Copy to Clipboard"}
-                </button>
+              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                <IconButton
+                  icon={<CopyIcon />}
+                  onClick={handleCopy}
+                  text={isCopy ? "Copied" : "Copy to Clipboard"}
+                />
+                <IconButton
+                  icon={<ClearIcon />}
+                  onClick={() => setOutput("")}
+                  text="Clear"
+                />
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

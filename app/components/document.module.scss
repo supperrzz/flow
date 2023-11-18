@@ -8,6 +8,7 @@
   padding: 1rem;
   background: var(--theme-color);
   animation: fade-in ease 0.3s;
+  overflow-y: auto;
   h3 {
     margin: 5px 0;
   }
@@ -34,13 +35,22 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     & > * {
-      animation: slide-in-from-left ease 0.3s;
+      animation: fade-in ease 0.3s;
     }
   }
   hr {
     border: var(--border-in-light);
+  }
+  .output {
+    margin-top: 20px;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    border: var(--border-in-light);
+    font-size: 14px;
+    line-height: 1.6;
   }
 }
 

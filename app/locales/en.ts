@@ -318,7 +318,7 @@ const en = {
     },
   },
   Store: {
-    DefaultTopic: "New Virtual Assistant",
+    DefaultTopic: "New Conversation",
     BotHello: "Hello! How can I assist you today?",
     Error: "Something went wrong, please try again later.",
     Prompt: {
@@ -335,9 +335,9 @@ const en = {
     Failed: "Copy failed, please grant permission to access clipboard",
   },
   Context: {
-    Toast: (x: any) => `With ${x} contextual prompts`,
-    Edit: "Current Chat Settings",
-    Add: "Add a message",
+    Toast: (x: any) => `${x} Context Messages`,
+    Edit: "Chat Settings",
+    Add: "Add to context",
     Clear: "Context Cleared",
     Revert: "Revert",
   },
