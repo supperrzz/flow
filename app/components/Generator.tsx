@@ -6,12 +6,15 @@ import {
   actionState,
 } from "../state";
 import { useRecoilState, useRecoilValue } from "recoil";
-import Tone from "../components/Tone";
+import Tone from "./inputs/Tone";
 import TextInput from "../components/inputs/TextInput";
 import TextAreaInput from "../components/inputs/TextAreaInput";
 import { camelToTitle } from "../utils-2";
 import SelectBox from "./inputs/SelectBox";
 import pageActions from "../actions";
+import styles from "../components/document.module.scss";
+import { IconButton } from "./button";
+import ChatGptIcon from "../icons/chatgpt.svg";
 
 export default function Generator() {
   const tone = useRecoilValue(toneState);
@@ -91,10 +94,10 @@ export default function Generator() {
       <div>
         <div>
           <h3>{camelToTitle(action)}</h3>
-          <hr />
+          <hr style={{ marginTop: "5px" }} />
         </div>
         {/* Action Inputs */}
-        <div>
+        <div className={styles["inputs"]}>
           {promptInputs.map((input) => {
             const Component = inputMapping[input.type];
             return (
@@ -105,13 +108,13 @@ export default function Generator() {
           })}
         </div>
         {hasTone && <Tone />}
-        <button
+        <IconButton
           onClick={submit}
-          className={`${loading || !isComplete ? "disabled-button" : ""}`}
+          text={loading ? "Generating..." : ""}
           disabled={loading || !isComplete}
-        >
-          {loading ? "loading..." : "Generate"}
-        </button>
+          icon={!loading ? <ChatGptIcon /> : undefined}
+          type={"primary"}
+        />
         {/* output here */}
         {output && (
           <>

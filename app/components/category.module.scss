@@ -1,6 +1,7 @@
 @import "../styles/animation.scss";
 
 .category {
+  color: var(--black);
   width: 100%;
   padding: 10px 14px;
   background-color: var(--white);
@@ -50,9 +51,16 @@
       }
     }
     &-item {
+      color: var(--black);
       border: 0;
       padding: 10px 12px;
       border-radius: 5px;
       cursor: pointer;
+      background: var(--white);
+      animation: slide-in ease 0.3s;
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     }
 }

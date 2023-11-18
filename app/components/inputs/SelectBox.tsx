@@ -2,6 +2,15 @@ import { inputValuesState } from "../../state";
 import { PromptInput } from "../../state/types";
 import React, { ChangeEvent } from "react";
 import { useRecoilState } from "recoil";
+import {
+  Input,
+  List,
+  ListItem,
+  Modal,
+  Popover,
+  Select,
+  showConfirm,
+} from "../ui-lib";
 interface SelectBoxProps {
   input: PromptInput;
 }
@@ -23,24 +32,25 @@ const SelectBox = ({ input }: SelectBoxProps) => {
     setInputValues({ ...inputValues, [id]: e.target.value });
   };
   return (
-    <label htmlFor={id}>
-      <span className="text-sm">{input.label}</span>
-      <hr />
-      <select
+    <>
+      <label htmlFor={id}>
+        <span className="text-sm">{input.label}</span>
+      </label>
+      <Select
         value={inputValues[id] || ""}
         onChange={handleChange}
-        name="tone"
-        id="tone"
+        name={id}
+        id={`input-${id}`}
         className=""
       >
-        <option value="default">None</option>
+        <option value="default">Select an option</option>
         {options?.map((option) => (
           <option key={option} value={option}>
             {option}
           </option>
         ))}
-      </select>
-    </label>
+      </Select>
+    </>
   );
 };
 

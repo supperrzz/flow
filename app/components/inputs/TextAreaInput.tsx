@@ -15,21 +15,20 @@ const TextAreaInput = ({ input }: TextAreaInputProps) => {
   const currentInputValue = inputValues[id];
   return (
     <div>
-      <label htmlFor={id}>
-        <span>{input.label}</span>
-        <hr />
-      </label>
+      <label htmlFor={id}>{/* <span>{input.label}</span> */}</label>
       <textarea
         rows={5}
         value={inputValues[id]}
         onChange={(e: ChangeEvent<HTMLTextAreaElement>): void =>
           handleChange(e)
         }
-        placeholder={placeholder}
+        placeholder={input.label}
       />
-      <div>
+      <div style={{ fontSize: "12px", width: "100%", textAlign: "right" }}>
         <span
-          className={currentInputValue?.length >= CHARACTER_LIMIT ? "red" : ""}
+          style={{
+            color: currentInputValue?.length >= CHARACTER_LIMIT ? "red" : "",
+          }}
         >
           {currentInputValue?.length || 0}
         </span>

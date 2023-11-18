@@ -168,7 +168,7 @@ function Screen() {
               </Routes>
             </div>
           ) : (
-            <Document showChat={() => setShowChat(true)} />
+            <Document />
           )}
         </>
       )}

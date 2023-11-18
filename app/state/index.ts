@@ -41,5 +41,5 @@ export const activeCategoryMenuState = atom({
 
 export const showChatState = atom({
   key: "showChat",
-  default: false,
+  default: true,
 });

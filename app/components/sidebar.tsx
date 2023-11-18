@@ -166,8 +166,8 @@ export function SideBar(props: { className?: string }) {
         </div>
       </div>
 
-      <div className={styles["sidebar-header-bar"]}>
-        {showChat && (
+      {showChat && (
+        <div className={styles["sidebar-header-bar"]}>
           <IconButton
             icon={<PluginIcon />}
             text={shouldNarrow ? undefined : Locale.Mask.Name}
@@ -181,8 +181,8 @@ export function SideBar(props: { className?: string }) {
             }}
             shadow
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <div
         className={styles["sidebar-body"]}
@@ -217,37 +217,35 @@ export function SideBar(props: { className?: string }) {
           </div>
           {showChat && (
             <div className={styles["sidebar-action"]}>
-              <Link onClick={() => setShowChat(true)} to={Path.Settings}>
-                <IconButton icon={<SettingsIcon />} shadow />
-              </Link>
+              <IconButton
+                icon={<AddIcon />}
+                text={shouldNarrow ? undefined : Locale.Home.NewChat}
+                onClick={() => {
+                  if (config.dontShowMaskSplashScreen) {
+                    chatStore.newSession();
+                    navigate(Path.Chat);
+                  } else {
+                    navigate(Path.NewChat);
+                  }
+                }}
+                shadow
+              />
             </div>
           )}
         </div>
-        {showChat && (
-          <div>
-            <IconButton
-              icon={<AddIcon />}
-              text={shouldNarrow ? undefined : Locale.Home.NewChat}
-              onClick={() => {
-                if (config.dontShowMaskSplashScreen) {
-                  chatStore.newSession();
-                  navigate(Path.Chat);
-                } else {
-                  navigate(Path.NewChat);
-                }
-              }}
-              shadow
-            />
-          </div>
-        )}
+        <Link onClick={() => setShowChat(true)} to={Path.Settings}>
+          <IconButton icon={<SettingsIcon />} shadow />
+        </Link>
       </div>
 
-      <div
-        className={styles["sidebar-drag"]}
-        onPointerDown={(e) => onDragStart(e as any)}
-      >
-        <DragIcon />
-      </div>
+      {showChat && (
+        <div
+          className={styles["sidebar-drag"]}
+          onPointerDown={(e) => onDragStart(e as any)}
+        >
+          <DragIcon />
+        </div>
+      )}
     </div>
   );
 }

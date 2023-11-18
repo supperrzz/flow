@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React from "react";
 import { useRecoilState } from "recoil";
 import ACTIONS, { ACTION_ICONS } from "../config/actions";
 import { actionState, activeCategoryMenuState } from "../state";
@@ -26,7 +26,7 @@ const Category = ({ category }: { category: string }) => {
             <span>{ACTION_ICONS[category]}</span>
             {camelToTitle(category)}
           </h3>
-          {expanded ? "-" : "+"}
+          <h3>{expanded ? "-" : "+"}</h3>
         </div>
       </button>
       <div

@@ -97,6 +97,7 @@ Code Response Rules:
 - Use the general mermaid syntax to create diagrams, flowcharts, and graphs
 ---
 To enable syntax highlighting, add the language type at the start of the code block. Language types include "mermaid", "pdfmake", "markdown", "html"
+Ask before making any documents or pdfs.
 `;
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";

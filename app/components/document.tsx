@@ -3,6 +3,7 @@ import Generator from "../components/Generator";
 import ACTIONS from "../config/actions";
 import FullPad from "../components/ScratchPad/full";
 import Category from "../components/category";
+import styles from "./document.module.scss";
 
 export const Menu = () => {
   const categories = Object.keys(ACTIONS);
@@ -16,13 +17,13 @@ export const Menu = () => {
   );
 };
 
-export default function Document({ showChat }: { showChat: any }) {
+export default function Document() {
   return (
     <>
-      <div className="generator">
+      <div className={styles["generator"]}>
         <Generator />
       </div>
-      <div className="document">
+      <div className={styles["document"]}>
         <FullPad />
       </div>
     </>
