@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "react-quill/dist/quill.snow.css";
-import QuillNoSSRWrapper from "react-quill";
 
 const toolbarOptions = [
   [{ font: [] }, { header: [1, 2, 3, 4, 5, 6, false] }],
@@ -62,6 +61,10 @@ export default function ScratchPad() {
   const [value, setValue] = useState<string>();
   const documentId = "";
   const storageKey = `document-${documentId}`;
+  const ReactQuill = useMemo(
+    () => dynamic(() => import("react-quill"), { ssr: false }),
+    [],
+  );
 
   useEffect(() => {
     const data = localStorage.getItem(storageKey as string);
@@ -77,7 +80,7 @@ export default function ScratchPad() {
 
   return (
     <div id="scratch-pad">
-      <QuillNoSSRWrapper
+      <ReactQuill
         defaultValue={value}
         value={value}
         placeholder={"Start writing here..."}
