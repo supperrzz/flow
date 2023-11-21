@@ -37,8 +37,8 @@ const en = {
       Copy: "Copy",
       Stop: "Stop",
       Retry: "Retry",
-      Pin: "Pin",
-      PinToastContent: "Pinned 1 messages to contextual prompts",
+      Pin: "Add to Memory",
+      PinToastContent: "Added 1 message to memory",
       PinToastAction: "View",
       Delete: "Delete",
       Edit: "Edit",
@@ -48,7 +48,7 @@ const en = {
       newm: "Start a new chat with Virtual Assistants",
       next: "Next Chat",
       prev: "Previous Chat",
-      clear: "Clear Context",
+      clear: "Clear Memory",
       del: "Delete Chat",
     },
     InputActions: {
@@ -61,7 +61,7 @@ const en = {
       },
       Prompt: "Prompts",
       Masks: "Virtual Assistants",
-      Clear: "Clear Context",
+      Clear: "Clear Memory",
       Settings: "Chat Settings",
     },
     Rename: "Rename Chat",
@@ -78,7 +78,7 @@ const en = {
       Reset: "Reset to Default",
       SaveAs: "Save as Virtual Assistant",
     },
-    IsContext: "Contextual Prompt",
+    IsContext: "System Prompt",
   },
   Export: {
     Title: "Export Messages",
@@ -127,8 +127,8 @@ const en = {
     Logout: "Logout",
   },
   Settings: {
-    Title: "Settings",
-    SubTitle: "All Settings",
+    Title: "Global Settings",
+    SubTitle: "Settings apply to all chats but can be individually modified",
     Danger: {
       Logout: "Logout",
       Reset: {
@@ -335,10 +335,10 @@ const en = {
     Failed: "Copy failed, please grant permission to access clipboard",
   },
   Context: {
-    Toast: (x: any) => `${x} messages in memory`,
+    Toast: (x: any) => `${x} Messages in Memory`,
     Edit: "Chat Settings",
-    Add: "Add to context",
-    Clear: "Context Cleared",
+    Add: "Add a Message",
+    Clear: "Memory Cleared",
     Revert: "Revert",
   },
   Plugin: {
@@ -348,7 +348,7 @@ const en = {
     Sysmessage: "You are an assistant that",
   },
   Mask: {
-    Name: "Virtual Assistants",
+    Name: "Browse Virtual Assistants",
     Page: {
       Title: "Virtual Assistants Library",
       SubTitle: (count: number) => `${count} Virtual Assistants`,
@@ -378,8 +378,8 @@ const en = {
         Confirm: "Confirm to override custom config with global config?",
       },
       HideContext: {
-        Title: "Hide Context Prompts",
-        SubTitle: "Do not show in-context prompts in chat",
+        Title: "Hide Memory Messages",
+        SubTitle: "Do not show in-memonry messages in chat",
       },
       Share: {
         Title: "Share This Virtual Assistants",

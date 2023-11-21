@@ -8,6 +8,7 @@ import ChatGptIcon from "../icons/chatgpt.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
 import PluginIcon from "../icons/plugin.svg";
+import BotIcon from "../icons/robot.svg";
 import DragIcon from "../icons/drag.svg";
 import ChatIcon from "../icons/chat.svg";
 
@@ -169,7 +170,7 @@ export function SideBar(props: { className?: string }) {
       {showChat && (
         <div className={styles["sidebar-header-bar"]}>
           <IconButton
-            icon={<PluginIcon />}
+            icon={<BotIcon />}
             text={shouldNarrow ? undefined : Locale.Mask.Name}
             className={styles["sidebar-bar-button"]}
             onClick={() => {
@@ -177,6 +178,19 @@ export function SideBar(props: { className?: string }) {
                 navigate(Path.NewChat, { state: { fromHome: true } });
               } else {
                 navigate(Path.Masks, { state: { fromHome: true } });
+              }
+            }}
+            shadow
+          />
+          <IconButton
+            icon={<AddIcon />}
+            // text={shouldNarrow ? undefined : Locale.Home.NewChat}
+            onClick={() => {
+              if (config.dontShowMaskSplashScreen) {
+                chatStore.newSession();
+                navigate(Path.Chat);
+              } else {
+                navigate(Path.NewChat);
               }
             }}
             shadow
@@ -215,7 +229,7 @@ export function SideBar(props: { className?: string }) {
               }}
             />
           </div>
-          {showChat && (
+          {/* {showChat && (
             <div className={styles["sidebar-action"]}>
               <IconButton
                 icon={<AddIcon />}
@@ -231,7 +245,7 @@ export function SideBar(props: { className?: string }) {
                 shadow
               />
             </div>
-          )}
+          )} */}
         </div>
         <Link onClick={() => setShowChat(true)} to={Path.Settings}>
           <IconButton icon={<SettingsIcon />} shadow />
