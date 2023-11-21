@@ -335,7 +335,7 @@ const en = {
     Failed: "Copy failed, please grant permission to access clipboard",
   },
   Context: {
-    Toast: (x: any) => `${x} Context Messages`,
+    Toast: (x: any) => `${x} messages in memory`,
     Edit: "Chat Settings",
     Add: "Add to context",
     Clear: "Context Cleared",
@@ -348,7 +348,7 @@ const en = {
     Sysmessage: "You are an assistant that",
   },
   Mask: {
-    Name: "Browse Virtual Assistants",
+    Name: "Virtual Assistants",
     Page: {
       Title: "Virtual Assistants Library",
       SubTitle: (count: number) => `${count} Virtual Assistants`,

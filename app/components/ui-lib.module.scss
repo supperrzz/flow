@@ -242,6 +242,9 @@
     background-color: var(--white);
     color: var(--black);
     text-align: center;
+    &.empty {
+      color: rgb(117, 117, 117);;
+    }
   }
 
   .select-with-icon-icon {

@@ -43,8 +43,8 @@ export default function Generator() {
 
   if (actionNotFound) {
     return (
-      <div>
-        <h2>Select an action to get started</h2>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <h3>Select a Prompt to Get Started</h3>
       </div>
     );
   }
@@ -95,8 +95,7 @@ export default function Generator() {
     <div>
       <div>
         <div>
-          <h3>{camelToTitle(action)}</h3>
-          <hr style={{ marginTop: "5px" }} />
+          <div className={styles["action-title"]}>{camelToTitle(action)}</div>
         </div>
         {/* Action Inputs */}
         <div className={styles["inputs"]}>

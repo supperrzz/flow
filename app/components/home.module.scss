@@ -52,6 +52,8 @@
   .sidebar-header-bar {
     display: flex;
     margin-bottom: 20px;
+    flex-direction: column;
+    gap: 10px;
 
     .sidebar-bar-button {
       flex-grow: 1;
@@ -169,7 +171,6 @@
   flex: 1;
   overflow: auto;
   overflow-x: hidden;
-  padding-right: 5px;
 }
 
 .chat-item {

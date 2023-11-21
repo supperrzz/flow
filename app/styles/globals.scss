@@ -93,6 +93,10 @@ html {
     "PingFang SC", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
+button {
+  font-family: inherit;
+}
+
 body {
   background-color: var(--gray);
   color: var(--black);
@@ -417,6 +421,7 @@ pre {
 #scratch-pad {
   height: 100%;
   & .quill {
+    font-family: 'Noto Sans';
     height: 100%;
   }
 }

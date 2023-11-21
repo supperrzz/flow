@@ -18,11 +18,8 @@ interface SelectBoxProps {
 const SelectBox = ({ input }: SelectBoxProps) => {
   const [inputValues, setInputValues] = useRecoilState(inputValuesState);
   const { id, options } = input;
-  const placeholderTextColor = "";
-  const textColor =
-    inputValues[id] === "default" || !inputValues[id]
-      ? placeholderTextColor
-      : "";
+  const className =
+    inputValues[id] === "default" || !inputValues[id] ? "empty" : "";
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === "default") {
       const { [id]: _, ...rest } = inputValues;
@@ -33,17 +30,15 @@ const SelectBox = ({ input }: SelectBoxProps) => {
   };
   return (
     <>
-      <label htmlFor={id}>
-        <span className="text-sm">{input.label}</span>
-      </label>
+      <label htmlFor={id}></label>
       <Select
         value={inputValues[id] || ""}
         onChange={handleChange}
         name={id}
         id={`input-${id}`}
-        className=""
+        className={className}
       >
-        <option value="default">Select an option</option>
+        <option value="default">{input.label}</option>
         {options?.map((option) => (
           <option key={option} value={option}>
             {option}

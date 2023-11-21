@@ -284,7 +284,12 @@ export function Select(
   const { className, children, ...otherProps } = props;
   return (
     <div className={`${styles["select-with-icon"]} ${className}`}>
-      <select className={styles["select-with-icon-select"]} {...otherProps}>
+      <select
+        className={`${styles["select-with-icon-select"]} ${
+          className === "empty" && styles["empty"]
+        }`}
+        {...otherProps}
+      >
         {children}
       </select>
       <DownIcon className={styles["select-with-icon-icon"]} />

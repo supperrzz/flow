@@ -5,14 +5,24 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 1rem;
+  padding: 20px;
   background: var(--theme-color);
   animation: fade-in ease 0.3s;
   overflow-y: auto;
-  h3 {
-    margin: 5px 0;
+  .action-title {
+    font-size: 20px;
+    font-weight: bolder;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    max-width: 50vw;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: var(--border-in-light);
   }
   input, select, button, textarea {
+    font-family: inherit;
     width: 100%;
     max-width: unset;
     border: var(--border-in-light);
@@ -44,6 +54,7 @@
     border: var(--border-in-light);
   }
   .output {
+    font-family: inherit;
     margin-top: 20px;
     background: var(--white);
     padding: 20px;
@@ -56,6 +67,6 @@
 
 .document {
   animation: fade-in ease 0.3s;
-  width: 40rem;
+  width: 45rem;
   border-left: var(--border-in-light);
 }

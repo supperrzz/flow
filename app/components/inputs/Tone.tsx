@@ -6,9 +6,7 @@ import { Select } from "../ui-lib";
 
 const Tone = () => {
   const [tone, setTone] = useRecoilState(toneState);
-  const placeholderTextColor = "";
-  const textColor =
-    tone === "Neutral" || tone === "default" ? placeholderTextColor : "";
+  const textColor = tone === "Neutral" || tone === "default" ? "empty" : "";
   return (
     <div style={{ marginBottom: "16px" }}>
       <label htmlFor="tone">
@@ -22,7 +20,7 @@ const Tone = () => {
           id="tone"
           className={textColor}
         >
-          <option value="default">Select a tone</option>
+          <option value="default">Default Tone</option>
           {WRITING_TONES.map((tone) => (
             <option key={tone} value={tone}>
               {tone}
