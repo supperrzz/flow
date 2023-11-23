@@ -21,6 +21,9 @@
         flex-grow: 1;
         max-width: 100%;
         min-width: 0;
+        &:focus-visible {
+          outline: none;
+        }
       }
 
       .mask-filter-lang {

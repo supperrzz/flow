@@ -38,10 +38,10 @@ const en = {
       Stop: "Stop",
       Retry: "Retry",
       Pin: "Add to Memory",
-      PinToastContent: "Added 1 message to memory",
+      PinToastContent: "Message Added to Memory",
       PinToastAction: "View",
       Delete: "Delete",
-      Edit: "Edit",
+      Edit: "Edit Messages",
     },
     Commands: {
       new: "Start a new chat",
@@ -59,7 +59,7 @@ const en = {
         light: "Light Theme",
         dark: "Dark Theme",
       },
-      Prompt: "Prompts",
+      Prompt: "Messages",
       Masks: "Virtual Assistants",
       Clear: "Clear Memory",
       Settings: "Chat Settings",
@@ -318,7 +318,7 @@ const en = {
     },
   },
   Store: {
-    DefaultTopic: "New Conversation",
+    DefaultTopic: "New Chat",
     BotHello: "Hello! How can I assist you today?",
     Error: "Something went wrong, please try again later.",
     Prompt: {
@@ -365,9 +365,10 @@ const en = {
     },
     EditModal: {
       Title: (readonly: boolean) =>
-        `Edit Prompt Template ${readonly ? "(readonly)" : ""}`,
+        `Edit Virtual Assistant ${readonly ? "(readonly)" : ""}`,
       Download: "Download",
       Clone: "Clone",
+      Save: "Save",
     },
     Config: {
       Avatar: "Chat Avatar",
@@ -379,7 +380,7 @@ const en = {
       },
       HideContext: {
         Title: "Hide Memory Messages",
-        SubTitle: "Do not show in-memonry messages in chat",
+        SubTitle: "Don't show in-memory messages in chat",
       },
       Share: {
         Title: "Share This Virtual Assistants",

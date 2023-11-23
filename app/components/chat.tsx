@@ -135,14 +135,12 @@ export function SessionConfigModel(props: { onClose: () => void }) {
           }}
           shouldSyncFromGlobal
           extraListItems={
-            session.mask.modelConfig.sendMemory ? (
+            session.memoryPrompt && session.mask.modelConfig.sendMemory ? (
               <ListItem
                 title={`${Locale.Memory.Title} (${session.lastSummarizeIndex} of ${session.messages.length})`}
                 subTitle={session.memoryPrompt || Locale.Memory.EmptyContent}
               ></ListItem>
-            ) : (
-              <></>
-            )
+            ) : null
           }
         ></MaskConfig>
       </Modal>
@@ -857,6 +855,11 @@ function _Chat() {
 
   // preview messages
   const renderMessages = useMemo(() => {
+    const onlyDefaultMessage =
+      session.messages.at(0)?.content !== BOT_HELLO.content;
+    if (session.messages.length > 1 && onlyDefaultMessage) {
+      context.pop();
+    }
     return context
       .concat(session.messages as RenderMessage[])
       .concat(
@@ -1045,14 +1048,14 @@ function _Chat() {
           {!isMobileScreen && (
             <div className="window-action-button">
               <IconButton
-                text="Chat Messages"
+                text={Locale.Chat.Actions.Edit}
                 icon={<RenameIcon />}
                 bordered
                 onClick={() => setIsEditingMessage(true)}
               />
             </div>
           )}
-          {/* <div className="window-action-button">
+          <div className="window-action-button">
             <IconButton
               icon={<ExportIcon />}
               bordered
@@ -1061,7 +1064,7 @@ function _Chat() {
                 setShowExport(true);
               }}
             />
-          </div> */}
+          </div>
           {showMaxIcon && (
             <div className="window-action-button">
               <IconButton

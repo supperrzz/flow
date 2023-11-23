@@ -98,6 +98,7 @@
 }
 
 .context-prompt {
+  animation: slide-in ease 0.3s;
   .context-prompt-insert {
     display: flex;
     justify-content: center;

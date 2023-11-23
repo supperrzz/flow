@@ -99,7 +99,7 @@ export function Loading() {
 interface ModalProps {
   title: string;
   children?: any;
-  actions?: JSX.Element[];
+  actions?: Array<JSX.Element | null>;
   defaultMax?: boolean;
   onClose?: () => void;
 }
@@ -150,11 +150,14 @@ export function Modal(props: ModalProps) {
 
       <div className={styles["modal-footer"]}>
         <div className={styles["modal-actions"]}>
-          {props.actions?.map((action, i) => (
-            <div key={i} className={styles["modal-action"]}>
-              {action}
-            </div>
-          ))}
+          {props.actions?.map((action, i) => {
+            if (!action) return null;
+            return (
+              <div key={i} className={styles["modal-action"]}>
+                {action}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -193,7 +196,13 @@ export type ToastProps = {
 
 export function Toast(props: ToastProps) {
   return (
-    <div className={styles["toast-container"]}>
+    <div
+      onClick={() => {
+        props.action?.onClick?.();
+        props.onClose?.();
+      }}
+      className={styles["toast-container"]}
+    >
       <div className={styles["toast-content"]}>
         <span>{props.content}</span>
         {props.action && (
