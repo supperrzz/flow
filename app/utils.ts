@@ -190,3 +190,10 @@ export function countTokens(text: string) {
 
   return tokenCount;
 }
+
+export const consoleLog = (message: string) => {
+  // console log in green text
+  message = `%c${message}`;
+  const css = "color: green; font-weight: bold";
+  console.log(message, css);
+};

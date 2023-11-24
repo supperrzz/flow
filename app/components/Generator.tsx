@@ -17,8 +17,10 @@ import { IconButton } from "./button";
 import ChatGptIcon from "../icons/chatgpt.svg";
 import CopyIcon from "../icons/copy.svg";
 import ClearIcon from "../icons/clear.svg";
+import useSession from "../hooks/useSession";
 
 export default function Generator() {
+  const { session } = useSession();
   const tone = useRecoilValue(toneState);
   const [promptInputs, setPromptInputs] = useRecoilState(promptInputsState);
   const [output, setOutput] = React.useState("");
@@ -72,12 +74,17 @@ export default function Generator() {
   const submit = async () => {
     setLoading(true);
     try {
+      // send supabase user id
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ key: action, payload: inputValues, tone }),
+        body: JSON.stringify({
+          key: action,
+          payload: { ...inputValues, userId: session?.user.id },
+          tone,
+        }),
       });
       const output: { result: string } = await response.json();
       const { result } = output;

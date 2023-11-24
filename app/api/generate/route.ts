@@ -1,6 +1,8 @@
 import { renderPrompt } from "@/app/utils-2";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import Locale from "../../locales";
+import { usageLimitCheck } from "@/app/utils/usage";
 
 const openai = new OpenAI();
 
@@ -18,10 +20,21 @@ async function handle(req: NextRequest) {
     input: prompt,
   });
 
-  console.log("moderation check: ", moderation.results[0].flagged);
+  console.log("[moderation check]: ", moderation.results[0].flagged);
   if (moderation.results[0].flagged) {
     // return error
     return NextResponse.error();
+  }
+
+  const usageLimit = await usageLimitCheck(payload.userId);
+  console.log("[usage limit check]: ", usageLimit);
+
+  if (usageLimit === false) {
+    // return error message with usage limit and not authorized code
+    return NextResponse.json({
+      code: 401,
+      result: Locale.Error.UsageLimit,
+    });
   }
 
   const response = await openai.completions.create({
@@ -35,7 +48,7 @@ async function handle(req: NextRequest) {
 
   let data = response.choices?.[0]?.text;
 
-  // remove new line at the beginning
+  // remove new line at the beginning of the response
   if (data) {
     const firstNewLineIndex = data.indexOf("\n");
     if (firstNewLineIndex === 0) {
