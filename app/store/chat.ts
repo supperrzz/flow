@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { trimTopic } from "../utils";
+import { countTokens, countWords, trimTopic } from "../utils";
 
 import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
@@ -594,7 +594,11 @@ export const useChatStore = createPersistStore(
       updateStat(message: ChatMessage) {
         get().updateCurrentSession((session) => {
           session.stat.charCount += message.content.length;
-          // TODO: should update chat count and word count
+          session.stat.wordCount += countWords(message.content);
+          session.stat.tokenCount += countTokens(message.content);
+        });
+        get().updateCurrentSession((session) => {
+          session.stat.charCount += message.content.length;
         });
       },
 

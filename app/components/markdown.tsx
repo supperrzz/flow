@@ -362,7 +362,6 @@ export function PreCode(props: { children: any }) {
   const renderContent = (type: string) => {
     if (!ref.current) return;
     const dom = ref.current.querySelector(`code.language-${type}`);
-    console.log({ dom });
     if (
       dom instanceof HTMLElement &&
       dom.parentElement instanceof HTMLElement

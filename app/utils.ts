@@ -173,3 +173,20 @@ export function autoGrowTextArea(dom: HTMLTextAreaElement) {
 export function getCSSVar(varName: string) {
   return getComputedStyle(document.body).getPropertyValue(varName).trim();
 }
+
+export function countWords(text: string) {
+  return text.trim().split(/\s+/).length;
+}
+
+export function countTokens(text: string) {
+  // Split the text into words and count them
+  const wordCount = text.split(/\s+/).length;
+
+  // Count the number of individual characters
+  const charCount = text.split(/\s/).join("").length;
+
+  // The total token count is the sum of the word count and the character count
+  const tokenCount = wordCount + charCount;
+
+  return tokenCount;
+}

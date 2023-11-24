@@ -1,6 +1,7 @@
 import {
   DEFAULT_API_HOST,
   DEFAULT_MODELS,
+  MAX_MONTHLY_USAGE,
   OpenaiPath,
   REQUEST_TIMEOUT_MS,
 } from "@/app/constant";
@@ -14,6 +15,7 @@ import {
 } from "@fortaine/fetch-event-source";
 import { prettyObject } from "@/app/utils/format";
 import { getClientConfig } from "@/app/config/client";
+import { supabase } from "@/app/utils/supabaseClient";
 
 export interface OpenAIListModelResponse {
   object: string;
@@ -105,6 +107,12 @@ export class ChatGPTApi implements LLMApi {
         };
 
         controller.signal.onabort = finish;
+
+        const result = await this.usageLimitCheck();
+        if (!result) {
+          options.onError?.(new Error(Locale.Error.UsageLimit));
+          return;
+        }
 
         fetchEventSource(chatPath, {
           ...chatPayload,
@@ -276,6 +284,42 @@ export class ChatGPTApi implements LLMApi {
       name: m.id,
       available: true,
     }));
+  }
+
+  async usageLimitCheck(): Promise<boolean | Error> {
+    try {
+      const { data: userResponse, error: userError } =
+        await supabase.auth.getUser();
+      if (userError) {
+        console.error("Error retrieving user:", userError);
+        return new Error("Authentication error");
+      }
+
+      if (!userResponse.user) {
+        return false; // User not logged in or not found.
+      }
+
+      const { data: usageData, error: usageError } = await supabase
+        .from("usage")
+        .select("monthly_usage")
+        .eq("user_id", userResponse.user.id); // Assuming the column is 'user_id'.
+
+      if (usageError) {
+        console.error("Error retrieving user usage:", usageError);
+        return new Error("Usage retrieval error");
+      }
+
+      if (
+        usageData.length === 0 ||
+        usageData[0].monthly_usage >= MAX_MONTHLY_USAGE
+      ) {
+        return false; // User has no usage data or has exceeded the monthly usage.
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+      return new Error("Unexpected error");
+    }
+    return true; // User exists, has usage data, and has not exceeded the monthly usage.
   }
 }
 export { OpenaiPath };
