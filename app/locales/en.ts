@@ -275,7 +275,7 @@ const en = {
     Usage: {
       Title: "Account Balance",
       SubTitle(used: any, total: any) {
-        return `Used this month $${used}, subscription $${total}`;
+        return `Usage this month ${used} / ${total}`;
       },
       IsChecking: "Checking...",
       Check: "Check",

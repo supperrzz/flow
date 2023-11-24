@@ -51,7 +51,13 @@ import Locale, {
 } from "../locales";
 import { copyToClipboard } from "../utils";
 import Link from "next/link";
-import { Path, RELEASE_URL, STORAGE_KEY, UPDATE_URL } from "../constant";
+import {
+  MAX_MONTHLY_USAGE,
+  Path,
+  RELEASE_URL,
+  STORAGE_KEY,
+  UPDATE_URL,
+} from "../constant";
 import { Prompt, SearchService, usePromptStore } from "../store/prompt";
 import { ErrorBoundary } from "./error";
 import { InputRange } from "./input-range";
@@ -585,21 +591,36 @@ export function Settings() {
     console.log("[Update] local version ", updateStore.version);
     console.log("[Update] remote version ", updateStore.remoteVersion);
   }
-
-  const usage = {
-    used: updateStore.used,
-    subscription: updateStore.subscription,
-  };
+  const [usage, setUsage] = useState(null);
   const [loadingUsage, setLoadingUsage] = useState(false);
-  function checkUsage(force = false) {
-    if (accessStore.hideBalanceQuery) {
-      return;
-    }
+  async function checkUsage() {
+    try {
+      const { data: userResponse, error: userError } =
+        await supabase.auth.getUser();
+      if (userError) {
+        console.error("Error retrieving user:", userError);
+        return new Error("Authentication error");
+      }
 
-    setLoadingUsage(true);
-    updateStore.updateUsage(force).finally(() => {
-      setLoadingUsage(false);
-    });
+      if (!userResponse.user) {
+        return false; // User not logged in or not found.
+      }
+
+      const { data: usageData, error: usageError } = await supabase
+        .from("usage")
+        .select("monthly_usage")
+        .eq("user_id", userResponse.user.id); // Assuming the column is 'user_id'.
+
+      if (usageError) {
+        console.error("Error retrieving user usage:", usageError);
+        return new Error("Usage retrieval error");
+      }
+      setUsage(usageData[0].monthly_usage);
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+      return new Error("Unexpected error");
+    }
+    setLoadingUsage(false);
   }
 
   const accessStore = useAccessStore();
@@ -877,8 +898,8 @@ export function Settings() {
                   ? loadingUsage
                     ? Locale.Settings.Usage.IsChecking
                     : Locale.Settings.Usage.SubTitle(
-                        usage?.used ?? "[?]",
-                        usage?.subscription ?? "[?]",
+                        usage ?? "[?]",
+                        MAX_MONTHLY_USAGE ?? "[?]",
                       )
                   : Locale.Settings.Usage.NoAccess
               }
@@ -889,7 +910,7 @@ export function Settings() {
                 <IconButton
                   icon={<ResetIcon></ResetIcon>}
                   text={Locale.Settings.Usage.Check}
-                  onClick={() => checkUsage(true)}
+                  onClick={() => checkUsage()}
                 />
               )}
             </ListItem>
