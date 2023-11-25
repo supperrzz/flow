@@ -117,7 +117,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-  --bar-width: 5px;
+  --bar-width: 7px;
   width: var(--bar-width);
   height: var(--bar-width);
 }
@@ -128,7 +128,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--bar-color);
-  border-radius: 20px;
+  border-radius: 10px;
   background-clip: content-box;
   border: 1px solid transparent;
 }

@@ -435,7 +435,7 @@ export const useChatStore = createPersistStore(
         if (shouldInjectSystemPrompts) {
           console.log(
             "[Global System Prompt] ",
-            systemPrompts.at(0)?.content ?? "empty",
+            // systemPrompts.at(0)?.content ?? "empty",
           );
         }
 

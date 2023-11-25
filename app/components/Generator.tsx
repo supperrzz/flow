@@ -45,7 +45,7 @@ export default function Generator() {
 
   if (actionNotFound) {
     return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div className={styles["empty-state"]}>
         <h3>Select a Prompt to Get Started</h3>
       </div>
     );
