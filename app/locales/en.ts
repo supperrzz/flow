@@ -336,7 +336,7 @@ const en = {
     Failed: "Copy failed, please grant permission to access clipboard",
   },
   Context: {
-    Toast: (x: any) => `${x} Messages in Memory`,
+    Toast: (x: any) => `${x} Message${x > 1 ? "s" : ""} in Memory`,
     Edit: "Chat Settings",
     Add: "Add a Message",
     Clear: "Memory Cleared",
