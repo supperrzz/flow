@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { countTokens, countWords, trimTopic } from "../utils";
+import { trimTopic } from "../utils";
 
 import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
@@ -19,6 +19,8 @@ import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
+import { countTokens, countWords, updateUsage } from "../utils/usage";
+import { supabase } from "../utils/supabaseClient";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -339,8 +341,23 @@ export const useChatStore = createPersistStore(
               session.messages = session.messages.concat();
             });
           },
-          onFinish(message) {
+          async onFinish(message) {
             botMessage.streaming = false;
+
+            try {
+              const {
+                data: { user },
+              } = await supabase.auth.getUser();
+              if (!user) {
+                console.error("No user data found");
+                return;
+              }
+              const tokens = countTokens(message);
+              updateUsage(user.id, tokens);
+            } catch (error) {
+              console.error("Error updating usage:", error);
+            }
+
             if (message) {
               botMessage.content = message;
               get().onNewMessage(botMessage);

@@ -2,7 +2,7 @@ import { renderPrompt } from "@/app/utils-2";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import Locale from "../../locales";
-import { usageLimitCheck } from "@/app/utils/usage";
+import { countTokens, updateUsage, usageLimitCheck } from "@/app/utils/usage";
 
 const openai = new OpenAI();
 
@@ -50,6 +50,7 @@ async function handle(req: NextRequest) {
 
   // remove new line at the beginning of the response
   if (data) {
+    updateUsage(payload.userId, countTokens(data));
     const firstNewLineIndex = data.indexOf("\n");
     if (firstNewLineIndex === 0) {
       data = data.slice(1);
