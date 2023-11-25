@@ -144,6 +144,12 @@ const en = {
         Action: "Clear",
         Confirm: "Confirm to clear all messages and settings?",
       },
+      Cancel: {
+        Title: "Cancel Subscription",
+        SubTitle: "Cancel your subscription plan",
+        Action: "Cancel",
+        Confirm: "Cancel",
+      },
     },
     Lang: {
       Name: "Language", // ATTENTION: if you wanna add a new translation, please do not translate this value, leave it as `Language`
@@ -225,7 +231,7 @@ const en = {
 
       LocalState: "Local Data",
       Overview: (overview: any) => {
-        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} Virtual Assistants`;
+        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} custom prompts，${overview.mask} virtual assistants`;
       },
       ImportFailed: "Failed to import from file",
     },
@@ -238,6 +244,24 @@ const en = {
       Builtin: {
         Title: "Hide System Virtual Assistants",
         SubTitle: "Hide system Virtual Assistants in Virtual Assistants list",
+      },
+    },
+    Subscription: {
+      Subscription: "Subscription Status",
+      Plan: (plan: string) => `Subscription Status: ${plan}`,
+      Upgrade: "Subscribe to Pro",
+      Cancel: "Cancel Subscription",
+      Subscribed: "Subscription Active",
+      Loading: "...",
+      Status: {
+        Active: "Active",
+        Expired: "Expired",
+        Cancelled: "Cancelled",
+        Inactive: "Inactive",
+      },
+      Modal: {
+        Title: "Subscription",
+        Done: "Done",
       },
     },
     Prompt: {

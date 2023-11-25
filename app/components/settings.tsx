@@ -69,6 +69,13 @@ import { nanoid } from "nanoid";
 import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
 import { supabase } from "../utils/supabaseClient";
+import Stripe from "stripe";
+import { loadStripe } from "@stripe/stripe-js";
+import { SubscribeButton } from "./StripeButtons";
+const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string);
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string,
+);
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -224,7 +231,35 @@ function UserPromptModal(props: { onClose?: () => void }) {
   );
 }
 
-function DangerItems() {
+function SubscriptionModal(props: { onClose?: () => void }) {
+  return (
+    <div className="modal-mask">
+      <Modal
+        title={Locale.Settings.Subscription.Modal.Title}
+        onClose={() => props.onClose?.()}
+        actions={[
+          <IconButton
+            key="done"
+            onClick={() => {
+              props.onClose?.();
+            }}
+            icon={<ConfirmIcon />}
+            bordered
+            text={Locale.Settings.Subscription.Modal.Done}
+          />,
+        ]}
+      >
+        <div className={styles["user-prompt-modal"]}></div>
+      </Modal>
+    </div>
+  );
+}
+
+function cancelSubscription() {
+  console.log("cancel subscription");
+}
+
+function DangerItems({ isSubscribed }: { isSubscribed: boolean }) {
   const chatStore = useChatStore();
   const appConfig = useAppConfig();
   const handleSignOut = async () => {
@@ -271,6 +306,19 @@ function DangerItems() {
           type="danger"
         />
       </ListItem>
+      {isSubscribed ? (
+        <ListItem title={Locale.Settings.Danger.Cancel.Title}>
+          <IconButton
+            text={Locale.Settings.Danger.Cancel.Action}
+            onClick={async () => {
+              if (await showConfirm(Locale.Settings.Danger.Cancel.Confirm)) {
+                cancelSubscription();
+              }
+            }}
+            type="danger"
+          />
+        </ListItem>
+      ) : null}
     </List>
   );
 }
@@ -575,25 +623,10 @@ export function Settings() {
   const config = useAppConfig();
   const updateConfig = config.update;
 
-  const updateStore = useUpdateStore();
-  const [checkingUpdate, setCheckingUpdate] = useState(false);
-  const currentVersion = updateStore.formatVersion(updateStore.version);
-  const remoteId = updateStore.formatVersion(updateStore.remoteVersion);
-  const hasNewVersion = currentVersion !== remoteId;
-  const updateUrl = getClientConfig()?.isApp ? RELEASE_URL : UPDATE_URL;
-
-  function checkUpdate(force = false) {
-    setCheckingUpdate(true);
-    updateStore.getLatestVersion(force).then(() => {
-      setCheckingUpdate(false);
-    });
-
-    console.log("[Update] local version ", updateStore.version);
-    console.log("[Update] remote version ", updateStore.remoteVersion);
-  }
   const [usage, setUsage] = useState(null);
   const [loadingUsage, setLoadingUsage] = useState(false);
   async function checkUsage() {
+    setLoadingUsage(true);
     try {
       const { data: userResponse, error: userError } =
         await supabase.auth.getUser();
@@ -620,9 +653,40 @@ export function Settings() {
       console.error("An unexpected error occurred:", error);
       return new Error("Unexpected error");
     }
-    setLoadingUsage(false);
+    setTimeout(() => {
+      setLoadingUsage(false);
+    }, 500);
   }
 
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const checkSubsctiption = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      console.error("No user data found");
+      return;
+    }
+
+    // find subscription in stripe
+    if (!stripe) {
+      return;
+    }
+
+    // find customer by email
+    const customer = await stripe.customers.list({
+      email: user.email,
+      limit: 1,
+    });
+
+    const subscriptions = await stripe.subscriptions.list({
+      limit: 1,
+      customer: customer.data[0].id,
+    });
+    if (subscriptions.data.length > 0) {
+      setIsSubscribed(true);
+    }
+  };
   const accessStore = useAccessStore();
   const enabledAccessControl = useMemo(
     () => accessStore.enabledAccessControl(),
@@ -634,13 +698,9 @@ export function Settings() {
   const builtinCount = SearchService.count.builtin;
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
-
-  const showUsage = accessStore.isAuthorized();
   useEffect(() => {
-    // checks per minutes
-    checkUpdate();
-    showUsage && checkUsage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    checkSubsctiption();
+    checkUsage();
   }, []);
 
   useEffect(() => {
@@ -705,31 +765,6 @@ export function Settings() {
               </div>
             </Popover>
           </ListItem>
-
-          {/* <ListItem
-            title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
-            subTitle={
-              checkingUpdate
-                ? Locale.Settings.Update.IsChecking
-                : hasNewVersion
-                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
-                : Locale.Settings.Update.IsLatest
-            }
-          >
-            {checkingUpdate ? (
-              <LoadingIcon />
-            ) : hasNewVersion ? (
-              <Link href={updateUrl} target="_blank" className="link">
-                {Locale.Settings.Update.GoToUpdate}
-              </Link>
-            ) : (
-              <IconButton
-                icon={<ResetIcon></ResetIcon>}
-                text={Locale.Settings.Update.CheckUpdate}
-                onClick={() => checkUpdate(true)}
-              />
-            )}
-          </ListItem> */}
 
           <ListItem
             title={Locale.Settings.SendKey.title}
@@ -802,7 +837,7 @@ export function Settings() {
           </ListItem>
         </List>
 
-        <SyncItems />
+        {/* <SyncItems /> */}
 
         {/* Mask Splash */}
         {/* <List>
@@ -841,82 +876,16 @@ export function Settings() {
         </List> */}
 
         <List>
-          {showAccessCode ? (
-            <ListItem
-              title={Locale.Settings.AccessCode.Title}
-              subTitle={Locale.Settings.AccessCode.SubTitle}
-            >
-              <PasswordInput
-                value={accessStore.accessCode}
-                type="text"
-                placeholder={Locale.Settings.AccessCode.Placeholder}
-                onChange={(e) => {
-                  accessStore.updateCode(e.currentTarget.value);
-                }}
-              />
-            </ListItem>
-          ) : (
-            <></>
-          )}
-
-          {!accessStore.hideUserApiKey ? (
-            <>
-              {/* <ListItem
-                title={Locale.Settings.Endpoint.Title}
-                subTitle={Locale.Settings.Endpoint.SubTitle}
-              >
-                <input
-                  type="text"
-                  value={accessStore.openaiUrl}
-                  placeholder="https://api.openai.com/"
-                  onChange={(e) =>
-                    accessStore.updateOpenAiUrl(e.currentTarget.value)
-                  }
-                ></input>
-              </ListItem> */}
-              <ListItem
-                title={Locale.Settings.Token.Title}
-                subTitle={Locale.Settings.Token.SubTitle}
-              >
-                <PasswordInput
-                  value={accessStore.token}
-                  type="text"
-                  placeholder={Locale.Settings.Token.Placeholder}
-                  onChange={(e) => {
-                    accessStore.updateToken(e.currentTarget.value);
-                  }}
-                />
-              </ListItem>
-            </>
-          ) : null}
-
-          {!accessStore.hideBalanceQuery ? (
-            <ListItem
-              title={Locale.Settings.Usage.Title}
-              subTitle={
-                showUsage
-                  ? loadingUsage
-                    ? Locale.Settings.Usage.IsChecking
-                    : Locale.Settings.Usage.SubTitle(
-                        usage ?? "[?]",
-                        MAX_MONTHLY_USAGE ?? "[?]",
-                      )
-                  : Locale.Settings.Usage.NoAccess
-              }
-            >
-              {!showUsage || loadingUsage ? (
-                <div />
-              ) : (
-                <IconButton
-                  icon={<ResetIcon></ResetIcon>}
-                  text={Locale.Settings.Usage.Check}
-                  onClick={() => checkUsage()}
-                />
-              )}
-            </ListItem>
-          ) : null}
-
-          {/* Custon Model */}
+          <ModelConfigList
+            showFields={false}
+            modelConfig={config.modelConfig}
+            updateConfig={(updater) => {
+              const modelConfig = { ...config.modelConfig };
+              updater(modelConfig);
+              config.update((config) => (config.modelConfig = modelConfig));
+            }}
+          />
+          {/* Custom Model */}
           {/* <ListItem
             title={Locale.Settings.CustomModel.Title}
             subTitle={Locale.Settings.CustomModel.SubTitle}
@@ -935,21 +904,47 @@ export function Settings() {
         </List>
 
         <List>
-          <ModelConfigList
-            modelConfig={config.modelConfig}
-            updateConfig={(updater) => {
-              const modelConfig = { ...config.modelConfig };
-              updater(modelConfig);
-              config.update((config) => (config.modelConfig = modelConfig));
-            }}
-          />
+          <ListItem
+            title={Locale.Settings.Subscription.Subscription}
+            subTitle={
+              isSubscribed
+                ? Locale.Settings.Subscription.Status.Active
+                : Locale.Settings.Subscription.Status.Inactive
+            }
+          >
+            <div style={{ display: "flex" }}>
+              <SubscribeButton isSubscribed={isSubscribed} />
+            </div>
+          </ListItem>
+          <ListItem
+            title={Locale.Settings.Usage.Title}
+            subTitle={
+              loadingUsage
+                ? Locale.Settings.Usage.IsChecking
+                : Locale.Settings.Usage.SubTitle(
+                    usage ?? "[?]",
+                    MAX_MONTHLY_USAGE ?? "[?]",
+                  )
+            }
+          >
+            <IconButton
+              icon={<ResetIcon></ResetIcon>}
+              text={
+                loadingUsage
+                  ? Locale.Settings.Usage.IsChecking
+                  : Locale.Settings.Usage.Check
+              }
+              onClick={() => checkUsage()}
+              disabled={loadingUsage}
+            />
+          </ListItem>
         </List>
 
         {shouldShowPromptModal && (
           <UserPromptModal onClose={() => setShowPromptModal(false)} />
         )}
 
-        <DangerItems />
+        <DangerItems isSubscribed={isSubscribed} />
       </div>
     </ErrorBoundary>
   );
