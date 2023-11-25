@@ -1,4 +1,5 @@
-import { MAX_MONTHLY_USAGE } from "../constant";
+import Stripe from "stripe";
+import { FREE_MONTHLY_USAGE, MAX_MONTHLY_USAGE } from "../constant";
 import { supabase } from "./supabaseClient";
 export function countWords(text: string) {
   return text.trim().split(/\s+/).length;
@@ -16,14 +17,43 @@ export function countTokens(text: string) {
 
   return tokenCount;
 }
+export const getUsageLimit = async (userEmail: string) => {
+  const stripe = new Stripe(
+    process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string,
+  );
+
+  // find subscription in stripe
+  if (!stripe) {
+    return;
+  }
+
+  // find customer by email
+  const customer = await stripe.customers.list({
+    email: userEmail,
+    limit: 1,
+  });
+
+  const subscriptions = await stripe.subscriptions.list({
+    limit: 1,
+    customer: customer.data[0].id,
+  });
+
+  return subscriptions.data.length > 0 ? MAX_MONTHLY_USAGE : FREE_MONTHLY_USAGE;
+};
 export const usageLimitCheck = async (
   userId: string,
 ): Promise<boolean | Error> => {
   try {
+    const { data: userResponse, error: userError } =
+      await supabase.auth.getUser();
+    if (!userResponse.user) {
+      console.error("Error retrieving user:", userError);
+      return new Error("Authentication error");
+    }
     const { data: usageData, error: usageError } = await supabase
       .from("usage")
       .select("monthly_usage")
-      .eq("user_id", userId); // Assuming the column is 'user_id'.
+      .eq("user_id", userId);
 
     if (usageError) {
       console.error("Error retrieving user usage:", usageError);
@@ -32,7 +62,7 @@ export const usageLimitCheck = async (
 
     if (
       usageData.length === 0 ||
-      usageData[0].monthly_usage >= MAX_MONTHLY_USAGE
+      usageData[0].monthly_usage >= getUsageLimit(userResponse.user.email!)
     ) {
       return false; // User has no usage data or has exceeded the monthly usage.
     }

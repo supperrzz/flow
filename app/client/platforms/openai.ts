@@ -16,6 +16,7 @@ import {
 import { prettyObject } from "@/app/utils/format";
 import { getClientConfig } from "@/app/config/client";
 import { supabase } from "@/app/utils/supabaseClient";
+import { getUsageLimit } from "@/app/utils/usage";
 
 export interface OpenAIListModelResponse {
   object: string;
@@ -309,10 +310,15 @@ export class ChatGPTApi implements LLMApi {
         return new Error("Usage retrieval error");
       }
 
-      if (
-        usageData.length === 0 ||
-        usageData[0].monthly_usage >= MAX_MONTHLY_USAGE
-      ) {
+      console.log("[Usage]", usageData);
+      const usageLimit = await getUsageLimit(userResponse.user.email!);
+
+      if (!usageLimit) {
+        return false; // User has no usage limit.
+      }
+      console.log("[Usage Limit]", usageLimit);
+
+      if (usageData.length === 0 || usageData[0].monthly_usage >= usageLimit) {
         return false; // User has no usage data or has exceeded the monthly usage.
       }
     } catch (error) {

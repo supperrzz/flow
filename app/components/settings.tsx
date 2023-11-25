@@ -52,6 +52,7 @@ import Locale, {
 import { copyToClipboard } from "../utils";
 import Link from "next/link";
 import {
+  FREE_MONTHLY_USAGE,
   MAX_MONTHLY_USAGE,
   Path,
   RELEASE_URL,
@@ -70,12 +71,8 @@ import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
 import { supabase } from "../utils/supabaseClient";
 import Stripe from "stripe";
-import { loadStripe } from "@stripe/stripe-js";
 import { SubscribeButton } from "./StripeButtons";
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string);
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string,
-);
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -923,7 +920,8 @@ export function Settings() {
                 ? Locale.Settings.Usage.IsChecking
                 : Locale.Settings.Usage.SubTitle(
                     usage ?? "[?]",
-                    MAX_MONTHLY_USAGE ?? "[?]",
+                    (isSubscribed ? MAX_MONTHLY_USAGE : FREE_MONTHLY_USAGE) ??
+                      "[?]",
                   )
             }
           >
