@@ -23,7 +23,7 @@ const Category = ({ category }: { category: string }) => {
       >
         <div className={styles["category-title"]}>
           <h3>
-            <span style={{ fontSize: "16px" }}>{ACTION_ICONS[category]}</span>
+            <span style={{ fontSize: "14px" }}>{ACTION_ICONS[category]}</span>
             {camelToTitle(category)}
           </h3>
           <h3>{expanded ? "-" : "+"}</h3>

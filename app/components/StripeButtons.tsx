@@ -59,6 +59,7 @@ export const SubscribeButton = ({
       }, 5000);
     }
   }, [success]);
+
   if (isSubscribed) {
     return (
       <IconButton
@@ -66,7 +67,6 @@ export const SubscribeButton = ({
         bordered
         text={Locale.Settings.Subscription.Subscribed}
         disabled
-        type="primary"
       />
     );
   }

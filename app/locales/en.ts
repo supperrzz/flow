@@ -68,7 +68,7 @@ const en = {
     Rename: "Rename Chat",
     Typing: "Typing…",
     Input: (submitKey: string) => {
-      var inputHints = `${submitKey} to send`;
+      var inputHints = `Press ${submitKey} to send a message`;
       if (submitKey === String(SubmitKey.Enter)) {
         inputHints;
       }
@@ -293,7 +293,7 @@ const en = {
     },
     Token: {
       Title: "API Key",
-      SubTitle: "Use your key to ignore access code limit",
+      SubTitle: "Use your key to ignore usage limit",
       Placeholder: "OpenAI API Key",
     },
     Usage: {

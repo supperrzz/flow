@@ -36,7 +36,7 @@
         align-items: center;
         gap: 10px;
         margin: 0;
-        font-size: 14px;
+        font-size: small;
         font-weight: normal;
       }
     }
@@ -56,6 +56,7 @@
       border: 0;
       padding: 10px 12px;
       border-radius: 5px;
+      font-size: small;
       box-shadow: var(--card-shadow);
       cursor: pointer;
       background: var(--white);
