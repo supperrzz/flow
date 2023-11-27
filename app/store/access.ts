@@ -2,6 +2,7 @@ import { DEFAULT_API_HOST, DEFAULT_MODELS, StoreKey } from "../constant";
 import { getHeaders } from "../client/api";
 import { getClientConfig } from "../config/client";
 import { createPersistStore } from "../utils/store";
+import { User } from "@supabase/supabase-js";
 
 let fetchState = 0; // 0 not fetch, 1 fetching, 2 done
 
@@ -16,6 +17,7 @@ const DEFAULT_ACCESS_STATE = {
   hideUserApiKey: false,
   hideBalanceQuery: false,
   disableGPT4: false,
+  user: null as null | User,
 
   openaiUrl: DEFAULT_OPENAI_URL,
 };
@@ -73,6 +75,14 @@ export const useAccessStore = createPersistStore(
         .finally(() => {
           fetchState = 2;
         });
+    },
+    updateUser(user: any) {
+      set(() => ({
+        user,
+      }));
+    },
+    user() {
+      return get().user;
     },
   }),
   {

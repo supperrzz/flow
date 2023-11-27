@@ -2,7 +2,7 @@
 
 require("../polyfill");
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 
 import styles from "./home.module.scss";
 
@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 import { Path, SlotID } from "../constant";
 import { ErrorBoundary } from "./error";
 
-import { getISOLang, getLang } from "../locales";
+import { getISOLang } from "../locales";
 
 import {
   HashRouter as Router,
@@ -31,7 +31,7 @@ import { api } from "../client/api";
 import { useAccessStore } from "../store";
 import useSession from "../hooks/useSession";
 import Document from "../components/document";
-import { MutableSnapshot, RecoilRoot, useRecoilState } from "recoil";
+import { RecoilRoot, useRecoilValue } from "recoil";
 import { showChatState } from "../state";
 
 export function Loading(props: { noLogo?: boolean }) {
@@ -127,7 +127,7 @@ const loadAsyncGoogleFont = () => {
 };
 
 function Screen() {
-  const [showChat, setShowChat] = useRecoilState(showChatState);
+  const showChat = useRecoilValue(showChatState);
   const config = useAppConfig();
   const location = useLocation();
   const { session } = useSession();
@@ -142,7 +142,7 @@ function Screen() {
   }, []);
 
   useEffect(() => {
-    setIsAuth(!session);
+    setIsAuth(!session?.user);
   }, [session]);
 
   return (

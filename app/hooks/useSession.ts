@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import { Session } from "@supabase/supabase-js";
+import { useAccessStore } from "../store";
+import { useSetRecoilState } from "recoil";
+import { currentUserState } from "../state";
 
 const useSession = () => {
   const [session, setSession] = useState<Session | null>();
   const [loading, setLoading] = useState(true);
+  const setUser = useSetRecoilState(currentUserState);
+  const accessStore = useAccessStore();
 
   useEffect(() => {
     let mounted = true;
@@ -37,6 +42,16 @@ const useSession = () => {
       subscription.subscription?.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      accessStore.updateUser(session.user);
+      setUser(session.user);
+    } else {
+      accessStore.updateUser(null);
+      setUser(null);
+    }
+  }, [session]);
 
   return { session, loading };
 };

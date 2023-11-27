@@ -4,6 +4,7 @@ import {
   promptInputsState,
   inputValuesState,
   actionState,
+  currentUserState,
 } from "../state";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Tone from "./inputs/Tone";
@@ -17,10 +18,9 @@ import { IconButton } from "./button";
 import ChatGptIcon from "../icons/chatgpt.svg";
 import CopyIcon from "../icons/copy.svg";
 import ClearIcon from "../icons/clear.svg";
-import useSession from "../hooks/useSession";
 
 export default function Generator() {
-  const { session } = useSession();
+  const user = useRecoilValue(currentUserState);
   const tone = useRecoilValue(toneState);
   const [promptInputs, setPromptInputs] = useRecoilState(promptInputsState);
   const [output, setOutput] = React.useState("");
@@ -84,8 +84,8 @@ export default function Generator() {
           key: action,
           payload: {
             ...inputValues,
-            userId: session?.user.id,
-            userEmail: session?.user.email,
+            userId: user?.id,
+            userEmail: user?.email,
           },
           tone,
         }),

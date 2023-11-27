@@ -2,7 +2,7 @@ import { RecoilState, atom } from "recoil";
 import { PromptInput } from "./types";
 import { DEFAULT_ACTION } from "../config/config";
 import { WritingTone } from "../config/tones";
-import { Session } from "@supabase/supabase-js";
+import { Session, User } from "@supabase/supabase-js";
 
 export const actionState = atom({
   key: "action",
@@ -42,4 +42,9 @@ export const activeCategoryMenuState = atom({
 export const showChatState = atom({
   key: "showChat",
   default: true,
+});
+
+export const currentUserState = atom({
+  key: "user",
+  default: null as null | User,
 });
