@@ -353,7 +353,9 @@ export const useChatStore = createPersistStore(
                 return;
               }
               const tokens = countTokens(message);
-              updateUsage(user.id, tokens);
+              if (session.mask.modelConfig.model !== "gpt-3.5-turbo") {
+                updateUsage(user.id, tokens);
+              }
             } catch (error) {
               console.error("Error updating usage:", error);
             }

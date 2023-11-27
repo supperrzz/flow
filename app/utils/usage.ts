@@ -7,13 +7,13 @@ export function countWords(text: string) {
 
 export function countTokens(text: string) {
   // Split the text into words and count them
-  const wordCount = text.split(/\s+/).length;
+  // const wordCount = text.split(/\s+/).length;
 
   // Count the number of individual characters
   const charCount = text.split(/\s/).join("").length;
 
   // The total token count is the sum of the word count and the character count
-  const tokenCount = wordCount + charCount;
+  const tokenCount = charCount;
 
   return tokenCount;
 }
@@ -42,14 +42,9 @@ export const getUsageLimit = async (userEmail: string) => {
 };
 export const usageLimitCheck = async (
   userId: string,
+  userEmail: string,
 ): Promise<boolean | Error> => {
   try {
-    const { data: userResponse, error: userError } =
-      await supabase.auth.getUser();
-    if (!userResponse.user) {
-      console.error("Error retrieving user:", userError);
-      return new Error("Authentication error");
-    }
     const { data: usageData, error: usageError } = await supabase
       .from("usage")
       .select("monthly_usage")
@@ -60,10 +55,12 @@ export const usageLimitCheck = async (
       return new Error("Usage retrieval error");
     }
 
-    if (
-      usageData.length === 0 ||
-      usageData[0].monthly_usage >= getUsageLimit(userResponse.user.email!)
-    ) {
+    const usageLimit = await getUsageLimit(userEmail);
+    if (!usageLimit) {
+      return false; // User has no usage limit.
+    }
+
+    if (usageData.length === 0 || usageData[0].monthly_usage >= usageLimit) {
       return false; // User has no usage data or has exceeded the monthly usage.
     }
   } catch (error) {

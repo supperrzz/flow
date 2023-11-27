@@ -202,6 +202,7 @@ export function MaskConfig(props: {
           ></input>
         </ListItem>
         <ModelConfigList
+          isSubscribed={true}
           modelConfig={{ ...props.mask.modelConfig }}
           updateConfig={updateConfig}
           showFields={!props.mask.syncGlobalConfig}
@@ -542,7 +543,7 @@ export function MaskPage() {
               <IconButton
                 icon={<CloseIcon />}
                 bordered
-                onClick={() => navigate(-1)}
+                onClick={() => navigate(Path.Home)}
               />
             </div>
           </div>

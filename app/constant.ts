@@ -104,7 +104,7 @@ export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
 
 export const DEFAULT_MODELS = [
   {
-    name: "gpt-4-1106-preview",
+    name: "gpt-3.5-turbo",
     available: true,
   },
   {
@@ -112,10 +112,16 @@ export const DEFAULT_MODELS = [
     available: true,
   },
   {
-    name: "gpt-3.5-turbo",
+    name: "gpt-4-1106-preview",
     available: true,
   },
 ] as const;
+
+export const MODEL_NAMES = {
+  "gpt-4-1106-preview": "GPT-4 Turbo",
+  "gpt-4": "GPT-4",
+  "gpt-3.5-turbo": "GPT-3.5",
+};
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;

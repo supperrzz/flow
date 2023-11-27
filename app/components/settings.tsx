@@ -256,6 +256,33 @@ function cancelSubscription() {
   console.log("cancel subscription");
 }
 
+export const checkSubscription = async () => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    console.error("No user data found");
+    return false;
+  }
+
+  // find subscription in stripe
+  if (!stripe) {
+    return false;
+  }
+
+  // find customer by email
+  const customer = await stripe.customers.list({
+    email: user.email,
+    limit: 1,
+  });
+
+  const subscriptions = await stripe.subscriptions.list({
+    limit: 1,
+    customer: customer.data[0].id,
+  });
+  return subscriptions.data.length > 0;
+};
+
 function DangerItems({ isSubscribed }: { isSubscribed: boolean }) {
   const chatStore = useChatStore();
   const appConfig = useAppConfig();
@@ -303,19 +330,20 @@ function DangerItems({ isSubscribed }: { isSubscribed: boolean }) {
           type="danger"
         />
       </ListItem>
-      {isSubscribed ? (
-        <ListItem title={Locale.Settings.Danger.Cancel.Title}>
-          <IconButton
-            text={Locale.Settings.Danger.Cancel.Action}
-            onClick={async () => {
-              if (await showConfirm(Locale.Settings.Danger.Cancel.Confirm)) {
-                cancelSubscription();
-              }
-            }}
-            type="danger"
-          />
-        </ListItem>
-      ) : null}
+      {/* Cancel subscription button */}
+      {/* {isSubscribed ? (
+          <ListItem title={Locale.Settings.Danger.Cancel.Title}>
+            <IconButton
+              text={Locale.Settings.Danger.Cancel.Action}
+              onClick={async () => {
+                if (await showConfirm(Locale.Settings.Danger.Cancel.Confirm)) {
+                  cancelSubscription();
+                }
+              }}
+              type="danger"
+            />
+          </ListItem>
+        ) : null} */}
     </List>
   );
 }
@@ -656,34 +684,6 @@ export function Settings() {
   }
 
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const checkSubsctiption = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      console.error("No user data found");
-      return;
-    }
-
-    // find subscription in stripe
-    if (!stripe) {
-      return;
-    }
-
-    // find customer by email
-    const customer = await stripe.customers.list({
-      email: user.email,
-      limit: 1,
-    });
-
-    const subscriptions = await stripe.subscriptions.list({
-      limit: 1,
-      customer: customer.data[0].id,
-    });
-    if (subscriptions.data.length > 0) {
-      setIsSubscribed(true);
-    }
-  };
   const accessStore = useAccessStore();
   const enabledAccessControl = useMemo(
     () => accessStore.enabledAccessControl(),
@@ -695,8 +695,12 @@ export function Settings() {
   const builtinCount = SearchService.count.builtin;
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
+
+  const handleCheckSubscriptipon = async () => {
+    setIsSubscribed(await checkSubscription());
+  };
   useEffect(() => {
-    checkSubsctiption();
+    handleCheckSubscriptipon();
     checkUsage();
   }, []);
 
@@ -740,6 +744,84 @@ export function Settings() {
         </div>
       </div>
       <div className={styles["settings"]}>
+        <List>
+          <ModelConfigList
+            isSubscribed={isSubscribed}
+            showFields={false}
+            modelConfig={config.modelConfig}
+            updateConfig={(updater) => {
+              const modelConfig = { ...config.modelConfig };
+              updater(modelConfig);
+              config.update((config) => (config.modelConfig = modelConfig));
+            }}
+          />
+          {/* Custom Model */}
+          {/* <ListItem
+            title={Locale.Settings.CustomModel.Title}
+            subTitle={Locale.Settings.CustomModel.SubTitle}
+          >
+            <input
+              type="text"
+              value={config.customModels}
+              placeholder="model1,model2,model3"
+              onChange={(e) =>
+                config.update(
+                  (config) => (config.customModels = e.currentTarget.value),
+                )
+              }
+            ></input>
+          </ListItem> */}
+        </List>
+        <List>
+          <ListItem
+            title={Locale.Settings.Subscription.Subscription}
+            subTitle={
+              isSubscribed
+                ? Locale.Settings.Subscription.Status.Active
+                : Locale.Settings.Subscription.Status.Inactive
+            }
+          >
+            <div style={{ display: "flex" }}>
+              <SubscribeButton isSubscribed={isSubscribed} />
+            </div>
+          </ListItem>
+          <ListItem
+            title={Locale.Settings.Usage.Title}
+            subTitle={
+              loadingUsage
+                ? Locale.Settings.Usage.IsChecking
+                : Locale.Settings.Usage.SubTitle(
+                    usage ?? "[?]",
+                    (isSubscribed ? MAX_MONTHLY_USAGE : FREE_MONTHLY_USAGE) ??
+                      "[?]",
+                  )
+            }
+          >
+            <IconButton
+              icon={<ResetIcon></ResetIcon>}
+              text={
+                loadingUsage
+                  ? Locale.Settings.Usage.IsChecking
+                  : Locale.Settings.Usage.Check
+              }
+              onClick={() => checkUsage()}
+              disabled={loadingUsage}
+            />
+          </ListItem>
+          <ListItem
+            title={Locale.Settings.Token.Title}
+            subTitle={Locale.Settings.Token.SubTitle}
+          >
+            <PasswordInput
+              value={accessStore.token}
+              type="text"
+              placeholder={Locale.Settings.Token.Placeholder}
+              onChange={(e) => {
+                accessStore.updateToken(e.currentTarget.value);
+              }}
+            />
+          </ListItem>
+        </List>
         <List>
           <ListItem title={Locale.Settings.Avatar}>
             <Popover
@@ -871,72 +953,6 @@ export function Settings() {
             ></input>
           </ListItem>
         </List> */}
-
-        <List>
-          <ModelConfigList
-            showFields={false}
-            modelConfig={config.modelConfig}
-            updateConfig={(updater) => {
-              const modelConfig = { ...config.modelConfig };
-              updater(modelConfig);
-              config.update((config) => (config.modelConfig = modelConfig));
-            }}
-          />
-          {/* Custom Model */}
-          {/* <ListItem
-            title={Locale.Settings.CustomModel.Title}
-            subTitle={Locale.Settings.CustomModel.SubTitle}
-          >
-            <input
-              type="text"
-              value={config.customModels}
-              placeholder="model1,model2,model3"
-              onChange={(e) =>
-                config.update(
-                  (config) => (config.customModels = e.currentTarget.value),
-                )
-              }
-            ></input>
-          </ListItem> */}
-        </List>
-
-        <List>
-          <ListItem
-            title={Locale.Settings.Subscription.Subscription}
-            subTitle={
-              isSubscribed
-                ? Locale.Settings.Subscription.Status.Active
-                : Locale.Settings.Subscription.Status.Inactive
-            }
-          >
-            <div style={{ display: "flex" }}>
-              <SubscribeButton isSubscribed={isSubscribed} />
-            </div>
-          </ListItem>
-          <ListItem
-            title={Locale.Settings.Usage.Title}
-            subTitle={
-              loadingUsage
-                ? Locale.Settings.Usage.IsChecking
-                : Locale.Settings.Usage.SubTitle(
-                    usage ?? "[?]",
-                    (isSubscribed ? MAX_MONTHLY_USAGE : FREE_MONTHLY_USAGE) ??
-                      "[?]",
-                  )
-            }
-          >
-            <IconButton
-              icon={<ResetIcon></ResetIcon>}
-              text={
-                loadingUsage
-                  ? Locale.Settings.Usage.IsChecking
-                  : Locale.Settings.Usage.Check
-              }
-              onClick={() => checkUsage()}
-              disabled={loadingUsage}
-            />
-          </ListItem>
-        </List>
 
         {shouldShowPromptModal && (
           <UserPromptModal onClose={() => setShowPromptModal(false)} />

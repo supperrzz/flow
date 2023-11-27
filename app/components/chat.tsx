@@ -71,6 +71,7 @@ import {
   CHAT_PAGE_SIZE,
   LAST_INPUT_KEY,
   MAX_RENDER_MSG_COUNT,
+  MODEL_NAMES,
   Path,
   REQUEST_TIMEOUT_MS,
   UNFINISHED_INPUT,
@@ -82,6 +83,7 @@ import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
+import { checkSubscription } from "./settings";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -421,16 +423,25 @@ export function ChatActions(props: {
 
   // switch model
   const currentModel = chatStore.currentSession().mask.modelConfig.model;
-  const models = useMemo(
-    () =>
-      config
-        .allModels()
-        .filter((m) => m.available)
-        .map((m) => m.name),
-    [config],
+  const [models, setModels] = useState<string[]>(
+    config
+      .allModels()
+      .filter((m) => m.available)
+      .map((m) => m.name),
   );
   const [showModelSelector, setShowModelSelector] = useState(false);
+  const loadModels = async () => {
+    const isSubscribed = await checkSubscription();
+    if (isSubscribed) {
+      setModels(config.allModels().map((m) => m.name));
+    } else {
+      setModels(["gpt-3.5-turbo"]);
+    }
+  };
 
+  useEffect(() => {
+    loadModels();
+  }, []);
   return (
     <div className={styles["chat-input-actions"]}>
       {couldStop && (
@@ -495,7 +506,7 @@ export function ChatActions(props: {
         <Selector
           defaultSelectedValue={currentModel}
           items={models.map((m) => ({
-            title: m,
+            title: MODEL_NAMES[m as keyof typeof MODEL_NAMES],
             value: m,
           }))}
           onClose={() => setShowModelSelector(false)}

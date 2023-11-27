@@ -3,11 +3,13 @@ import { ModalConfigValidator, ModelConfig, useAppConfig } from "../store";
 import Locale from "../locales";
 import { InputRange } from "./input-range";
 import { ListItem, Select } from "./ui-lib";
+import { MODEL_NAMES } from "../constant";
 
 export function ModelConfigList(props: {
   modelConfig: ModelConfig;
   updateConfig: (updater: (config: ModelConfig) => void) => void;
   showFields?: boolean;
+  isSubscribed: boolean;
 }) {
   const config = useAppConfig();
 
@@ -25,11 +27,25 @@ export function ModelConfigList(props: {
             );
           }}
         >
-          {config.allModels().map((v, i) => (
-            <option value={v.name} key={i} disabled={!v.available}>
-              {v.name}
-            </option>
-          ))}
+          {!props.isSubscribed && (
+            <>
+              <option value="gpt-3.5-turbo" disabled={false}>
+                {"GPT-3.5"}
+              </option>
+              <option value="" disabled>
+                {"GPT-4"}
+              </option>
+              <option value="" disabled>
+                {"GPT-4 Turbo"}
+              </option>
+            </>
+          )}
+          {props.isSubscribed &&
+            config.allModels().map((v, i) => (
+              <option value={v.name} key={i} disabled={!v.available}>
+                {MODEL_NAMES[v.name as keyof typeof MODEL_NAMES]}
+              </option>
+            ))}
         </Select>
       </ListItem>
       {props.showFields && (
