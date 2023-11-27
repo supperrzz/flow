@@ -26,7 +26,7 @@ async function handle(req: NextRequest) {
     return NextResponse.error();
   }
 
-  const usageLimit = await usageLimitCheck(payload.userId);
+  const usageLimit = await usageLimitCheck(payload.userId, payload.userEmail);
   console.log("[usage limit check]: ", usageLimit);
 
   if (usageLimit === false) {

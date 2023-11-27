@@ -82,7 +82,11 @@ export default function Generator() {
         },
         body: JSON.stringify({
           key: action,
-          payload: { ...inputValues, userId: session?.user.id },
+          payload: {
+            ...inputValues,
+            userId: session?.user.id,
+            userEmail: session?.user.email,
+          },
           tone,
         }),
       });
