@@ -5,6 +5,7 @@ import Locale from "../locales";
 import { IconButton } from "./button";
 import AddIcon from "../icons/chatgpt.svg";
 import BotIcon from "../icons/bot.svg";
+import { useAccessStore } from "../store";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string,
@@ -18,7 +19,8 @@ export const SubscribeButton = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
+  const accessStore = useAccessStore();
+  const user = accessStore.user;
   const goToCheckout = async () => {
     console.log("goToCheckout");
     setLoading(true);
@@ -29,9 +31,7 @@ export const SubscribeButton = ({
       console.log("Stripe not loaded");
       return;
     }
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+
     if (!user) {
       console.error("No user data found");
       return;
@@ -87,6 +87,8 @@ export const CancelSubscriptionButton = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const accessStore = useAccessStore();
+  const user = accessStore.user;
 
   useEffect(() => {
     if (success) {
@@ -101,21 +103,7 @@ export const CancelSubscriptionButton = () => {
     setLoading(true);
     setError("");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      console.error("No user data found");
-      return;
-    }
-
-    const { error } = await supabase
-      .from("subscriptions")
-      .delete()
-      .eq("user_id", user.id);
-
     if (error) {
-      setError(error.message ?? "An unknown error occurred");
       setLoading(false);
     } else {
       setSuccess(true);
