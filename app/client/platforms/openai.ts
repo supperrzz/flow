@@ -1,7 +1,6 @@
 import {
   DEFAULT_API_HOST,
   DEFAULT_MODELS,
-  MAX_MONTHLY_USAGE,
   OpenaiPath,
   REQUEST_TIMEOUT_MS,
 } from "@/app/constant";

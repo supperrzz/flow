@@ -332,7 +332,7 @@ export const PptxGenContent = ({ code }: { code: string }) => {
   };
 
   return (
-    <div>
+    <div style={{ marginBottom: "10px" }}>
       <IconButton
         text="Download Presentation"
         icon={<DownloadIcon />}

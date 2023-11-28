@@ -17,7 +17,7 @@ const DEFAULT_ACCESS_STATE = {
   hideUserApiKey: false,
   hideBalanceQuery: false,
   disableGPT4: false,
-  user: null as null | User,
+  user: undefined as undefined | User,
 
   openaiUrl: DEFAULT_OPENAI_URL,
 };
@@ -77,9 +77,7 @@ export const useAccessStore = createPersistStore(
         });
     },
     updateUser(user: any) {
-      set(() => ({
-        user,
-      }));
+      set(() => user);
     },
     user() {
       return get().user;

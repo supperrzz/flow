@@ -48,9 +48,12 @@ async function handle(req: NextRequest) {
 
   let data = response.choices?.[0]?.text;
 
-  // remove new line at the beginning of the response
   if (data) {
-    updateUsage(payload.userId, countTokens(data));
+    const error = await updateUsage(payload.userId, countTokens(data));
+    if (error) {
+      console.error("[update usage error]: ", error);
+    }
+    // remove new line at the beginning of the response
     const firstNewLineIndex = data.indexOf("\n");
     if (firstNewLineIndex === 0) {
       data = data.slice(1);
