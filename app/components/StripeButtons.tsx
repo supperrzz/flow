@@ -4,6 +4,7 @@ import { supabase } from "../utils/supabaseClient";
 import Locale from "../locales";
 import { IconButton } from "./button";
 import AddIcon from "../icons/chatgpt.svg";
+import BotIcon from "../icons/bot.svg";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string,
@@ -63,7 +64,7 @@ export const SubscribeButton = ({
   if (isSubscribed) {
     return (
       <IconButton
-        icon={<AddIcon />}
+        icon={<BotIcon />}
         bordered
         text={Locale.Settings.Subscription.Subscribed}
         disabled

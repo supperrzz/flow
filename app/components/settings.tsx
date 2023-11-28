@@ -72,6 +72,7 @@ import { ProviderType } from "../utils/cloud";
 import { supabase } from "../utils/supabaseClient";
 import Stripe from "stripe";
 import { SubscribeButton } from "./StripeButtons";
+import { getUsage } from "../utils/usage";
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string);
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
@@ -256,15 +257,7 @@ function cancelSubscription() {
   console.log("cancel subscription");
 }
 
-export const checkSubscription = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    console.error("No user data found");
-    return false;
-  }
-
+export const checkSubscription = async (userEmail: string) => {
   // find subscription in stripe
   if (!stripe) {
     return false;
@@ -272,7 +265,7 @@ export const checkSubscription = async () => {
 
   // find customer by email
   const customer = await stripe.customers.list({
-    email: user.email,
+    email: userEmail,
     limit: 1,
   });
 
@@ -650,34 +643,10 @@ export function Settings() {
 
   const [usage, setUsage] = useState(null);
   const [loadingUsage, setLoadingUsage] = useState(false);
-  async function checkUsage() {
+  async function handleGetUsage(userId: string) {
     setLoadingUsage(true);
-    try {
-      const { data: userResponse, error: userError } =
-        await supabase.auth.getUser();
-      if (userError) {
-        console.error("Error retrieving user:", userError);
-        return new Error("Authentication error");
-      }
-
-      if (!userResponse.user) {
-        return false; // User not logged in or not found.
-      }
-
-      const { data: usageData, error: usageError } = await supabase
-        .from("usage")
-        .select("monthly_usage")
-        .eq("user_id", userResponse.user.id); // Assuming the column is 'user_id'.
-
-      if (usageError) {
-        console.error("Error retrieving user usage:", usageError);
-        return new Error("Usage retrieval error");
-      }
-      setUsage(usageData[0].monthly_usage);
-    } catch (error) {
-      console.error("An unexpected error occurred:", error);
-      return new Error("Unexpected error");
-    }
+    const usage = await getUsage(userId);
+    setUsage(usage);
     setTimeout(() => {
       setLoadingUsage(false);
     }, 500);
@@ -695,13 +664,15 @@ export function Settings() {
   const builtinCount = SearchService.count.builtin;
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
+  const user = accessStore.user;
 
-  const handleCheckSubscriptipon = async () => {
-    setIsSubscribed(await checkSubscription());
+  const handleCheckSubscription = async () => {
+    setIsSubscribed(await checkSubscription(user.email!));
   };
+
   useEffect(() => {
-    handleCheckSubscriptipon();
-    checkUsage();
+    handleCheckSubscription();
+    handleGetUsage(user.id!);
   }, []);
 
   useEffect(() => {
@@ -798,13 +769,13 @@ export function Settings() {
             }
           >
             <IconButton
-              icon={<ResetIcon></ResetIcon>}
+              icon={<ResetIcon />}
               text={
                 loadingUsage
                   ? Locale.Settings.Usage.IsChecking
                   : Locale.Settings.Usage.Check
               }
-              onClick={() => checkUsage()}
+              onClick={() => handleGetUsage(user.id!)}
               disabled={loadingUsage}
             />
           </ListItem>

@@ -99,3 +99,28 @@ export const updateUsage = async (userId: string, usage: number) => {
     return error;
   }
 };
+
+export const getUsage = async (userId: string) => {
+  const { data: usageData, error } = await supabase
+    .from("usage")
+    .select("monthly_usage")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error retrieving user usage:", error);
+    return error;
+  }
+
+  if (usageData.length === 0) {
+    // create new usage record
+    const { error: insertError } = await supabase.from("usage").insert([
+      {
+        user_id: userId,
+        monthly_usage: 0,
+      },
+    ]);
+    return 0;
+  }
+
+  return usageData[0]?.monthly_usage || 0;
+};
