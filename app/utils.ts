@@ -1,10 +1,28 @@
 import { useEffect, useState } from "react";
 import { showToast } from "./components/ui-lib";
 import Locale from "./locales";
+import { marked } from "marked";
 
 export function trimTopic(topic: string) {
   return topic.replace(/[，。！？”“"、,.!?]*$/, "");
 }
+
+export const markdownToPlainText = (markdown: string) => {
+  // convert markdown to html
+  let html = marked(markdown);
+
+  // create a temporary DOM element to hold the HTML
+  let tmp = document.createElement("div");
+
+  // set the HTML content
+  tmp.innerHTML = html;
+
+  // extract the text content
+  let text = tmp.textContent || tmp.innerText || "";
+
+  // return the plain text
+  return text;
+};
 
 export async function copyToClipboard(text: string) {
   try {

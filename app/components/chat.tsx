@@ -46,6 +46,7 @@ import {
   selectOrCopy,
   autoGrowTextArea,
   useMobileScreen,
+  markdownToPlainText,
 } from "../utils";
 
 import dynamic from "next/dynamic";
@@ -1185,7 +1186,11 @@ function _Chat() {
                               <ChatAction
                                 text={Locale.Chat.Actions.Copy}
                                 icon={<CopyIcon />}
-                                onClick={() => copyToClipboard(message.content)}
+                                onClick={() =>
+                                  copyToClipboard(
+                                    markdownToPlainText(message.content),
+                                  )
+                                }
                               />
                             </>
                           )}
