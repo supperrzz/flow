@@ -12,7 +12,7 @@ import {
 import { useChatStore } from "../store";
 
 import Locale from "../locales";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Path } from "../constant";
 import { MaskAvatar } from "./mask";
 import { Mask } from "../store/mask";
@@ -31,6 +31,27 @@ export function ChatItem(props: {
   narrow?: boolean;
   mask: Mask;
 }) {
+  // date format: Today at 01:01 PM or Yesterday at 01:01 PM or 01/01 at 01:01 PM
+  const formatTime = (time: string) => {
+    const date = new Date(time);
+    const now = new Date();
+    const today = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    ).getTime();
+    const yesterday = today - 24 * 60 * 60 * 1000;
+    const dateStr =
+      date.getTime() >= today
+        ? Locale.ChatItem.Today
+        : date.getTime() >= yesterday
+        ? Locale.ChatItem.Yesterday
+        : `${date.getMonth() + 1}/${date.getDate()}`;
+    return `${dateStr} ${date.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "numeric",
+    })}`;
+  };
   const draggableRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (props.selected && draggableRef.current) {
@@ -73,7 +94,9 @@ export function ChatItem(props: {
                 <div className={styles["chat-item-count"]}>
                   {Locale.ChatItem.ChatItemCount(props.count)}
                 </div>
-                <div className={styles["chat-item-date"]}>{props.time}</div>
+                <div className={styles["chat-item-date"]}>
+                  {formatTime(props.time)}
+                </div>
               </div>
             </>
           )}

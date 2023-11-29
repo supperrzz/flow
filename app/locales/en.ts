@@ -21,6 +21,8 @@ const en = {
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
+    Today: "Today at",
+    Yesterday: "Yesterday at",
   },
   Chat: {
     SubTitle: (count: number) => `${count} messages`,

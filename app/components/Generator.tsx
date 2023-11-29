@@ -110,17 +110,21 @@ export default function Generator() {
           <div className={styles["action-title"]}>{camelToTitle(action)}</div>
         </div>
         {/* Action Inputs */}
-        <div className={styles["inputs"]}>
-          {promptInputs.map((input) => {
-            const Component = inputMapping[input.type];
-            return (
-              <div key={input.id}>
-                <Component input={input} />
-              </div>
-            );
-          })}
-        </div>
-        {hasTone && <Tone />}
+        {
+          <div style={loading ? { opacity: "0.5", pointerEvents: "none" } : {}}>
+            <div className={styles["inputs"]}>
+              {promptInputs.map((input) => {
+                const Component = inputMapping[input.type];
+                return (
+                  <div key={input.id}>
+                    <Component input={input} />
+                  </div>
+                );
+              })}
+            </div>
+            {hasTone && <Tone />}
+          </div>
+        }
         <IconButton
           onClick={submit}
           // text={loading ? "Generating..." : ""}
