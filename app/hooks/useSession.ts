@@ -6,6 +6,7 @@ import { useSetRecoilState } from "recoil";
 import { currentUserState } from "../state";
 import Stripe from "stripe";
 import { getUsage } from "../utils/usage";
+import { ADMIN_EMAILS } from "../constant";
 
 const useSession = () => {
   const [session, setSession] = useState<Session | null>();
@@ -18,6 +19,13 @@ const useSession = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   const checkSubscription = async (userEmail: string) => {
+    const prod = process.env.NODE_ENV === "production";
+    if (prod && ADMIN_EMAILS.includes(session?.user?.email!)) {
+      console.log("[setting admin subscription]: ", session?.user?.email);
+      setIsSubscribed(true);
+      return;
+    }
+
     // find subscription in stripe
     if (!stripe) {
       return false;
