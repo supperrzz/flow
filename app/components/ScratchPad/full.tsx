@@ -3,16 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
 const toolbarOptions = [
-  [{ font: [] }, { header: [1, 2, 3, 4, 5, 6, false] }],
-  [
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    { align: [] },
-    "blockquote",
-    "code-block",
-  ], // toggled buttons
+  [{ font: [] }, { header: [1, 2, 3, false] }],
+  ["bold", "italic", "underline", "strike", { align: [] }, "blockquote"], // toggled buttons
   [
     { list: "ordered" },
     { list: "bullet" },
