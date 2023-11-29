@@ -266,7 +266,7 @@ export const useChatStore = createPersistStore(
               set(() => restoreState);
             },
           },
-          5000,
+          7000,
         );
       },
 
