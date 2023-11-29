@@ -18,6 +18,7 @@ const DEFAULT_ACCESS_STATE = {
   hideBalanceQuery: false,
   disableGPT4: false,
   user: undefined as undefined | User,
+  isSubscribed: false,
 
   openaiUrl: DEFAULT_OPENAI_URL,
 };
@@ -76,11 +77,17 @@ export const useAccessStore = createPersistStore(
           fetchState = 2;
         });
     },
-    updateUser(user: any) {
-      set(() => user);
+    setUser(user: any) {
+      set(() => ({ user: user }));
     },
     user() {
       return get().user;
+    },
+    setIsSubscribed(subscribed: boolean) {
+      set(() => ({ isSubscribed: subscribed }));
+    },
+    isSubscribed() {
+      return get().isSubscribed;
     },
   }),
   {

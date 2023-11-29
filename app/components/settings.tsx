@@ -71,7 +71,7 @@ import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
 import { supabase } from "../utils/supabaseClient";
 import Stripe from "stripe";
-import { SubscribeButton } from "./StripeButtons";
+import { CancelSubscriptionButton, SubscribeButton } from "./StripeButtons";
 import { getUsage } from "../utils/usage";
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string);
 
@@ -257,25 +257,6 @@ function cancelSubscription() {
   console.log("cancel subscription");
 }
 
-export const checkSubscription = async (userEmail: string) => {
-  // find subscription in stripe
-  if (!stripe) {
-    return false;
-  }
-
-  // find customer by email
-  const customer = await stripe.customers.list({
-    email: userEmail,
-    limit: 1,
-  });
-
-  const subscriptions = await stripe.subscriptions.list({
-    limit: 1,
-    customer: customer.data[0].id,
-  });
-  return subscriptions.data.length > 0;
-};
-
 function DangerItems({ isSubscribed }: { isSubscribed: boolean }) {
   const chatStore = useChatStore();
   const appConfig = useAppConfig();
@@ -324,19 +305,11 @@ function DangerItems({ isSubscribed }: { isSubscribed: boolean }) {
         />
       </ListItem>
       {/* Cancel subscription button */}
-      {/* {isSubscribed ? (
-          <ListItem title={Locale.Settings.Danger.Cancel.Title}>
-            <IconButton
-              text={Locale.Settings.Danger.Cancel.Action}
-              onClick={async () => {
-                if (await showConfirm(Locale.Settings.Danger.Cancel.Confirm)) {
-                  cancelSubscription();
-                }
-              }}
-              type="danger"
-            />
-          </ListItem>
-        ) : null} */}
+      {isSubscribed ? (
+        <ListItem title={Locale.Settings.Danger.Cancel.Title}>
+          <CancelSubscriptionButton />
+        </ListItem>
+      ) : null}
     </List>
   );
 }
@@ -652,8 +625,8 @@ export function Settings() {
     }, 500);
   }
 
-  const [isSubscribed, setIsSubscribed] = useState(false);
   const accessStore = useAccessStore();
+  const { isSubscribed, user } = accessStore;
   const enabledAccessControl = useMemo(
     () => accessStore.enabledAccessControl(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -664,14 +637,8 @@ export function Settings() {
   const builtinCount = SearchService.count.builtin;
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
-  const user = accessStore.user;
-
-  const handleCheckSubscription = async () => {
-    setIsSubscribed(await checkSubscription(user.email!));
-  };
 
   useEffect(() => {
-    handleCheckSubscription();
     handleGetUsage(user.id!);
   }, []);
 
@@ -747,7 +714,7 @@ export function Settings() {
           <ListItem
             title={Locale.Settings.Subscription.Subscription}
             subTitle={
-              isSubscribed
+              (isSubscribed as boolean)
                 ? Locale.Settings.Subscription.Status.Active
                 : Locale.Settings.Subscription.Status.Inactive
             }
@@ -763,8 +730,9 @@ export function Settings() {
                 ? Locale.Settings.Usage.IsChecking
                 : Locale.Settings.Usage.SubTitle(
                     usage ?? "[?]",
-                    (isSubscribed ? MAX_MONTHLY_USAGE : FREE_MONTHLY_USAGE) ??
-                      "[?]",
+                    ((isSubscribed as boolean)
+                      ? MAX_MONTHLY_USAGE
+                      : FREE_MONTHLY_USAGE) ?? "[?]",
                   )
             }
           >
@@ -779,7 +747,7 @@ export function Settings() {
               disabled={loadingUsage}
             />
           </ListItem>
-          <ListItem
+          {/* <ListItem
             title={Locale.Settings.Token.Title}
             subTitle={Locale.Settings.Token.SubTitle}
           >
@@ -791,7 +759,7 @@ export function Settings() {
                 accessStore.updateToken(e.currentTarget.value);
               }}
             />
-          </ListItem>
+          </ListItem> */}
         </List>
         <List>
           <ListItem title={Locale.Settings.Avatar}>

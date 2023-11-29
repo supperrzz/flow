@@ -21,6 +21,7 @@ import {
   ChatMessage,
   createMessage,
   ModelConfig,
+  useAccessStore,
   useAppConfig,
   useChatStore,
 } from "../store";
@@ -141,6 +142,8 @@ export function MaskConfig(props: {
   shouldSyncFromGlobal?: boolean;
 }) {
   const [showPicker, setShowPicker] = useState(false);
+  const accessStore = useAccessStore();
+  const { isSubscribed } = accessStore;
 
   const updateConfig = (updater: (config: ModelConfig) => void) => {
     if (props.readonly) return;
@@ -202,7 +205,7 @@ export function MaskConfig(props: {
           ></input>
         </ListItem>
         <ModelConfigList
-          isSubscribed={true}
+          isSubscribed={isSubscribed}
           modelConfig={{ ...props.mask.modelConfig }}
           updateConfig={updateConfig}
           showFields={!props.mask.syncGlobalConfig}

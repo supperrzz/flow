@@ -34,6 +34,10 @@ export const getUsageLimit = async (userEmail: string) => {
     limit: 1,
   });
 
+  if (customer.data.length === 0) {
+    return FREE_MONTHLY_USAGE;
+  }
+
   const subscriptions = await stripe.subscriptions.list({
     limit: 1,
     customer: customer.data[0].id,
@@ -101,6 +105,7 @@ export const updateUsage = async (userId: string, usage: number) => {
 };
 
 export const getUsage = async (userId: string) => {
+  console.log("[get usage]: ", userId);
   const { data: usageData, error } = await supabase
     .from("usage")
     .select("monthly_usage")

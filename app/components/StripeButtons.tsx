@@ -1,11 +1,12 @@
 import { loadStripe } from "@stripe/stripe-js";
 import { useEffect, useState } from "react";
-import { supabase } from "../utils/supabaseClient";
 import Locale from "../locales";
 import { IconButton } from "./button";
 import AddIcon from "../icons/chatgpt.svg";
 import BotIcon from "../icons/bot.svg";
 import { useAccessStore } from "../store";
+import Stripe from "stripe";
+import { showConfirm } from "./ui-lib";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string,
@@ -89,6 +90,9 @@ export const CancelSubscriptionButton = () => {
   const [success, setSuccess] = useState(false);
   const accessStore = useAccessStore();
   const user = accessStore.user;
+  const stripe = new Stripe(
+    process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string,
+  );
 
   useEffect(() => {
     if (success) {
@@ -98,26 +102,60 @@ export const CancelSubscriptionButton = () => {
     }
   }, [success]);
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     setLoading(true);
     setError("");
+
+    // find customer by email
+    const customer = await stripe.customers.list({
+      email: user.email,
+      limit: 1,
+    });
+
+    if (customer.data.length === 0) {
+      setError("No customer found");
+      setLoading(false);
+      return;
+    }
+
+    // find subscription
+    const subscriptions = await stripe.subscriptions.list({
+      limit: 1,
+      customer: customer.data[0].id,
+    });
+
+    if (subscriptions.data.length === 0) {
+      setError("No subscription found");
+      setLoading(false);
+      return;
+    }
+
+    const subscription = subscriptions.data[0];
+
+    const deletedSubscription = await stripe.subscriptions.cancel(
+      subscription.id,
+    );
+
+    console.log(deletedSubscription);
 
     if (error) {
       setLoading(false);
     } else {
       setSuccess(true);
+      accessStore.setIsSubscribed(false);
     }
   };
 
   return (
-    <button
-      type="submit"
-      className="btn btn-primary btn-block"
+    <IconButton
+      text={Locale.Settings.Danger.Cancel.Action}
+      onClick={async () => {
+        if (await showConfirm(Locale.Settings.Danger.Cancel.Confirm)) {
+          handleSubmit();
+        }
+      }}
+      type="danger"
       disabled={loading}
-      onClick={handleSubmit}
-    >
-      {loading ? "Loading..." : "Cancel Subscription"}
-    </button>
+    />
   );
 };

@@ -147,8 +147,8 @@ const en = {
       Cancel: {
         Title: "Cancel Subscription",
         SubTitle: "Cancel your subscription plan",
-        Action: "Cancel",
-        Confirm: "Cancel",
+        Action: "Cancel Subscription",
+        Confirm: "Are you sure you want to cancel your subscription?",
       },
     },
     Lang: {

@@ -18,6 +18,7 @@ import { IconButton } from "./button";
 import ChatGptIcon from "../icons/chatgpt.svg";
 import CopyIcon from "../icons/copy.svg";
 import ClearIcon from "../icons/clear.svg";
+import LoadingIcon from "../icons/three-dots.svg";
 
 export default function Generator() {
   const user = useRecoilValue(currentUserState);
@@ -122,10 +123,10 @@ export default function Generator() {
         {hasTone && <Tone />}
         <IconButton
           onClick={submit}
-          text={loading ? "Generating..." : ""}
+          // text={loading ? "Generating..." : ""}
           disabled={loading || !isComplete}
-          icon={!loading ? <ChatGptIcon /> : undefined}
-          type={"primary"}
+          icon={!loading ? <ChatGptIcon /> : <LoadingIcon />}
+          type={loading ? undefined : "primary"}
         />
         {/* output here */}
         {output && (

@@ -4,12 +4,42 @@ import { Session } from "@supabase/supabase-js";
 import { useAccessStore } from "../store";
 import { useSetRecoilState } from "recoil";
 import { currentUserState } from "../state";
+import Stripe from "stripe";
+import { getUsage } from "../utils/usage";
 
 const useSession = () => {
   const [session, setSession] = useState<Session | null>();
   const [loading, setLoading] = useState(true);
   const setUser = useSetRecoilState(currentUserState);
   const accessStore = useAccessStore();
+  const stripe = new Stripe(
+    process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string,
+  );
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const checkSubscription = async (userEmail: string) => {
+    // find subscription in stripe
+    if (!stripe) {
+      return false;
+    }
+
+    // find customer by email
+    const customer = await stripe.customers.list({
+      email: userEmail,
+      limit: 1,
+    });
+
+    if (customer.data.length === 0) {
+      return false;
+    }
+
+    const subscriptions = await stripe.subscriptions.list({
+      limit: 1,
+      customer: customer.data[0].id,
+    });
+
+    setIsSubscribed(subscriptions.data.length > 0);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -45,13 +75,20 @@ const useSession = () => {
 
   useEffect(() => {
     if (session) {
-      accessStore.updateUser(session.user);
+      accessStore.setUser(session.user);
       setUser(session.user);
+      console.log("checking subscription");
+      checkSubscription(session.user.email!);
+      getUsage(session.user.id!);
     } else {
-      accessStore.updateUser(null);
+      accessStore.setUser(null);
       setUser(null);
     }
   }, [session]);
+
+  useEffect(() => {
+    accessStore.setIsSubscribed(isSubscribed);
+  }, [isSubscribed]);
 
   return { session, loading };
 };

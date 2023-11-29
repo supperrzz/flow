@@ -83,7 +83,6 @@ import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
-import { checkSubscription } from "./settings";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -406,6 +405,7 @@ export function ChatActions(props: {
   const config = useAppConfig();
   const navigate = useNavigate();
   const chatStore = useChatStore();
+  const accessStore = useAccessStore();
 
   // switch themes
   const theme = config.theme;
@@ -423,25 +423,15 @@ export function ChatActions(props: {
 
   // switch model
   const currentModel = chatStore.currentSession().mask.modelConfig.model;
-  const [models, setModels] = useState<string[]>(
-    config
-      .allModels()
-      .filter((m) => m.available)
-      .map((m) => m.name),
-  );
   const [showModelSelector, setShowModelSelector] = useState(false);
-  const loadModels = async () => {
-    const isSubscribed = await checkSubscription();
-    if (isSubscribed) {
-      setModels(config.allModels().map((m) => m.name));
+  const { isSubscribed } = accessStore;
+  const models = useMemo(() => {
+    if (isSubscribed as boolean) {
+      return config.allModels().map((m) => m.name);
     } else {
-      setModels(["gpt-3.5-turbo"]);
+      return ["gpt-3.5-turbo"];
     }
-  };
-
-  useEffect(() => {
-    loadModels();
-  }, []);
+  }, [config, isSubscribed]);
   return (
     <div className={styles["chat-input-actions"]}>
       {couldStop && (
