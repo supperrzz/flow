@@ -32,13 +32,7 @@ export const createEmptyMask = () =>
     id: nanoid(),
     avatar: DEFAULT_MASK_AVATAR,
     name: DEFAULT_TOPIC,
-    context: [
-      createMessage({
-        role: "system",
-        content: "",
-        date: new Date().toLocaleString(),
-      }),
-    ],
+    context: [],
     syncGlobalConfig: true, // use global config as default
     modelConfig: { ...useAppConfig.getState().modelConfig },
     lang: getLang(),

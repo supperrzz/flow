@@ -60,7 +60,7 @@ const en = {
         light: "Light Theme",
         dark: "Dark Theme",
       },
-      Prompt: "Messages",
+      Prompt: "Prompts",
       Masks: "Virtual Assistants",
       Clear: "Clear Memory",
       Settings: "Chat Settings",
