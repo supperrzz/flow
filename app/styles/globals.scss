@@ -431,6 +431,39 @@ pre {
   font-size: 14px !important;
 }
 
+.ql-editor {
+  p {
+    line-height: 1.4 !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-bottom: 8px !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  p,
+  ul,
+  blockquote {
+    margin-bottom: 8px !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  li, ol {
+    margin-bottom: 8px !important;
+  }
+}
+
 .ql-editor.ql-blank::before {
   color: var(--black) !important;
 }
@@ -488,4 +521,48 @@ pre {
 .ql-snow.ql-toolbar .ql-picker-item.ql-selected,
 .ql-snow .ql-toolbar .ql-picker-item.ql-selected {
   color: var(--primary) !important;
+}
+
+.document-selector {
+  width: 100%;
+  margin: auto;
+  button {
+    animation: fade-in ease 0.3s;
+  }
+}
+
+.document-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.document-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  color: var(--black);
+  padding: 5px 10px;
+  background-color: var(--white);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  user-select: none;
+  position: relative;
+  content-visibility: auto;
+  animation: slide-in ease 0.3s;
+  font-size: small;
+  cursor: pointer;
+  &.selected {
+    font-weight: 700;
+    border: 1px solid var(--primary);
+  }
+}
+
+.document-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

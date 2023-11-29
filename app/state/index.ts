@@ -3,6 +3,7 @@ import { PromptInput } from "./types";
 import { DEFAULT_ACTION } from "../config/config";
 import { WritingTone } from "../config/tones";
 import { Session, User } from "@supabase/supabase-js";
+import { NEW_DOC_KEY } from "../constant";
 
 export const actionState = atom({
   key: "action",
@@ -47,4 +48,9 @@ export const showChatState = atom({
 export const currentUserState = atom({
   key: "user",
   default: null as null | User,
+});
+
+export const currentDocumentState = atom({
+  key: "document",
+  default: NEW_DOC_KEY as string,
 });

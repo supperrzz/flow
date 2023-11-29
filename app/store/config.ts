@@ -1,6 +1,7 @@
 import { LLMModel } from "../client/api";
 import { getClientConfig } from "../config/client";
 import {
+  DEFAULT_DOCUMENT_WIDTH,
   DEFAULT_INPUT_TEMPLATE,
   DEFAULT_MODELS,
   DEFAULT_SIDEBAR_WIDTH,
@@ -35,6 +36,7 @@ export const DEFAULT_CONFIG = {
   sendPreviewBubble: true,
   enableAutoGenerateTitle: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
+  documentWidth: DEFAULT_DOCUMENT_WIDTH,
 
   disablePromptHint: false,
 

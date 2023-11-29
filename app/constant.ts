@@ -50,6 +50,11 @@ export const MAX_SIDEBAR_WIDTH = 500;
 export const MIN_SIDEBAR_WIDTH = 230;
 export const NARROW_SIDEBAR_WIDTH = 100;
 
+export const DEFAULT_DOCUMENT_WIDTH = 500;
+export const MAX_DOCUMENT_WIDTH = 816;
+export const MIN_DOCUMENT_WIDTH = 500;
+export const NARROW_DOCUMENT_WIDTH = 500;
+
 export const ACCESS_CODE_PREFIX = "nk-";
 
 export const LAST_INPUT_KEY = "last-input";
@@ -128,3 +133,4 @@ export const MAX_RENDER_MSG_COUNT = 45;
 export const FREE_MONTHLY_USAGE = 25000;
 export const MAX_MONTHLY_USAGE = 150000;
 export const ADMIN_EMAILS = ["hypperlabs@gmail.com", "weclosefaster@gmail.com"];
+export const NEW_DOC_KEY = "New Document";

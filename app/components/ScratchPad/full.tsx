@@ -1,6 +1,29 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import "react-quill/dist/quill.snow.css";
+import Quill from "quill";
+// @ts-ignore
+import { ImageDrop } from "quill-image-drop-module";
+import htmlEditButton from "quill-html-edit-button";
+// @ts-ignore
+import ImageResize from "quill-image-resize-module-react";
+import BlotFormatter, {
+  AlignAction,
+  DeleteAction,
+  ImageSpec,
+} from "quill-blot-formatter";
+import { useRecoilValue } from "recoil";
+import { currentDocumentState } from "@/app/state";
+Quill.register("modules/blotFormatter", BlotFormatter);
+Quill.register("modules/imageResize", ImageResize);
+Quill.register("modules/imageDrop", ImageDrop);
+Quill.register("modules/htmlEditButton", htmlEditButton);
+Quill.register("modules/blotFormatter", BlotFormatter);
+class CustomImageSpec extends ImageSpec {
+  getActions() {
+    return [AlignAction, DeleteAction];
+  }
+}
 
 const toolbarOptions = [
   [{ font: [] }, { header: [1, 2, 3, false] }],
@@ -10,6 +33,8 @@ const toolbarOptions = [
     { list: "bullet" },
     { color: [] },
     { background: [] },
+    "link",
+    "image",
     "clean",
   ],
 ];
@@ -24,6 +49,20 @@ const modules = {
     delay: 2000,
     maxStack: 500,
     userOnly: true,
+  },
+  imageResize: {
+    parchment: Quill.import("parchment"),
+    modules: ["Resize", "DisplaySize"],
+  },
+  imageDrop: true,
+  htmlEditButton: {},
+  blotFormatter: {
+    specs: [CustomImageSpec],
+    overlay: {
+      style: {
+        border: "none",
+      },
+    },
   },
 };
 /*
@@ -47,12 +86,17 @@ const formats = [
   "link",
   "image",
   "video",
+  "align",
+  "clean",
+  "alt",
+  "style",
+  "width",
+  "height",
 ];
 
 export default function ScratchPad() {
   const [value, setValue] = useState<string>();
-  const documentId = "";
-  const storageKey = `document-${documentId}`;
+  const storageKey = useRecoilValue(currentDocumentState);
   const ReactQuill = useMemo(
     () => dynamic(() => import("react-quill"), { ssr: false }),
     [],
@@ -66,7 +110,7 @@ export default function ScratchPad() {
     } else {
       setValue("");
     }
-  }, [documentId]);
+  }, [storageKey]);
 
   // if (!documentId) return null;
 

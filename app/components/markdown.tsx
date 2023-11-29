@@ -163,9 +163,10 @@ export const HtmlContent = ({ code }: { code: string }) => {
   const handleDownload = () => {
     const opt = {
       margin: 10,
-      filename: "document.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
+      filename: `document.pdf`,
+      enableLinks: true,
+      image: { type: "jpeg", quality: 1 },
+      html2canvas: { scale: 4 },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     };
     const trimmer = code.replace(/```html/g, "").replace(/```/g, "");

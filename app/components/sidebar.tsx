@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "./home.module.scss";
 
@@ -11,6 +11,12 @@ import PluginIcon from "../icons/plugin.svg";
 import BotIcon from "../icons/robot.svg";
 import DragIcon from "../icons/drag.svg";
 import ChatIcon from "../icons/chat.svg";
+import EditIcon from "../icons/edit.svg";
+import RenameIcon from "../icons/rename.svg";
+import DeleteIcon from "../icons/delete.svg";
+import DownloadIcon from "../icons/download.svg";
+// @ts-ignore
+import html2pdf from "html2pdf.js";
 
 import Locale from "../locales";
 
@@ -21,6 +27,7 @@ import {
   MAX_SIDEBAR_WIDTH,
   MIN_SIDEBAR_WIDTH,
   NARROW_SIDEBAR_WIDTH,
+  NEW_DOC_KEY,
   Path,
   REPO_URL,
 } from "../constant";
@@ -30,7 +37,7 @@ import { useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
 import { showConfirm, showToast } from "./ui-lib";
 import { useRecoilState } from "recoil";
-import { showChatState } from "../state";
+import { currentDocumentState, showChatState } from "../state";
 import { Menu } from "./document";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
@@ -133,12 +140,86 @@ function useDragSideBar() {
 export function SideBar(props: { className?: string }) {
   const chatStore = useChatStore();
   const [showChat, setShowChat] = useRecoilState(showChatState);
+  const [showDocument, setShowDocument] = useState(true);
+  const [documents, setDocuments] = useState<string[]>([]);
+  const [currentDocument, setCurrentDocument] =
+    useRecoilState(currentDocumentState);
+  const isMobileScreen = useMobileScreen();
+
+  useEffect(() => {
+    const docs: string[] = [NEW_DOC_KEY];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("document-")) {
+        docs.push(key);
+      }
+    }
+
+    setDocuments(docs);
+  }, []);
   // drag side bar
   const { onDragStart, shouldNarrow } = useDragSideBar();
   const navigate = useNavigate();
   const config = useAppConfig();
 
   useHotKey();
+
+  const handleDownload = (value: string, title: string) => {
+    const styles = `
+      p {
+        line-height: 1.4 !important;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin-bottom: 5px !important;
+
+        &:last-child {
+          margin-bottom: 0 !important;
+        }
+      }
+
+      p,
+      ul,
+      blockquote {
+        margin-bottom: 5px !important;
+
+        &:last-child {
+          margin-bottom: 0 !important;
+        }
+      }
+
+      li, ol {
+        margin-bottom: 5px !important;
+      }
+    `;
+    // add styles to the html
+    const html = `
+      <html>
+        <head>
+          <style>
+            ${styles}
+          </style>
+        </head>
+        <body>
+          ${value}
+        </body>
+      </html>
+    `;
+    const opt = {
+      margin: 10,
+      filename: `${title}.pdf`,
+      enableLinks: true,
+      image: { type: "jpeg", quality: 1 },
+      html2canvas: { scale: 4 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    };
+    html2pdf().from(html).set(opt).save();
+  };
 
   return (
     <div
@@ -206,19 +287,123 @@ export function SideBar(props: { className?: string }) {
           }
         }}
       >
-        {showChat ? <ChatList /> : <Menu />}
+        {showChat ? <ChatList /> : <Menu show={!showDocument} />}
+        {!showChat && !shouldNarrow && showDocument && (
+          <div className="document-selector">
+            <ul className="document-list">
+              {documents.map((doc) => {
+                const name = doc.replace("document-", "");
+                return (
+                  <li
+                    key={doc}
+                    onClick={() => {
+                      setCurrentDocument(doc);
+                    }}
+                    className={currentDocument === doc ? "selected" : ""}
+                  >
+                    <span className={`document-name`}>{name}</span>
+                    <div style={{ display: "flex" }}>
+                      <IconButton
+                        // text="Edit"
+                        disabled={currentDocument == doc}
+                        icon={<RenameIcon />}
+                        onClick={() => {
+                          setCurrentDocument(doc);
+                        }}
+                      />
+                      <IconButton
+                        // text="Download"
+                        icon={<DownloadIcon />}
+                        onClick={async () => {
+                          const value = localStorage.getItem(doc);
+                          if (
+                            await showConfirm(
+                              value,
+                              "Document Preview",
+                              "Download",
+                            )
+                          ) {
+                            if (value) {
+                              handleDownload(value, name);
+                            } else {
+                              showToast("Document is empty");
+                            }
+                          }
+                        }}
+                      />
+                      <IconButton
+                        icon={<DeleteIcon />}
+                        // text="Delete"
+                        onClick={async () => {
+                          if (
+                            await showConfirm(
+                              `Are you sure you want to delete ${name}?`,
+                            )
+                          ) {
+                            const isLast = documents.length === 1;
+                            localStorage.removeItem(doc);
+                            if (isLast) {
+                              localStorage.setItem(NEW_DOC_KEY, "");
+                              setDocuments([NEW_DOC_KEY]);
+                              setCurrentDocument(NEW_DOC_KEY);
+                            } else {
+                              setDocuments(documents.filter((d) => d !== doc));
+                              setCurrentDocument(documents[0]);
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <IconButton
+              fullWidth
+              onClick={() => {
+                const name = prompt("Enter a name for your document");
+                const docKey = `document-${name}`;
+                const docExists = documents.find((doc) => doc === docKey);
+                if (docExists) {
+                  showToast("Document already exists");
+                  setCurrentDocument(docKey);
+                  return;
+                }
+                if (name) {
+                  localStorage.setItem(docKey, "");
+                  setDocuments([...documents, docKey]);
+                  setCurrentDocument(docKey);
+                }
+              }}
+              icon={<AddIcon />}
+              text="Add Document"
+            />
+          </div>
+        )}
       </div>
 
       <div className={styles["sidebar-tail"]}>
         <div className={styles["sidebar-actions"]}>
           <div className={styles["sidebar-action"]}>
-            <IconButton
-              onClick={() => setShowChat(!showChat)}
-              icon={showChat ? <PluginIcon /> : <ChatIcon />}
-              text={showChat ? "Prompts" : "Chat"}
-              shadow
-            />
+            {!isMobileScreen && (
+              <IconButton
+                onClick={() => setShowChat(!showChat)}
+                icon={showChat ? <EditIcon /> : <ChatIcon />}
+                text={showChat ? "Documents" : "Chat"}
+                shadow
+              />
+            )}
           </div>
+          {!showChat && (
+            <div className={styles["sidebar-action"]}>
+              <IconButton
+                onClick={() => setShowDocument(!showDocument)}
+                icon={showDocument ? <PluginIcon /> : <EditIcon />}
+                text={showDocument ? "Workflows" : "Documents"}
+                shadow
+              />
+            </div>
+          )}
           <div className={styles["sidebar-action"] + " " + styles.mobile}>
             <IconButton
               icon={<CloseIcon />}
@@ -251,15 +436,12 @@ export function SideBar(props: { className?: string }) {
           <IconButton icon={<SettingsIcon />} shadow />
         </Link>
       </div>
-
-      {showChat && (
-        <div
-          className={styles["sidebar-drag"]}
-          onPointerDown={(e) => onDragStart(e as any)}
-        >
-          <DragIcon />
-        </div>
-      )}
+      <div
+        className={styles["sidebar-drag"]}
+        onPointerDown={(e) => onDragStart(e as any)}
+      >
+        <DragIcon />
+      </div>
     </div>
   );
 }
