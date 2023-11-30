@@ -23,7 +23,6 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
@@ -42,6 +41,11 @@ export function Loading(props: { noLogo?: boolean }) {
     </div>
   );
 }
+
+const SideBar = dynamic(async () => (await import("./sidebar")).SideBar, {
+  loading: () => null,
+  ssr: false,
+});
 
 const Settings = dynamic(async () => (await import("./settings")).Settings, {
   loading: () => <Loading noLogo />,

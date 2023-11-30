@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Generator from "../components/Generator";
 import ACTIONS from "../config/actions";
-import FullPad from "../components/ScratchPad/full";
+import dynamic from "next/dynamic";
 import Category from "../components/category";
 import styles from "./document.module.scss";
 import {
@@ -13,6 +13,9 @@ import {
 import { useAppConfig } from "../store";
 import { useMobileScreen } from "../utils";
 import DragIcon from "../icons/drag.svg";
+const FullPad = dynamic(() => import("../components/ScratchPad/full"), {
+  ssr: false,
+});
 
 export const Menu = ({ show }: { show: boolean }) => {
   if (!show) return null;

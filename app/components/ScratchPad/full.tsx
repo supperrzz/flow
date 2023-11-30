@@ -3,9 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import "react-quill/dist/quill.snow.css";
-import Quill from "quill";
 // @ts-ignore
-import { ImageDrop } from "quill-image-drop-module";
 import htmlEditButton from "quill-html-edit-button";
 // @ts-ignore
 import ImageResize from "quill-image-resize-module-react";
@@ -16,11 +14,19 @@ import BlotFormatter, {
 } from "quill-blot-formatter";
 import { useRecoilValue } from "recoil";
 import { currentDocumentState } from "@/app/state";
-Quill.register("modules/blotFormatter", BlotFormatter);
-Quill.register("modules/imageResize", ImageResize);
-Quill.register("modules/imageDrop", ImageDrop);
-Quill.register("modules/htmlEditButton", htmlEditButton);
-Quill.register("modules/blotFormatter", BlotFormatter);
+import { ErrorBoundary } from "../error";
+let Quill = null;
+
+if (typeof window !== "undefined") {
+  Quill = require("quill");
+  // @ts-ignore
+  window.Quill = Quill;
+  // register your modules here...
+  Quill.register("modules/blotFormatter", BlotFormatter);
+  Quill.register("modules/imageResize", ImageResize);
+  Quill.register("modules/htmlEditButton", htmlEditButton);
+}
+
 class CustomImageSpec extends ImageSpec {
   getActions() {
     return [AlignAction, DeleteAction];
@@ -56,7 +62,6 @@ const modules = {
     parchment: Quill.import("parchment"),
     modules: ["Resize", "DisplaySize"],
   },
-  imageDrop: true,
   htmlEditButton: {},
   blotFormatter: {
     specs: [CustomImageSpec],
@@ -117,19 +122,21 @@ export default function ScratchPad() {
   // if (!documentId) return null;
 
   return (
-    <div id="scratch-pad">
-      <ReactQuill
-        defaultValue={value}
-        value={value}
-        placeholder={"Start writing here..."}
-        modules={modules}
-        formats={formats}
-        theme="snow"
-        onChange={(content) => {
-          setValue(content);
-          localStorage.setItem(storageKey as string, content);
-        }}
-      />
-    </div>
+    <ErrorBoundary>
+      <div id="scratch-pad">
+        <ReactQuill
+          defaultValue={value}
+          value={value}
+          placeholder={"Start writing here..."}
+          modules={modules}
+          formats={formats}
+          theme="snow"
+          onChange={(content) => {
+            setValue(content);
+            localStorage.setItem(storageKey as string, content);
+          }}
+        />
+      </div>
+    </ErrorBoundary>
   );
 }
