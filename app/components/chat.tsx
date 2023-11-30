@@ -1186,11 +1186,7 @@ function _Chat() {
                               <ChatAction
                                 text={Locale.Chat.Actions.Copy}
                                 icon={<CopyIcon />}
-                                onClick={() =>
-                                  copyToClipboard(
-                                    markdownToPlainText(message.content),
-                                  )
-                                }
+                                onClick={() => copyToClipboard(message.content)}
                               />
                             </>
                           )}

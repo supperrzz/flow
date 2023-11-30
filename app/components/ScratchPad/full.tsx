@@ -1,113 +1,14 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
-import "react-quill/dist/quill.snow.css";
-// @ts-ignore
-import htmlEditButton from "quill-html-edit-button";
-// @ts-ignore
-import ImageResize from "quill-image-resize-module-react";
-import BlotFormatter, {
-  AlignAction,
-  DeleteAction,
-  ImageSpec,
-} from "quill-blot-formatter";
-import { useRecoilValue } from "recoil";
+import React, { useEffect, useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
+import { getCSSVar } from "@/app/utils";
 import { currentDocumentState } from "@/app/state";
-import { ErrorBoundary } from "../error";
-let Quill = null;
+import { useRecoilValue } from "recoil";
 
-if (typeof window !== "undefined") {
-  Quill = require("quill");
-  // @ts-ignore
-  window.Quill = Quill;
-  // register your modules here...
-  Quill.register("modules/blotFormatter", BlotFormatter);
-  Quill.register("modules/imageResize", ImageResize);
-  Quill.register("modules/htmlEditButton", htmlEditButton);
-}
-
-class CustomImageSpec extends ImageSpec {
-  getActions() {
-    return [AlignAction, DeleteAction];
-  }
-}
-
-const toolbarOptions = [
-  [{ font: [] }, { header: [1, 2, 3, false] }],
-  ["bold", "italic", "underline", "strike", { align: [] }, "blockquote"], // toggled buttons
-  [
-    { list: "ordered" },
-    { list: "bullet" },
-    { color: [] },
-    { background: [] },
-    "link",
-    "image",
-    "clean",
-  ],
-];
-
-const modules = {
-  toolbar: toolbarOptions,
-  clipboard: {
-    // toggle to add extra line breaks when pasting HTML:
-    matchVisual: false,
-  },
-  history: {
-    delay: 2000,
-    maxStack: 500,
-    userOnly: true,
-  },
-  imageResize: {
-    parchment: Quill.import("parchment"),
-    modules: ["Resize", "DisplaySize"],
-  },
-  htmlEditButton: {},
-  blotFormatter: {
-    specs: [CustomImageSpec],
-    overlay: {
-      style: {
-        border: "none",
-      },
-    },
-  },
-};
-/*
- * Quill editor formats
- * See https://quilljs.com/docs/formats/
- */
-const formats = [
-  "header",
-  "font",
-  "size",
-  "bold",
-  "color",
-  "background",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-  "image",
-  "video",
-  "align",
-  "clean",
-  "alt",
-  "style",
-  "width",
-  "height",
-];
-
-export default function ScratchPad() {
+export default function App() {
+  const themeColor = getCSSVar("--theme");
+  const bgColor = getCSSVar("--white");
   const [value, setValue] = useState<string>();
   const storageKey = useRecoilValue(currentDocumentState);
-  const ReactQuill = useMemo(
-    () => dynamic(() => import("react-quill"), { ssr: false }),
-    [],
-  );
 
   useEffect(() => {
     const data = localStorage.getItem(storageKey as string);
@@ -118,25 +19,33 @@ export default function ScratchPad() {
       setValue("");
     }
   }, [storageKey]);
-
-  // if (!documentId) return null;
-
   return (
-    <ErrorBoundary>
-      <div id="scratch-pad">
-        <ReactQuill
-          defaultValue={value}
-          value={value}
-          placeholder={"Start writing here..."}
-          modules={modules}
-          formats={formats}
-          theme="snow"
-          onChange={(content) => {
-            setValue(content);
-            localStorage.setItem(storageKey as string, content);
-          }}
-        />
-      </div>
-    </ErrorBoundary>
+    <Editor
+      apiKey="c9y9l8us1kzzfqftbay7hdp7t1nx76cy4p8h3es8jth7etiq"
+      init={{
+        height: "100%",
+        plugins:
+          "autolink charmap emoticons image link lists media searchreplace table wordcount checklist mediaembed casechange export formatpainter permanentpen footnotes advcode editimage tableofcontents powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss",
+        toolbar:
+          "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+        skin: themeColor === "light" ? "oxide" : "oxide-dark",
+        content_css: themeColor === "light" ? "light" : "dark",
+        content_style: `.mce-content-body { background-color: ${bgColor} }`,
+        branding: false,
+        resize: false,
+        toolbar_mode: "sliding",
+        resize_img_proportional: true,
+        text_patterns: [
+          { start: "`", end: "`", format: "code" },
+          { start: "```\n", end: "\n```", format: "codeblock" },
+        ],
+        // revisit ai later
+        // ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+      }}
+      initialValue={value}
+      onEditorChange={(content, editor) => {
+        localStorage.setItem("scratchpad", content);
+      }}
+    />
   );
 }

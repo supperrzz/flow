@@ -304,34 +304,6 @@ export function SideBar(props: { className?: string }) {
                     <span className={`document-name`}>{name}</span>
                     <div style={{ display: "flex" }}>
                       <IconButton
-                        // text="Edit"
-                        disabled={currentDocument == doc}
-                        icon={<RenameIcon />}
-                        onClick={() => {
-                          setCurrentDocument(doc);
-                        }}
-                      />
-                      <IconButton
-                        // text="Download"
-                        icon={<DownloadIcon />}
-                        onClick={async () => {
-                          const value = localStorage.getItem(doc);
-                          if (
-                            await showConfirm(
-                              value,
-                              "Document Preview",
-                              "Download",
-                            )
-                          ) {
-                            if (value) {
-                              handleDownload(value, name);
-                            } else {
-                              showToast("Document is empty");
-                            }
-                          }
-                        }}
-                      />
-                      <IconButton
                         icon={<DeleteIcon />}
                         // text="Delete"
                         onClick={async () => {
