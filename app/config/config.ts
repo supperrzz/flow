@@ -1,1 +1,1 @@
-export const DEFAULT_ACTION = "brainstormIdeas";
+export const DEFAULT_ACTION = "";

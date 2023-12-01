@@ -44,7 +44,7 @@ export default function App() {
       }}
       initialValue={value}
       onEditorChange={(content, editor) => {
-        localStorage.setItem("scratchpad", content);
+        localStorage.setItem(storageKey, content);
       }}
     />
   );

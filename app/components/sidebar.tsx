@@ -287,8 +287,9 @@ export function SideBar(props: { className?: string }) {
           }
         }}
       >
-        {showChat ? <ChatList /> : <Menu show={!showDocument} />}
-        {!showChat && !shouldNarrow && showDocument && (
+        {showChat ? <ChatList /> : <Menu show={true} />}
+        {/* hide documents for now */}
+        {/* {!showChat && !shouldNarrow && showDocument && (
           <div className="document-selector">
             <ul className="document-list">
               {documents.map((doc) => {
@@ -351,7 +352,7 @@ export function SideBar(props: { className?: string }) {
               text="Add Document"
             />
           </div>
-        )}
+        )} */}
       </div>
 
       <div className={styles["sidebar-tail"]}>
@@ -360,13 +361,17 @@ export function SideBar(props: { className?: string }) {
             {!isMobileScreen && (
               <IconButton
                 onClick={() => setShowChat(!showChat)}
-                icon={showChat ? <EditIcon /> : <ChatIcon />}
-                text={showChat ? "Documents" : "Chat"}
+                icon={showChat ? <PluginIcon /> : <ChatIcon />}
+                text={
+                  (!shouldNarrow && (showChat ? "Workflows" : "Chat")) ||
+                  undefined
+                }
                 shadow
               />
             )}
           </div>
-          {!showChat && (
+          {/* Hide documents for now */}
+          {/* {!showChat && (
             <div className={styles["sidebar-action"]}>
               <IconButton
                 onClick={() => setShowDocument(!showDocument)}
@@ -375,7 +380,7 @@ export function SideBar(props: { className?: string }) {
                 shadow
               />
             </div>
-          )}
+          )} */}
           <div className={styles["sidebar-action"] + " " + styles.mobile}>
             <IconButton
               icon={<CloseIcon />}

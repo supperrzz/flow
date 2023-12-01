@@ -336,7 +336,7 @@ export function showConfirm(content: any, title = "", buttonAction = "") {
           ></IconButton>,
           <IconButton
             key="confirm"
-            text={buttonAction ?? Locale.UI.Confirm}
+            text={buttonAction || Locale.UI.Confirm}
             type="primary"
             onClick={() => {
               resolve(true);
