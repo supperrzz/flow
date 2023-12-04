@@ -22,7 +22,7 @@ import LoadingIcon from "../icons/three-dots.svg";
 
 export default function Generator() {
   const user = useRecoilValue(currentUserState);
-  const tone = useRecoilValue(toneState);
+  const [tone, setTone] = useRecoilState(toneState);
   const [promptInputs, setPromptInputs] = useRecoilState(promptInputsState);
   const [output, setOutput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -30,24 +30,32 @@ export default function Generator() {
   const [requiredInputs, setRequiredInputs] = useState<string[]>([]);
   const action = useRecoilValue(actionState);
   const actionNotFound = !pageActions[action as keyof typeof pageActions];
-  const inputValues = useRecoilValue(inputValuesState);
+  const [inputValues, setInputValue] = useRecoilState(inputValuesState);
+
+  const reset = () => {
+    setInputValue({});
+    setOutput("");
+    setTone("Neutral");
+  };
 
   useEffect(() => {
     if (action) {
       const inputs =
         pageActions[action as keyof typeof pageActions]?.inputs || [];
       const requiredInputIds = inputs
-        .filter((input) => input.required)
-        .map((input) => input.id);
+        .filter((input: { required: any }) => input.required)
+        .map((input: { id: any }) => input.id);
       setRequiredInputs(requiredInputIds);
       setPromptInputs(inputs);
+      setInputValue({});
+      setTone("Neutral");
     }
   }, [action, setPromptInputs]);
 
   if (actionNotFound) {
     return (
       <div className={styles["empty-state"]}>
-        <h3>Select a Prompt to Get Started</h3>
+        <h3>Select a Workflow to Get Started</h3>
       </div>
     );
   }
@@ -150,7 +158,7 @@ export default function Generator() {
                 />
                 <IconButton
                   icon={<ClearIcon />}
-                  onClick={() => setOutput("")}
+                  onClick={() => reset()}
                   text="Clear"
                 />
               </div>

@@ -15,51 +15,6 @@ export const BlogPostIdeas: Action = {
     `Generate a list of potential blog post topics based on the niche or keyword '${payload.niche}'.`,
 };
 
-export const BlogTitleOptimizer: Action = {
-  name: "blogTitleOptimizer",
-  inputs: [
-    {
-      type: "text",
-      id: "blogTopic",
-      label: "Blog Post Topic",
-      placeholder: "Enter the topic of the blog post",
-      required: true,
-    },
-  ],
-  prompt: (payload: Record<string, string>) =>
-    `Craft compelling and SEO-friendly titles for the blog post topic '${payload.blogTopic}'.`,
-};
-
-export const BlogIntroCreator: Action = {
-  name: "blogIntroCreator",
-  inputs: [
-    {
-      type: "text",
-      id: "blogTopic",
-      label: "Blog Post Topic",
-      placeholder: "Enter the topic of the blog post",
-      required: true,
-    },
-  ],
-  prompt: (payload: Record<string, string>) =>
-    `Generate an engaging introduction for the blog post topic '${payload.blogTopic}' that hooks readers.`,
-};
-
-export const BlogConclusionGenerator: Action = {
-  name: "blogConclusionGenerator",
-  inputs: [
-    {
-      type: "text",
-      id: "blogTopic",
-      label: "Blog Post Topic",
-      placeholder: "Enter the topic of the blog post",
-      required: true,
-    },
-  ],
-  prompt: (payload: Record<string, string>) =>
-    `Craft a strong conclusion for the blog post topic '${payload.blogTopic}' that summarizes the content and encourages reader engagement.`,
-};
-
 export const BlogOutlineBuilder: Action = {
   name: "blogOutlineBuilder",
   inputs: [
@@ -90,8 +45,8 @@ export const KeywordSuggestion: Action = {
     `Suggest relevant SEO keywords for the blog post topic '${payload.blogTopic}'.`,
 };
 
-export const CtaGenerator: Action = {
-  name: "ctaGenerator",
+export const CallToAction: Action = {
+  name: "callToAction",
   inputs: [
     {
       type: "text",
@@ -120,30 +75,8 @@ export const BlogPostReviewer: Action = {
     `Analyze the provided blog post content and provide suggestions for improvement.`,
 };
 
-export const GuestPostPitch: Action = {
-  name: "guestPostPitch",
-  inputs: [
-    {
-      type: "text",
-      id: "targetBlog",
-      label: "Target Blog or Website",
-      placeholder: "Enter the name of the blog or website you're pitching to",
-      required: true,
-    },
-    {
-      type: "text",
-      id: "yourExpertise",
-      label: "Your Expertise",
-      placeholder: "Describe your expertise or niche",
-      required: true,
-    },
-  ],
-  prompt: (payload: Record<string, string>) =>
-    `Craft a compelling pitch for a guest post opportunity on '${payload.targetBlog}' showcasing expertise in '${payload.yourExpertise}'.`,
-};
-
-export const SeoBlogPost: Action = {
-  name: "seoBlogPost",
+export const BlogPost: Action = {
+  name: "blogPost",
   inputs: [
     {
       type: "text",
@@ -186,14 +119,8 @@ export const SeoMetaData: Action = {
 
 export default {
   blogPostIdeas: BlogPostIdeas,
-  blogTitleOptimizer: BlogTitleOptimizer,
-  blogIntroCreator: BlogIntroCreator,
-  blogConclusionGenerator: BlogConclusionGenerator,
-  blogOutlineBuilder: BlogOutlineBuilder,
-  keywordSuggestion: KeywordSuggestion,
-  ctaGenerator: CtaGenerator,
-  blogPostReviewer: BlogPostReviewer,
-  guestPostPitch: GuestPostPitch,
-  seoBlogPost: SeoBlogPost,
+  blogPost: BlogPost,
+  // keywordSuggestion: KeywordSuggestion,
+  callToAction: CallToAction,
   seoMetaData: SeoMetaData,
 };

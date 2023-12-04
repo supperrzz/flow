@@ -1,44 +1,5 @@
 import { Action } from "../state/types";
 
-export const BrandName: Action = {
-  name: "brandName",
-  inputs: [
-    {
-      type: "select",
-      id: "industry",
-      label: "Industry",
-      placeholder: "Select the industry of the brand",
-      options: [
-        "Tech",
-        "Fashion",
-        "Food",
-        "Healthcare",
-        "Entertainment",
-        "Other",
-      ],
-      required: true,
-    },
-    {
-      type: "textArea",
-      id: "brandValues",
-      label: "Brand Values",
-      placeholder:
-        "List the core values of the brand (e.g., Innovation, Sustainability, Luxury)",
-      required: true,
-    },
-    {
-      type: "select",
-      id: "brandType",
-      label: "Brand Type",
-      placeholder: "Select the type of brand",
-      options: ["Product", "Service", "Platform", "Community", "Other"],
-      required: true,
-    },
-  ],
-  prompt: (payload: Record<string, string>) =>
-    `Generate a brand name for a ${payload.industry} ${payload.brandType} that embodies the core values of ${payload.brandValues}. Consider uniqueness, memorability, and relevance to the intended audience. brand name: `,
-};
-
 export const BrandMission: Action = {
   name: "brandMission",
   inputs: [
@@ -52,27 +13,12 @@ export const BrandMission: Action = {
     {
       type: "textArea",
       id: "brandValues",
-      label: "Brand Values",
+      label: "Describe your product or service",
       placeholder:
         "List the core values of the brand (e.g., Innovation, Sustainability, Luxury)",
       required: true,
     },
     {
-      type: "select",
-      id: "industry",
-      label: "Industry",
-      placeholder: "Select the industry of the brand",
-      options: [
-        "Tech",
-        "Fashion",
-        "Food",
-        "Healthcare",
-        "Entertainment",
-        "Other",
-      ],
-      required: true,
-    },
-    {
       type: "text",
       id: "targetAudience",
       label: "Target Audience",
@@ -81,63 +27,40 @@ export const BrandMission: Action = {
     },
   ],
   prompt: (payload: Record<string, string>) =>
-    `Craft a mission statement for ${payload.brandName}, a brand in the ${payload.industry} industry. The mission should reflect its core values: ${payload.brandValues}. It should resonate with its target audience, ${payload.targetAudience} and be written in`,
+    `Craft a mission statement for ${payload.brandName}. The mission should reflect the brand description: ${payload.brandValues}. It should resonate with its target audience, ${payload.targetAudience} and be written in`,
   tone: true,
 };
 
-export const ValueProposition: Action = {
-  name: "valueProposition",
-  inputs: [
-    {
-      type: "text",
-      id: "productName",
-      label: "Product/Service Name",
-      placeholder: "Enter the name of the product or service",
-      required: true,
-    },
-    {
-      type: "textArea",
-      id: "keyFeatures",
-      label: "Key Features",
-      placeholder:
-        "List the main features or benefits (e.g., Fast, Durable, User-friendly)",
-      required: true,
-    },
-    {
-      type: "text",
-      id: "targetAudience",
-      label: "Target Audience",
-      placeholder: "Describe the primary audience or customer base",
-      required: true,
-    },
-    {
-      type: "select",
-      id: "industry",
-      label: "Industry",
-      placeholder: "Select the industry of the product/service",
-      options: [
-        "Tech",
-        "Fashion",
-        "Food",
-        "Healthcare",
-        "Entertainment",
-        "Other",
-      ],
-      required: true,
-    },
-    {
-      type: "textArea",
-      id: "competitiveAdvantage",
-      label: "Competitive Advantage",
-      placeholder:
-        "Describe what sets this product/service apart from competitors",
-      required: true,
-    },
-  ],
-  prompt: (payload: Record<string, string>) =>
-    `Craft a compelling value proposition for ${payload.productName}, a ${payload.industry} product/service. Highlight its key features: ${payload.keyFeatures}. The proposition should emphasize its competitive advantage: ${payload.competitiveAdvantage}, and resonate with its target audience: ${payload.targetAudience} and be written in`,
-  tone: true,
-};
+// export const ValueProposition: Action = {
+//   name: "valueProposition",
+//   inputs: [
+//     {
+//       type: "text",
+//       id: "brandName",
+//       label: "Brand Name",
+//       placeholder: "Enter the name of the brand",
+//       required: true,
+//     },
+//     {
+//       type: "textArea",
+//       id: "brandValues",
+//       label: "Describe your product or service",
+//       placeholder:
+//         "List the core values of the brand (e.g., Innovation, Sustainability, Luxury)",
+//       required: true,
+//     },
+//     {
+//       type: "text",
+//       id: "targetAudience",
+//       label: "Target Audience",
+//       placeholder: "Describe the primary audience or customer base",
+//       required: true,
+//     },
+//   ],
+//   prompt: (payload: Record<string, string>) =>
+//     `Craft a compelling value proposition for ${payload.brandName}. Highlight its key features: ${payload.brandValues}. The proposition should resonate with its target audience: ${payload.targetAudience} and be written in`,
+//   tone: true,
+// };
 
 export const PitchDeck: Action = {
   name: "pitchDeck",
@@ -244,60 +167,37 @@ export const BrainstormIdeas: Action = {
   name: "brainstormIdeas",
   inputs: [
     {
-      type: "select",
-      id: "industry",
-      label: "Industry",
-      placeholder: "Select the industry for the business idea",
-      options: [
-        "Tech",
-        "Fashion",
-        "Food",
-        "Healthcare",
-        "Entertainment",
-        "E-commerce",
-        "Education",
-        "Other",
-      ],
-      required: true,
-    },
-    {
-      type: "text",
-      id: "targetAudience",
-      label: "Target Audience",
-      placeholder: "Describe the primary audience or customer base",
-      required: true,
-    },
-    {
       type: "text",
       id: "topicOne",
       label: "Topic 1",
-      placeholder: "Enter the first topic to base the business idea on",
+      placeholder: "Enter a topic to base the business idea on",
       required: true,
     },
     {
       type: "text",
       id: "topicTwo",
       label: "Topic 2",
-      placeholder: "Enter the second topic to base the business idea on",
-      required: true,
+      placeholder: "Enter a topic to base the business idea on",
     },
     {
-      type: "select",
-      id: "businessType",
-      label: "Business Type",
-      placeholder: "Select the type of business",
-      options: ["Product", "Service", "Platform", "Community", "Other"],
-      required: true,
+      type: "text",
+      id: "topicThree",
+      label: "Topic 3",
+      placeholder: "Enter a topic to base the business idea on",
+    },
+    {
+      type: "text",
+      id: "topicFour",
+      label: "Topic 4",
+      placeholder: "Enter a topic to base the business idea on",
     },
   ],
   prompt: (payload: Record<string, string>) =>
-    `Brainstorm 3 innovative business ideas for the ${payload.industry} industry, specifically focusing on ${payload.businessType}. Consider the target audience: ${payload.targetAudience}. Generate ideas that intersect the themes of '${payload.topicOne}' and '${payload.topicTwo}', ensuring they are unique, feasible, and address a clear need or gap in the market.`,
+    `Brainstorm 3 innovative business ideas for that intersect these themes: '${payload.topicOne}', '${payload.topicTwo}', '${payload.topicThree}', '${payload.topicFour}' ensuring they are unique, feasible, and address a clear need or gap in the market.`,
 };
 
-//Make a single page website that shows off different neat javascript features for drop-downs and things to display information. The website should be an HTML file with embedded javascript and CSS.
-
-const SinglePageWebsite: Action = {
-  name: "singlePageWebsite",
+const WebPageCopy: Action = {
+  name: "webPageCopy",
   inputs: [
     {
       type: "text",
@@ -316,18 +216,17 @@ const SinglePageWebsite: Action = {
     },
   ],
   prompt: (payload: Record<string, string>) =>
-    `Make a single page website. The website should be called ${payload.websiteName} and should be used for ${payload.websiteDescription}. The website should be an HTML file with embedded javascript and CSS.`,
+    `Generate copy for a single page website. The website should be called ${payload.websiteName} and should be used for ${payload.websiteDescription}. The copy should be written in`,
   tone: true,
 };
 
 const ACTIONS = {
   brainstormIdeas: BrainstormIdeas,
-  brandName: BrandName,
   brandMission: BrandMission,
-  valueProposition: ValueProposition,
+  // valueProposition: ValueProposition,
   pitchDeck: PitchDeck,
-  sloganGenerator: SloganGenerator,
-  singlePageWebsite: SinglePageWebsite,
+  // sloganGenerator: SloganGenerator,
+  webPageCopy: WebPageCopy,
 };
 
 export default ACTIONS;

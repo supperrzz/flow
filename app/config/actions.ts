@@ -5,7 +5,6 @@ import BUSINESS_ACTIONS from "../actions/business";
 import BLOG_ACTIONS from "../actions/blog";
 import GRAMMER_ACTIONS from "../actions/grammer";
 // import PRODUCT_ACTIONS from "../actions/product";
-import MESSAGING_ACTIONS from "../actions/messaging";
 import NEWSLETTER_ACTIONS from "../actions/newsletter";
 
 type Actions = {
@@ -21,7 +20,6 @@ const ACTIONS: Actions = {
   // product: PRODUCT_ACTIONS,
   course: COURSE_ACTIONS,
   marketing: MARKETING_ACTIONS,
-  messaging: MESSAGING_ACTIONS,
   newsletter: NEWSLETTER_ACTIONS,
 };
 

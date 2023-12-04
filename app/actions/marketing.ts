@@ -66,28 +66,6 @@ export const ProductSalesCopy: Action = {
     `Write a persuasive sales copy for the product named '${payload.productName}' emphasizing its benefits: '${payload.productBenefits}'.`,
 };
 
-export const EmailSalesLetter: Action = {
-  name: "emailSalesLetter",
-  inputs: [
-    {
-      type: "text",
-      id: "productName",
-      label: "Product Name",
-      placeholder: "Enter the name or type of the product",
-      required: true,
-    },
-    {
-      type: "text",
-      id: "targetAudience",
-      label: "Target Audience",
-      placeholder: "Describe the primary audience or customer base",
-      required: true,
-    },
-  ],
-  prompt: (payload: Record<string, string>) =>
-    `Craft an engaging email sales letter promoting the product named '${payload.productName}' tailored for the target audience: '${payload.targetAudience}'.`,
-};
-
 export const ColdCallingScript: Action = {
   name: "coldCallingScript",
   inputs: [
@@ -136,11 +114,54 @@ const CallToActionSection: Action = {
 // landing page with heading, subheading, body text, and button or opt-in form
 // sales page with heading, subheading, body text, and button or opt-in form
 
+export const EmailGenerator: Action = {
+  name: "emailGenerator",
+  inputs: [
+    {
+      type: "select",
+      id: "emailType",
+      label: "Email Type",
+      options: [
+        "Welcome Email",
+        "Thank You Email",
+        "Confirmation Email",
+        "Follow Up Email",
+        "Coupon/Discount Email",
+        "Cancellation Email",
+        "Clickbait (Outreach email)",
+      ],
+      placeholder: "Select the type of email to generate",
+      required: true,
+    },
+    {
+      type: "text",
+      id: "recipientName",
+      label: "Recipient's Name",
+      placeholder: "Enter the name of the email recipient",
+    },
+    {
+      type: "text",
+      id: "companyName",
+      label: "Your Company Name",
+      placeholder: "Enter the name of your company",
+    },
+    {
+      type: "textArea",
+      id: "additionalInfo",
+      label: "Additional Information",
+      placeholder:
+        "Provide any additional information or context relevant to the email type selected",
+    },
+  ],
+  prompt: (payload: Record<string, string>) =>
+    `Generate a '${payload.emailType}' for recipient '${payload.recipientName}' from company '${payload.companyName}'. Consider any additional context provided: '${payload.additionalInfo}'.`,
+};
+
 export default {
   generalAdCopy: GeneralAdCopy,
-  classifiedAd: ClassifiedAd,
+  // classifiedAd: ClassifiedAd,
   productSalesCopy: ProductSalesCopy,
-  emailSalesLetter: EmailSalesLetter,
   coldCallingScript: ColdCallingScript,
-  callToActionSection: CallToActionSection,
+  emailGenerator: EmailGenerator,
+  // callToActionSection: CallToActionSection, // move to website category
 };
