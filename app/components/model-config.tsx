@@ -2,7 +2,7 @@ import { ModalConfigValidator, ModelConfig, useAppConfig } from "../store";
 
 import Locale from "../locales";
 import { InputRange } from "./input-range";
-import { ListItem, Select } from "./ui-lib";
+import { Input, ListItem, Select } from "./ui-lib";
 import { MODEL_NAMES } from "../constant";
 
 export function ModelConfigList(props: {
@@ -47,6 +47,18 @@ export function ModelConfigList(props: {
               </option>
             ))}
         </Select>
+      </ListItem>
+      <ListItem title="System Prompt" subTitle="Provide system instructions">
+        <Input
+          defaultValue={props.modelConfig.systemPrompt}
+          style={{ width: "80%" }}
+          rows={4}
+          onChange={(e) => {
+            props.updateConfig(
+              (config) => (config.systemPrompt = e.currentTarget.value),
+            );
+          }}
+        />
       </ListItem>
       {props.showFields && (
         <>

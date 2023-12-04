@@ -5,6 +5,7 @@ import {
   DEFAULT_INPUT_TEMPLATE,
   DEFAULT_MODELS,
   DEFAULT_SIDEBAR_WIDTH,
+  DEFAULT_SYSTEM_PROMPT,
   StoreKey,
 } from "../constant";
 import { createPersistStore } from "../utils/store";
@@ -37,7 +38,7 @@ export const DEFAULT_CONFIG = {
   enableAutoGenerateTitle: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
   documentWidth: DEFAULT_DOCUMENT_WIDTH,
-
+  defaultSystemPrompt: DEFAULT_SYSTEM_PROMPT,
   disablePromptHint: false,
 
   dontShowMaskSplashScreen: true, // dont show splash screen when create chat
@@ -58,6 +59,7 @@ export const DEFAULT_CONFIG = {
     compressMessageLengthThreshold: 1000,
     enableInjectSystemPrompts: true,
     template: DEFAULT_INPUT_TEMPLATE,
+    systemPrompt: DEFAULT_SYSTEM_PROMPT,
   },
 };
 
@@ -137,6 +139,12 @@ export const useAppConfig = createPersistStore(
 
       const models = get().models.concat(customModels);
       return models;
+    },
+
+    setDefaultSystemPrompt(prompt: string) {
+      set(() => ({
+        defaultSystemPrompt: prompt,
+      }));
     },
   }),
   {

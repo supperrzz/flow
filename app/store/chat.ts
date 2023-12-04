@@ -9,6 +9,7 @@ import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { createEmptyMask, Mask } from "./mask";
 import {
   DEFAULT_INPUT_TEMPLATE,
+  DEFAULT_SYSTEM_PROMPT,
   DEFAULT_SYSTEM_TEMPLATE,
   StoreKey,
   SUMMARIZE_MODEL,
@@ -328,9 +329,18 @@ export const useChatStore = createPersistStore(
           ]);
         });
 
+        const includeSystemPrompt =
+          modelConfig.systemPrompt !== DEFAULT_SYSTEM_PROMPT;
+        const systemPrompt = createMessage({
+          role: "system",
+          content: modelConfig.systemPrompt,
+        });
+
         // make request
         api.llm.chat({
-          messages: sendMessages,
+          messages: sendMessages.concat(
+            includeSystemPrompt ? systemPrompt : [],
+          ),
           config: { ...modelConfig, stream: true },
           onUpdate(message) {
             botMessage.streaming = true;
