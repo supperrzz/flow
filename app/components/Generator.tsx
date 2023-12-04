@@ -43,7 +43,7 @@ export default function Generator() {
       const inputs =
         pageActions[action as keyof typeof pageActions]?.inputs || [];
       const requiredInputIds = inputs
-        .filter((input: { required: any }) => input.required)
+        .filter((input) => input.required)
         .map((input: { id: any }) => input.id);
       setRequiredInputs(requiredInputIds);
       setPromptInputs(inputs);
