@@ -27,6 +27,7 @@ import AutoIcon from "../icons/auto.svg";
 import BottomIcon from "../icons/bottom.svg";
 import StopIcon from "../icons/pause.svg";
 import RobotIcon from "../icons/robot.svg";
+import ChatGptIcon from "../icons/chatgpt.svg";
 
 import {
   ChatMessage,
@@ -1266,7 +1267,7 @@ function _Chat() {
             }}
           />
           <IconButton
-            icon={<SendWhiteIcon />}
+            icon={<ChatGptIcon />}
             text={Locale.Chat.Send}
             className={styles["chat-input-send"]}
             type="primary"

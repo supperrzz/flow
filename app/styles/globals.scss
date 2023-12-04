@@ -575,3 +575,567 @@ pre {
 .tox-tiered-menu {
   min-width: 0 !important;
 }
+
+// Color Styles
+.dark {
+  .tox-toolbar__primary {
+    background-color: var(--second) !important;
+  }
+
+  .tox .tox-toolbar-overlord {
+    background-color: var(--second) !important;
+  }
+  
+  .tox:not(.tox-tinymce-inline) .tox-editor-header {
+    background-color: var(--second) !important;
+  }
+  
+  .tox .tox-menubar,
+  .tox .tox-toolbar,
+  .tox .tox-toolbar__overflow,
+  .tox .tox-toolbar__primary,
+  .tox .tox-statusbar {
+    background-color: var(--second) !important;
+  }
+  
+  .tox .tox-button--secondary:active:not(:disabled) {
+    background-color: var(--second) !important;
+    background-image: none;
+    border-color: var(--second) !important;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-collection--list .tox-collection__item--enabled {
+    background-color: var(--second) !important;
+    color: #fff
+  }
+  
+  .tox .tox-collection--horizontal {
+    background-color: var(--second) !important;
+    border: var(--border-in-light);
+    border-radius: 6px;
+    box-shadow: 0 0 2px 0 rgba(34, 47, 62, .2), 0 4px 8px 0 rgba(34, 47, 62, .15);
+    display: flex;
+    flex: 0 0 auto;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+    margin-bottom: 0;
+    overflow-x: auto;
+    padding: 0
+  }
+  
+  .tox .tox-comment__overlaytext p {
+    background-color: var(--second) !important;
+    box-shadow: 0 0 8px 8px var(--second) !important;
+    color: #fff;
+    text-align: center
+  }
+  
+  .tox .tox-comment__busy-spinner {
+    align-items: center;
+    background-color: var(--second) !important;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 20
+  }
+  
+  .tox .tox-dialog {
+    background-color: var(--second) !important;
+    border-color: #494949 !important;
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 0;
+    box-shadow: 0 16px 16px -10px rgba(34, 47, 62, .15), 0 0 40px 1px rgba(34, 47, 62, .15);
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    max-width: 480px;
+    overflow: hidden;
+    position: relative;
+    width: 95vw;
+    z-index: 2
+  }
+  
+  .tox .tox-dialog__header {
+    align-items: center;
+    background-color: var(--second) !important;
+    border-bottom: none;
+    color: #fff;
+    display: flex;
+    font-size: 16px;
+    justify-content: space-between;
+    padding: 8px 16px 0 16px;
+    position: relative
+  }
+  
+  .tox .tox-dialog__footer {
+    align-items: center;
+    background-color: var(--second) !important;
+    border-top: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 16px
+  }
+  
+  .tox .tox-listboxfield .tox-listbox--select,
+  .tox .tox-textarea,
+  .tox .tox-textarea-wrap .tox-textarea:focus,
+  .tox .tox-textfield,
+  .tox .tox-toolbar-textfield {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--second) !important;
+    border-color: #494949 !important;
+    border-radius: 6px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #fff;
+    font-family: "Noto Sans", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    line-height: 24px;
+    margin: 0;
+    min-height: 34px;
+    outline: 0;
+    padding: 5px 10px !important;
+    resize: none;
+    width: 100%;
+    font-size: 14px !important;
+  }
+  
+  .tox .tox-custom-editor:focus-within,
+  .tox .tox-listboxfield .tox-listbox--select:focus,
+  .tox .tox-textarea-wrap:focus-within,
+  .tox .tox-textarea:focus,
+  .tox .tox-textfield:focus {
+    background-color: var(--second) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 108, 231, .25);
+    outline: 0
+  }
+  
+  .tox .tox-selectfield select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--second) !important;
+    border-color: #494949 !important;
+    border-radius: 6px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0;
+    min-height: 34px;
+    outline: 0;
+    padding: 5px 5.5px;
+    resize: none;
+    width: 100%
+  }
+  
+  .tox .tox-selectfield select:focus {
+    background-color: var(--second) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 108, 231, .25);
+    outline: 0
+  }
+  
+  .tox .tox-menu {
+    background-color: var(--second) !important;
+    border: var(--border-in-light);
+    border-radius: 6px;
+    box-shadow: none;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    z-index: 1150
+  }
+  
+  .tox .tox-comment-thread {
+    background: var(--second) !important;
+    position: relative
+  }
+  
+  .tox .tox-comment {
+    background: var(--second) !important;
+    border: 1px solid #161f29;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px 0 rgba(34, 47, 62, .1);
+    padding: 8px 8px 16px 8px;
+    position: relative
+  }
+  
+  .tox .tox-comment-thread__overlay::after {
+    background: var(--second) !important;
+    bottom: 0;
+    content: "";
+    display: flex;
+    left: 0;
+    opacity: .9;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 5
+  }
+  
+  .tox .tox-comment__overlay {
+    background: var(--second) !important;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    left: 0;
+    opacity: .9;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    z-index: 5
+  }
+  
+  .tox .tox-comment__gradient::after {
+    background: linear-gradient(rgba(43, 59, 78, 0), var(--second) !important);
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 5em;
+    margin-top: -40px;
+    position: absolute;
+    width: 100%
+  }
+  
+  .tox .tox-comment__overlaytext p {
+    background-color: var(--second) !important;
+    box-shadow: 0 0 8px 8px var(--second) !important;
+    color: #fff;
+    text-align: center
+  }
+  
+  .tox .tox-color-input span::before {
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, .25) 25%, transparent 25%), linear-gradient(-45deg, rgba(255, 255, 255, .25) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, .25) 75%), linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, .25) 75%);
+    border: 1px solid var(--second) !important;
+  }
+
+  .tox .tox-dialog__body-content .accessibility-issue--info a.tox-button--naked.tox-button--icon {
+    background-color: var(--primary) !important;
+    color: #fff
+  }
+
+  .tox .tox-button {
+    background-color: var(--primary) !important;
+    background-image: none;
+    background-position: 0 0;
+    background-repeat: repeat;
+    border-color: var(--primary) !important;
+    border-radius: 6px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: normal;
+    line-height: 24px;
+    margin: 0;
+    outline: 0;
+    padding: 4px 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    text-transform: none;
+    white-space: nowrap
+  }
+
+  .tox .tox-button::before {
+    border-radius: 6px;
+    bottom: -1px;
+    box-shadow: inset 0 0 0 2px #fff, 0 0 0 1px var(--primary), 0 0 0 3px rgba(0, 108, 231, .25) !important;
+    content: '';
+    left: -1px;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    right: -1px;
+    top: -1px
+  }
+
+  .tox .tox-button[disabled] {
+    background-color: var(--primary) !important;
+    background-image: none;
+    border-color: var(--primary) !important;
+    box-shadow: none;
+    color: rgba(255, 255, 255, .5);
+    cursor: not-allowed
+  }
+
+  .tox .tox-checkbox__icons .tox-checkbox-icon__indeterminate svg {
+    display: none;
+    fill: var(--primary) !important
+  }
+
+  .tox .tox-checkbox__icons .tox-checkbox-icon__checked svg {
+    display: none;
+    fill: var(--primary) !important
+  }
+
+  .tox input.tox-checkbox__input:focus+.tox-checkbox__icons {
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1px var(--primary) !important;
+    padding: calc(4px - 1px)
+  }
+
+  .tox .tox-navobj-bordered-focus.tox-navobj-bordered::before {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 108, 231, .25);
+    outline: 0
+  }
+
+  .tox .tox-color-input span:focus:not([aria-disabled=true]),
+  .tox .tox-color-input span:hover:not([aria-disabled=true]) {
+    border-color: var(--primary) !important;
+    cursor: pointer
+  }
+
+  .tox .tox-custom-editor:focus-within,
+  .tox .tox-listboxfield .tox-listbox--select:focus,
+  .tox .tox-textarea-wrap:focus-within,
+  .tox .tox-textarea:focus,
+  .tox .tox-textfield:focus {
+    background-color: #2b3b4e;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 108, 231, .25);
+    outline: 0
+  }
+
+  .tox .tox-naked-btn {
+    background-color: transparent;
+    border: 0;
+    border-color: transparent;
+    box-shadow: unset;
+    color: var(--primary) !important;
+    cursor: pointer;
+    display: block;
+    margin: 0;
+    padding: 0
+  }
+
+  .tox .tox-selectfield select:focus {
+    background-color: #2b3b4e;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 108, 231, .25);
+    outline: 0
+  }
+
+  .tox .tox-slider__handle {
+    background-color: var(--primary) !important;
+    border: 2px solid #0054b4;
+    border-radius: 6px;
+    box-shadow: none;
+    height: 24px;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 14px
+  }
+
+  .tox .tox-collection--list .tox-collection__item--active {
+    background-color: var(--primary) !important;
+  }
+  
+  .tox .tox-collection--toolbar .tox-collection__item--active {
+    background-color: var(--primary) !important;
+  }
+  
+  .tox .tox-collection--grid .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
+    background-color: var(--primary) !important;;
+    color: #fff
+  }
+  
+  .tox .tox-swatches__picker-btn:hover {
+    background: var(--primary) !important
+  }
+  
+  .tox .tox-mbtn:focus:not(:disabled) {
+    background: var(--primary) !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-mbtn:hover:not(:disabled):not(.tox-mbtn--active) {
+    background: var(--primary) !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-tbtn:focus {
+    background: var(--primary) !important;
+    border: 0;
+    box-shadow: none
+  }
+  
+  .tox .tox-tbtn:hover {
+    background: var(--primary) !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-number-input .tox-input-wrapper:focus {
+    background: var(--primary) !important
+  }
+  
+  .tox .tox-number-input input:hover {
+    background: var(--primary) !important;
+    color: #fff
+  }
+  
+  .tox .tox-number-input button:focus {
+    background: var(--primary) !important
+  }
+  
+  .tox .tox-number-input button:hover {
+    background: var(--primary) !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-number-input:focus:not(:active)>.tox-input-wrapper,
+  .tox .tox-number-input:focus:not(:active)>button {
+    background: var(--primary) !important
+  }
+  
+  .tox .tox-split-button:hover {
+    box-shadow: 0 0 0 1px var(--primary) inset !important;
+  }
+  
+  .tox .tox-split-button:focus {
+    background: var(--primary) !important;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-tree .tox-trbtn:focus {
+    background: var(--primary) !important;
+    border: 0;
+    box-shadow: none
+  }
+  
+  .tox .tox-tree .tox-trbtn:hover {
+    background: var(--primary) !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-collection--toolbar .tox-collection__item--enabled {
+    background-color: #0e4753 !important;
+    color: #fff
+  }
+  
+  .tox .tox-collection--grid .tox-collection__item--enabled {
+    background-color: #0e4753 !important;
+    color: #fff
+  }
+  
+  .tox .tox-mbtn--active {
+    background: #0e4753 !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-tbtn:active {
+    background: #0e4753 !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-tbtn--enabled,
+  .tox .tox-tbtn--enabled:hover {
+    background: #0e4753 !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-number-input button:active {
+    background: #0e4753 !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-tree .tox-trbtn:active {
+    background: #0e4753 !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  
+  .tox .tox-tree .tox-trbtn--enabled,
+  .tox .tox-tree .tox-trbtn--enabled:hover {
+    background: #0e4753 !important;
+    border: 0;
+    box-shadow: none;
+    color: #fff
+  }
+  .tox .tox-insert-table-picker .tox-insert-table-picker__selected {
+    background-color: rgb(29 147 171 / 40%) !important;
+    border-color: rgb(29 147 171 / 40%) !important;
+  }
+}
+
+.tox .tox-dialog__title {
+  font-size: 16px !important;
+}
+
+.dark .tox .tox-dialog__header {
+  padding: 5px 10px 0 10px !important;
+}
+
+.tox .tox-dialog__body-content {
+  padding: 10px !important;
+}
+
+.tox .tox-form__grid {
+  justify-content: center !important;
+  align-items: center !important;
+  padding-top: 15px !important;
+  padding-bottom: 10px !important;
+  gap: 5px !important;
+  flex-direction: column !important;
+}
+
+.tox .tox-dialog--width-md {
+  max-width: calc(var(--document-width) - 40px) !important;
+}
+
+.tox .tox-form__controls-h-stack {
+  gap: 5px !important;
+}
+
+.tox .tox-dialog__body-content .tox-form__group .tox-label.tox-label--end {
+  text-align: center !important;
+  padding: 0 !important;
+}

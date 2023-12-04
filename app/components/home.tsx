@@ -29,7 +29,6 @@ import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
 import useSession from "../hooks/useSession";
-import Document from "../components/document";
 import { RecoilRoot, useRecoilValue } from "recoil";
 import { showChatState } from "../state";
 
@@ -43,23 +42,27 @@ export function Loading(props: { noLogo?: boolean }) {
 }
 
 const SideBar = dynamic(async () => (await import("./sidebar")).SideBar, {
-  loading: () => null,
+  // loading: () => <Loading noLogo />,
   ssr: false,
 });
 
 const Settings = dynamic(async () => (await import("./settings")).Settings, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const Chat = dynamic(async () => (await import("./chat")).Chat, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
+  // loading: () => <Loading noLogo />,
+});
+
+const Document = dynamic(async () => await import("./document"), {
   loading: () => <Loading noLogo />,
 });
 
@@ -134,9 +137,8 @@ function Screen() {
   const showChat = useRecoilValue(showChatState);
   const config = useAppConfig();
   const location = useLocation();
-  const { session } = useSession();
+  const { session, loading: sessionLoading } = useSession(); // Assuming useSession has a loading state
   const isHome = location.pathname === Path.Home;
-  const [isAuth, setIsAuth] = useState<boolean>(false);
   const isMobileScreen = useMobileScreen();
   const shouldTightBorder =
     config.tightBorder && !isMobileScreen && !getClientConfig()?.isApp;
@@ -145,15 +147,17 @@ function Screen() {
     loadAsyncGoogleFont();
   }, []);
 
-  useEffect(() => {
-    setIsAuth(!session?.user);
-  }, [session]);
+  if (sessionLoading) {
+    return <Loading />;
+  }
+
+  const isAuth = !session?.user;
 
   return (
     <div
       className={
         styles.container +
-        ` ${shouldTightBorder ? styles["tight-container"] : styles.container}`
+        ` ${shouldTightBorder ? styles["tight-container"] : ""}`
       }
     >
       {isAuth ? (
