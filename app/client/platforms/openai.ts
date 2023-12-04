@@ -1,5 +1,4 @@
 import {
-  ADMIN_EMAILS,
   DEFAULT_API_HOST,
   DEFAULT_MODELS,
   OpenaiPath,
@@ -295,14 +294,6 @@ export class ChatGPTApi implements LLMApi {
       if (userError) {
         console.error("Error retrieving user:", userError);
         return new Error("Authentication error");
-      }
-      const prod = process.env.NODE_ENV === "production";
-      if (prod && ADMIN_EMAILS.includes(userResponse.user?.email!)) {
-        console.log(
-          "[bypassing usage limit check]: ",
-          userResponse.user?.email,
-        );
-        return true; // Admin users have no usage limit.
       }
 
       if (!userResponse.user) {

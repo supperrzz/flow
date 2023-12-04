@@ -257,7 +257,13 @@ function cancelSubscription() {
   console.log("cancel subscription");
 }
 
-function DangerItems({ isSubscribed }: { isSubscribed: boolean }) {
+function DangerItems({
+  isSubscribed,
+  userEmail,
+}: {
+  isSubscribed: boolean;
+  userEmail: string;
+}) {
   const chatStore = useChatStore();
   const appConfig = useAppConfig();
   const handleSignOut = async () => {
@@ -306,7 +312,10 @@ function DangerItems({ isSubscribed }: { isSubscribed: boolean }) {
       </ListItem>
       {/* Cancel subscription button */}
       {isSubscribed ? (
-        <ListItem title={Locale.Settings.Danger.Cancel.Title}>
+        <ListItem
+          title={Locale.Settings.Danger.Cancel.Title}
+          subTitle={userEmail}
+        >
           <CancelSubscriptionButton />
         </ListItem>
       ) : null}
@@ -683,34 +692,6 @@ export function Settings() {
       </div>
       <div className={styles["settings"]}>
         <List>
-          <ModelConfigList
-            isSubscribed={isSubscribed}
-            showFields={false}
-            modelConfig={config.modelConfig}
-            updateConfig={(updater) => {
-              const modelConfig = { ...config.modelConfig };
-              updater(modelConfig);
-              config.update((config) => (config.modelConfig = modelConfig));
-            }}
-          />
-          {/* Custom Model */}
-          {/* <ListItem
-            title={Locale.Settings.CustomModel.Title}
-            subTitle={Locale.Settings.CustomModel.SubTitle}
-          >
-            <input
-              type="text"
-              value={config.customModels}
-              placeholder="model1,model2,model3"
-              onChange={(e) =>
-                config.update(
-                  (config) => (config.customModels = e.currentTarget.value),
-                )
-              }
-            ></input>
-          </ListItem> */}
-        </List>
-        <List>
           <ListItem
             title={Locale.Settings.Subscription.Subscription}
             subTitle={
@@ -759,6 +740,34 @@ export function Settings() {
                 accessStore.updateToken(e.currentTarget.value);
               }}
             />
+          </ListItem> */}
+        </List>
+        <List>
+          <ModelConfigList
+            isSubscribed={isSubscribed}
+            showFields={false}
+            modelConfig={config.modelConfig}
+            updateConfig={(updater) => {
+              const modelConfig = { ...config.modelConfig };
+              updater(modelConfig);
+              config.update((config) => (config.modelConfig = modelConfig));
+            }}
+          />
+          {/* Custom Model */}
+          {/* <ListItem
+            title={Locale.Settings.CustomModel.Title}
+            subTitle={Locale.Settings.CustomModel.SubTitle}
+          >
+            <input
+              type="text"
+              value={config.customModels}
+              placeholder="model1,model2,model3"
+              onChange={(e) =>
+                config.update(
+                  (config) => (config.customModels = e.currentTarget.value),
+                )
+              }
+            ></input>
           </ListItem> */}
         </List>
         <List>
@@ -897,7 +906,7 @@ export function Settings() {
           <UserPromptModal onClose={() => setShowPromptModal(false)} />
         )}
 
-        <DangerItems isSubscribed={isSubscribed} />
+        <DangerItems isSubscribed={isSubscribed} userEmail={user.email ?? ""} />
       </div>
     </ErrorBoundary>
   );

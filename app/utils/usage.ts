@@ -1,9 +1,5 @@
 import Stripe from "stripe";
-import {
-  ADMIN_EMAILS,
-  FREE_MONTHLY_USAGE,
-  MAX_MONTHLY_USAGE,
-} from "../constant";
+import { FREE_MONTHLY_USAGE, MAX_MONTHLY_USAGE } from "../constant";
 import { supabase } from "./supabaseClient";
 export function countWords(text: string) {
   return text.trim().split(/\s+/).length;
@@ -54,13 +50,6 @@ export const usageLimitCheck = async (
   userId: string,
   userEmail: string,
 ): Promise<boolean | Error> => {
-  const prod = process.env.NODE_ENV === "production";
-
-  if (prod && ADMIN_EMAILS.includes(userEmail)) {
-    console.log("[bypassing usage limit check]: ", userEmail);
-    return true; // Admin users have no usage limit.
-  }
-
   try {
     const { data: usageData, error } = await supabase
       .from("usage")

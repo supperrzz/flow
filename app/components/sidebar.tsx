@@ -11,16 +11,8 @@ import PluginIcon from "../icons/plugin.svg";
 import BotIcon from "../icons/robot.svg";
 import DragIcon from "../icons/drag.svg";
 import ChatIcon from "../icons/chat.svg";
-import EditIcon from "../icons/edit.svg";
-import RenameIcon from "../icons/rename.svg";
-import DeleteIcon from "../icons/delete.svg";
-import DownloadIcon from "../icons/download.svg";
-// @ts-ignore
-import html2pdf from "html2pdf.js";
-
 import Locale from "../locales";
-
-import { useAppConfig, useChatStore } from "../store";
+import { useAccessStore, useAppConfig, useChatStore } from "../store";
 
 import {
   DEFAULT_SIDEBAR_WIDTH,
@@ -145,6 +137,8 @@ export function SideBar(props: { className?: string }) {
   const [currentDocument, setCurrentDocument] =
     useRecoilState(currentDocumentState);
   const isMobileScreen = useMobileScreen();
+  const accessStore = useAccessStore();
+  const { isSubscribed } = accessStore;
 
   useEffect(() => {
     const docs: string[] = [NEW_DOC_KEY];
@@ -218,7 +212,7 @@ export function SideBar(props: { className?: string }) {
       html2canvas: { scale: 4 },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     };
-    html2pdf().from(html).set(opt).save();
+    // html2pdf().from(html).set(opt).save();
   };
 
   return (
@@ -252,6 +246,7 @@ export function SideBar(props: { className?: string }) {
         <div className={styles["sidebar-header-bar"]}>
           <IconButton
             icon={<BotIcon />}
+            disabled={!isSubscribed}
             text={shouldNarrow ? undefined : Locale.Mask.Name}
             className={styles["sidebar-bar-button"]}
             onClick={() => {
@@ -259,19 +254,6 @@ export function SideBar(props: { className?: string }) {
                 navigate(Path.NewChat, { state: { fromHome: true } });
               } else {
                 navigate(Path.Masks, { state: { fromHome: true } });
-              }
-            }}
-            shadow
-          />
-          <IconButton
-            icon={<AddIcon />}
-            // text={shouldNarrow ? undefined : Locale.Home.NewChat}
-            onClick={() => {
-              if (config.dontShowMaskSplashScreen) {
-                chatStore.newSession();
-                navigate(Path.Chat);
-              } else {
-                navigate(Path.NewChat);
               }
             }}
             shadow
@@ -358,7 +340,7 @@ export function SideBar(props: { className?: string }) {
       <div className={styles["sidebar-tail"]}>
         <div className={styles["sidebar-actions"]}>
           <div className={styles["sidebar-action"]}>
-            {!isMobileScreen && (
+            {!isMobileScreen && Boolean(isSubscribed) && (
               <IconButton
                 onClick={() => setShowChat(!showChat)}
                 icon={showChat ? <PluginIcon /> : <ChatIcon />}
@@ -391,7 +373,7 @@ export function SideBar(props: { className?: string }) {
               }}
             />
           </div>
-          {/* {showChat && (
+          {showChat && (
             <div className={styles["sidebar-action"]}>
               <IconButton
                 icon={<AddIcon />}
@@ -407,7 +389,7 @@ export function SideBar(props: { className?: string }) {
                 shadow
               />
             </div>
-          )} */}
+          )}
         </div>
         <Link onClick={() => setShowChat(true)} to={Path.Settings}>
           <IconButton icon={<SettingsIcon />} shadow />
