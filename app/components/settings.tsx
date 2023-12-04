@@ -70,10 +70,8 @@ import { nanoid } from "nanoid";
 import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
 import { supabase } from "../utils/supabaseClient";
-import Stripe from "stripe";
 import { CancelSubscriptionButton, SubscribeButton } from "./StripeButtons";
 import { getUsage } from "../utils/usage";
-const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string);
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -679,8 +677,6 @@ export function Settings() {
           </div>
         </div>
         <div className="window-actions">
-          <div className="window-action-button"></div>
-          <div className="window-action-button"></div>
           <div className="window-action-button">
             <IconButton
               icon={<CloseIcon />}

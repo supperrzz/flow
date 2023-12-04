@@ -80,6 +80,7 @@ const en = {
     Config: {
       Reset: "Reset to Default",
       SaveAs: "Save as Virtual Assistant",
+      Save: "Save Changes",
     },
     IsContext: "System Prompt",
   },
@@ -149,7 +150,7 @@ const en = {
       Cancel: {
         Title: "Cancel Subscription",
         SubTitle: "Cancel your subscription plan",
-        Action: "Cancel Subscription",
+        Action: "Cancel",
         Confirm: "Are you sure you want to cancel your subscription?",
       },
     },

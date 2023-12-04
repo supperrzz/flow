@@ -127,6 +127,13 @@ export function SessionConfigModel(props: { onClose: () => void }) {
               }, 500);
             }}
           />,
+          <IconButton
+            key="save"
+            icon={<ConfirmIcon />}
+            bordered
+            text={Locale.Chat.Config.Save}
+            onClick={() => props.onClose()}
+          />,
         ]}
       >
         <MaskConfig
