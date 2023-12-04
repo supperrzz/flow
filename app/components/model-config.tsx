@@ -35,9 +35,9 @@ export function ModelConfigList(props: {
               <option value="" disabled>
                 {"GPT-4"}
               </option>
-              <option value="" disabled>
+              {/* <option value="" disabled>
                 {"GPT-4 Turbo"}
-              </option>
+              </option> */}
             </>
           )}
           {props.isSubscribed &&

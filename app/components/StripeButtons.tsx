@@ -39,7 +39,7 @@ export const SubscribeButton = ({
     }
 
     const { error } = await stripe.redirectToCheckout({
-      lineItems: [{ price: "price_1OGFdOCuyL2Oyw2fV0QTMwdg", quantity: 1 }],
+      lineItems: [{ price: "price_1OJRNJCuyL2Oyw2f4O0SRUXY", quantity: 1 }],
       mode: "subscription",
       successUrl: `${window.location.origin}`,
       cancelUrl: `${window.location.origin}`,
