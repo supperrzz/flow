@@ -328,10 +328,8 @@ export const useChatStore = createPersistStore(
             botMessage,
           ]);
         });
-        const includeSystemPrompt = modelConfig.systemPrompt !== "";
-        console.log("[System Prompt] ", includeSystemPrompt);
 
-        if (includeSystemPrompt) {
+        if (modelConfig.systemPrompt) {
           const systemPrompt = createMessage({
             role: "system",
             content: modelConfig.systemPrompt,
