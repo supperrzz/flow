@@ -328,18 +328,24 @@ export const useChatStore = createPersistStore(
             botMessage,
           ]);
         });
-
         const includeSystemPrompt = modelConfig.systemPrompt !== "";
-        const systemPrompt = createMessage({
-          role: "system",
-          content: modelConfig.systemPrompt,
-        });
+        console.log("[System Prompt] ", includeSystemPrompt);
+
+        if (includeSystemPrompt) {
+          const systemPrompt = createMessage({
+            role: "system",
+            content: modelConfig.systemPrompt,
+          });
+
+          // Add systemPrompt at the beginning of the array
+          sendMessages.unshift(systemPrompt);
+        }
+
+        console.log("[Sent messages]", sendMessages);
 
         // make request
         api.llm.chat({
-          messages: sendMessages.concat(
-            includeSystemPrompt ? systemPrompt : [],
-          ),
+          messages: sendMessages,
           config: { ...modelConfig, stream: true },
           onUpdate(message) {
             botMessage.streaming = true;
