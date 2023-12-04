@@ -84,7 +84,6 @@ const useSession = () => {
     if (session) {
       accessStore.setUser(session.user);
       setUser(session.user);
-      console.log("checking subscription");
       checkSubscription(session.user.email!);
       getUsage(session.user.id!);
     } else {

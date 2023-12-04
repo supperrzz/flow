@@ -96,6 +96,7 @@ export const CancelSubscriptionButton = () => {
 
   useEffect(() => {
     if (success) {
+      window.location.reload();
       setTimeout(() => {
         setSuccess(false);
       }, 5000);

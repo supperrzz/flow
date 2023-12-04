@@ -329,8 +329,7 @@ export const useChatStore = createPersistStore(
           ]);
         });
 
-        const includeSystemPrompt =
-          modelConfig.systemPrompt !== DEFAULT_SYSTEM_PROMPT;
+        const includeSystemPrompt = modelConfig.systemPrompt !== "";
         const systemPrompt = createMessage({
           role: "system",
           content: modelConfig.systemPrompt,

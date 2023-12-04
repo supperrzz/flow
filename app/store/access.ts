@@ -61,7 +61,6 @@ export const useAccessStore = createPersistStore(
       })
         .then((res) => res.json())
         .then((res: DangerConfig) => {
-          console.log("[Config] got config from server", res);
           set(() => ({ ...res }));
 
           if (res.disableGPT4) {

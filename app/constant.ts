@@ -74,7 +74,7 @@ export const OpenaiPath = {
 };
 
 export const DEFAULT_INPUT_TEMPLATE = `{{input}}`; // input / time / model / lang
-export const DEFAULT_SYSTEM_PROMPT = "You are an assistant that";
+export const DEFAULT_SYSTEM_PROMPT = "";
 export const DEFAULT_SYSTEM_TEMPLATE = `
 You are Flow, a chat app trained by GPTech.
 Current model: {{model}}

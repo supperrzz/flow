@@ -289,6 +289,7 @@ function DangerItems({
           onClick={async () => {
             if (await showConfirm(Locale.Settings.Danger.Reset.Confirm)) {
               appConfig.reset();
+              window.location.reload();
             }
           }}
           type="danger"
@@ -303,6 +304,7 @@ function DangerItems({
           onClick={async () => {
             if (await showConfirm(Locale.Settings.Danger.Clear.Confirm)) {
               chatStore.clearAllData();
+              window.location.reload();
             }
           }}
           type="danger"
