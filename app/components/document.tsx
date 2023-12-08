@@ -59,7 +59,7 @@ function useDragDocument() {
         return;
       }
       lastUpdateTime.current = Date.now();
-      const d = e.clientX - startX.current;
+      const d = (e.clientX - startX.current) * -1;
       const nextWidth = limit(startDragWidth.current + d);
       config.update((config) => {
         if (nextWidth < MIN_DOCUMENT_WIDTH) {
@@ -128,12 +128,12 @@ export default function Document() {
       </div>
       <div className={styles["document"]}>
         <FullPad />
-        {/* <div
-          className={styles["drag"]}
-          onPointerDown={(e) => onDragStart(e as any)}
-        >
-          <DragIcon />
-        </div> */}
+      </div>
+      <div
+        className={styles["drag"]}
+        onPointerDown={(e) => onDragStart(e as any)}
+      >
+        <DragIcon />
       </div>
     </>
   );

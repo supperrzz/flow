@@ -51,9 +51,9 @@ export const MIN_SIDEBAR_WIDTH = 230;
 export const NARROW_SIDEBAR_WIDTH = 100;
 
 export const DEFAULT_DOCUMENT_WIDTH = 750;
-export const MAX_DOCUMENT_WIDTH = 750;
-export const MIN_DOCUMENT_WIDTH = 500;
-export const NARROW_DOCUMENT_WIDTH = 500;
+export const MAX_DOCUMENT_WIDTH = 1021;
+export const MIN_DOCUMENT_WIDTH = 250;
+export const NARROW_DOCUMENT_WIDTH = 250;
 
 export const ACCESS_CODE_PREFIX = "nk-";
 

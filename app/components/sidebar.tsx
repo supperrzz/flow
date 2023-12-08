@@ -6,6 +6,7 @@ import { IconButton } from "./button";
 import SettingsIcon from "../icons/config.svg";
 import ChatGptIcon from "../icons/chatgpt.svg";
 import AddIcon from "../icons/add.svg";
+import DeleteIcon from "../icons/delete.svg";
 import CloseIcon from "../icons/close.svg";
 import PluginIcon from "../icons/plugin.svg";
 import BotIcon from "../icons/robot.svg";
@@ -21,13 +22,12 @@ import {
   NARROW_SIDEBAR_WIDTH,
   NEW_DOC_KEY,
   Path,
-  REPO_URL,
 } from "../constant";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
-import { showConfirm, showToast } from "./ui-lib";
+import { Select, showConfirm, showToast } from "./ui-lib";
 import { useRecoilState } from "recoil";
 import { currentDocumentState, showChatState } from "../state";
 import { Menu } from "./document";
@@ -54,6 +54,88 @@ function useHotKey() {
     return () => window.removeEventListener("keydown", onKeyDown);
   });
 }
+
+const DocumentSelector = () => {
+  const [document, setDocument] = useRecoilState(currentDocumentState);
+  const [documents, setDocuments] = useState<string[]>([]);
+
+  useEffect(() => {
+    const docs: string[] = [NEW_DOC_KEY];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("document-")) {
+        docs.push(key);
+      }
+    }
+
+    setDocuments(docs);
+  }, []);
+
+  return (
+    <div className={styles["document-selector-container"]}>
+      <Select
+        className={styles["document-selector"]}
+        value={document}
+        onChange={(e) => setDocument(e.target.value)}
+      >
+        {documents.map((doc) => {
+          const documentName = doc.replace("document-", "");
+          return (
+            <option key={doc} value={doc}>
+              {documentName}
+            </option>
+          );
+        })}
+      </Select>
+      <IconButton
+        shadow
+        icon={<DeleteIcon />}
+        // text="Delete"
+        onClick={async () => {
+          if (
+            await showConfirm(
+              `Are you sure you want to delete ${document.replace(
+                "document-",
+                "",
+              )}?`,
+            )
+          ) {
+            const isLast = documents.length === 1;
+            console.log("isLast", isLast);
+            localStorage.removeItem(document);
+            if (isLast) {
+              localStorage.setItem(NEW_DOC_KEY, "");
+              setDocuments([NEW_DOC_KEY]);
+              setDocument(NEW_DOC_KEY);
+            } else {
+              setDocuments(documents.filter((d) => d !== document));
+              setDocument(documents[0]);
+            }
+          }
+        }}
+      />
+      <IconButton
+        shadow
+        onClick={() => {
+          const name = prompt("Enter a name for your document");
+          const docKey = `document-${name}`;
+          const docExists = documents.find((doc) => doc === docKey);
+          if (docExists) {
+            showToast("Document already exists");
+            setDocument(docKey);
+            return;
+          }
+          if (name) {
+            localStorage.setItem(docKey, "");
+            setDocuments([...documents, docKey]);
+            setDocument(docKey);
+          }
+        }}
+        icon={<AddIcon />}
+      />
+    </div>
+  );
+};
 
 function useDragSideBar() {
   const limit = (x: number) => Math.min(MAX_SIDEBAR_WIDTH, x);
@@ -132,88 +214,16 @@ function useDragSideBar() {
 export function SideBar(props: { className?: string }) {
   const chatStore = useChatStore();
   const [showChat, setShowChat] = useRecoilState(showChatState);
-  const [showDocument, setShowDocument] = useState(true);
-  const [documents, setDocuments] = useState<string[]>([]);
-  const [currentDocument, setCurrentDocument] =
-    useRecoilState(currentDocumentState);
   const isMobileScreen = useMobileScreen();
   const accessStore = useAccessStore();
   const { isSubscribed } = accessStore;
 
-  useEffect(() => {
-    const docs: string[] = [NEW_DOC_KEY];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith("document-")) {
-        docs.push(key);
-      }
-    }
-
-    setDocuments(docs);
-  }, []);
   // drag side bar
   const { onDragStart, shouldNarrow } = useDragSideBar();
   const navigate = useNavigate();
   const config = useAppConfig();
 
   useHotKey();
-
-  const handleDownload = (value: string, title: string) => {
-    const styles = `
-      p {
-        line-height: 1.4 !important;
-      }
-
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        margin-bottom: 5px !important;
-
-        &:last-child {
-          margin-bottom: 0 !important;
-        }
-      }
-
-      p,
-      ul,
-      blockquote {
-        margin-bottom: 5px !important;
-
-        &:last-child {
-          margin-bottom: 0 !important;
-        }
-      }
-
-      li, ol {
-        margin-bottom: 5px !important;
-      }
-    `;
-    // add styles to the html
-    const html = `
-      <html>
-        <head>
-          <style>
-            ${styles}
-          </style>
-        </head>
-        <body>
-          ${value}
-        </body>
-      </html>
-    `;
-    const opt = {
-      margin: 10,
-      filename: `${title}.pdf`,
-      enableLinks: true,
-      image: { type: "jpeg", quality: 1 },
-      html2canvas: { scale: 4 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
-    // html2pdf().from(html).set(opt).save();
-  };
 
   return (
     <div
@@ -269,72 +279,8 @@ export function SideBar(props: { className?: string }) {
           }
         }}
       >
+        {!showChat && !shouldNarrow && <DocumentSelector />}
         {showChat ? <ChatList /> : <Menu show={true} />}
-        {/* hide documents for now */}
-        {/* {!showChat && !shouldNarrow && showDocument && (
-          <div className="document-selector">
-            <ul className="document-list">
-              {documents.map((doc) => {
-                const name = doc.replace("document-", "");
-                return (
-                  <li
-                    key={doc}
-                    onClick={() => {
-                      setCurrentDocument(doc);
-                    }}
-                    className={currentDocument === doc ? "selected" : ""}
-                  >
-                    <span className={`document-name`}>{name}</span>
-                    <div style={{ display: "flex" }}>
-                      <IconButton
-                        icon={<DeleteIcon />}
-                        // text="Delete"
-                        onClick={async () => {
-                          if (
-                            await showConfirm(
-                              `Are you sure you want to delete ${name}?`,
-                            )
-                          ) {
-                            const isLast = documents.length === 1;
-                            localStorage.removeItem(doc);
-                            if (isLast) {
-                              localStorage.setItem(NEW_DOC_KEY, "");
-                              setDocuments([NEW_DOC_KEY]);
-                              setCurrentDocument(NEW_DOC_KEY);
-                            } else {
-                              setDocuments(documents.filter((d) => d !== doc));
-                              setCurrentDocument(documents[0]);
-                            }
-                          }
-                        }}
-                      />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-            <IconButton
-              fullWidth
-              onClick={() => {
-                const name = prompt("Enter a name for your document");
-                const docKey = `document-${name}`;
-                const docExists = documents.find((doc) => doc === docKey);
-                if (docExists) {
-                  showToast("Document already exists");
-                  setCurrentDocument(docKey);
-                  return;
-                }
-                if (name) {
-                  localStorage.setItem(docKey, "");
-                  setDocuments([...documents, docKey]);
-                  setCurrentDocument(docKey);
-                }
-              }}
-              icon={<AddIcon />}
-              text="Add Document"
-            />
-          </div>
-        )} */}
       </div>
 
       <div className={styles["sidebar-tail"]}>
@@ -352,17 +298,6 @@ export function SideBar(props: { className?: string }) {
               />
             )}
           </div>
-          {/* Hide documents for now */}
-          {/* {!showChat && (
-            <div className={styles["sidebar-action"]}>
-              <IconButton
-                onClick={() => setShowDocument(!showDocument)}
-                icon={showDocument ? <PluginIcon /> : <EditIcon />}
-                text={showDocument ? "Workflows" : "Documents"}
-                shadow
-              />
-            </div>
-          )} */}
           <div className={styles["sidebar-action"] + " " + styles.mobile}>
             <IconButton
               icon={<CloseIcon />}

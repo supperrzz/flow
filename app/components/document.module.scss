@@ -16,6 +16,7 @@
     flex-direction: column;
     gap: 10px;
     padding: 20px;
+    margin-top: 40px;
     border-radius: 10px;
     border: var(--border-in-light);
     font-size: 14px;
@@ -87,30 +88,24 @@
   overflow-y: auto;
   position: relative;
   width: var(--document-width);
-  .drag {
-    &:hover {
-      background-color: rgba($color: #000000, $alpha: 0.01);
+}
 
-      svg {
-        opacity: 0.2;
-      }
-    }
-    $width: 14px;
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: $width;
-    background-color: rgba($color: #000000, $alpha: 0);
-    cursor: ew-resize;
-    transition: all ease 0.3s;
-    display: flex;
-    align-items: center;
-
-    svg {
-      opacity: 0;
-      margin-left: -2px;
-    }
+.drag {
+  position: absolute;
+  right: var(--document-width);
+  display: flex;
+  align-items: center;
+  width: 14px;
+  height: 24px;
+  padding: 0 2px;
+  cursor: ew-resize;
+  border-left: var(--border-in-light);
+  border-right: var(--border-in-light);
+  border-bottom: var(--border-in-light);
+  border-bottom-left-radius: 2px;
+  background-color: var(--white);
+  svg {
+    opacity: 0.2;
+    margin-left: -2px;
   }
 }

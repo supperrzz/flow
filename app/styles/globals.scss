@@ -523,48 +523,8 @@ pre {
   color: var(--primary) !important;
 }
 
-.document-selector {
-  width: 100%;
-  margin: auto;
-  button {
-    animation: fade-in ease 0.3s;
-  }
-}
-
-.document-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.document-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  color: var(--black);
-  padding: 5px 10px;
-  background-color: var(--white);
-  border-radius: 10px;
-  margin-bottom: 10px;
-  user-select: none;
-  position: relative;
-  content-visibility: auto;
-  animation: slide-in ease 0.3s;
-  font-size: small;
-  cursor: pointer;
-  &.selected {
-    font-weight: 700;
-    border: 1px solid var(--primary);
-  }
-}
-
-.document-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.tox .tox-edit-area {
+  padding: 0 20px;
 }
 
 .tox-tinymce {

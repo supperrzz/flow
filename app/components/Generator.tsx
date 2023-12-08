@@ -55,7 +55,7 @@ export default function Generator() {
   if (actionNotFound) {
     return (
       <div className={styles["empty-state"]}>
-        <h3>Select a Workflow to Get Started</h3>
+        <h3>Select a Workflow</h3>
       </div>
     );
   }

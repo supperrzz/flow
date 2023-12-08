@@ -350,3 +350,19 @@
 .rtl-screen {
   direction: rtl;
 }
+
+.document-selector {
+  flex: 1;
+  animation: fade-in ease 0.3s;
+  select {
+    border: none !important;
+    box-shadow: var(--card-shadow);
+  }
+}
+
+.document-selector-container {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
