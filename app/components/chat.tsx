@@ -515,7 +515,7 @@ export function ChatActions(props: {
               session.mask.modelConfig.model = s[0] as ModelType;
               session.mask.syncGlobalConfig = false;
             });
-            showToast(s[0]);
+            showToast(MODEL_NAMES[s[0] as keyof typeof MODEL_NAMES]);
           }}
         />
       )}

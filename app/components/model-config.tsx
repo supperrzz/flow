@@ -30,10 +30,10 @@ export function ModelConfigList(props: {
           {!props.isSubscribed && (
             <>
               <option value="gpt-3.5-turbo" disabled={false}>
-                {"GPT-3.5"}
+                {"Default"}
               </option>
               <option value="" disabled>
-                {"GPT-4"}
+                {"Turbo"}
               </option>
               {/* <option value="" disabled>
                 {"GPT-4 Turbo"}
@@ -48,7 +48,7 @@ export function ModelConfigList(props: {
             ))}
         </Select>
       </ListItem>
-      <ListItem title="System Prompt" subTitle="Provide system instructions">
+      <ListItem title="AI Instructions" subTitle="Default AI Instructions">
         <Input
           defaultValue={props.modelConfig.systemPrompt}
           style={{ width: "80%" }}

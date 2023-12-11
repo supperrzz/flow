@@ -113,21 +113,20 @@ export const DEFAULT_MODELS = [
     name: "gpt-3.5-turbo",
     available: true,
   },
-  {
-    name: "gpt-4",
-    available: true,
-  },
-  // Removing turbo for now
   // {
-  //   name: "gpt-4-1106-preview",
+  //   name: "gpt-4",
   //   available: true,
   // },
+  {
+    name: "gpt-4-1106-preview",
+    available: true,
+  },
 ] as const;
 
 export const MODEL_NAMES = {
-  // "gpt-4-1106-preview": "GPT-4 Turbo",
-  "gpt-4": "GPT-4",
-  "gpt-3.5-turbo": "GPT-3.5",
+  "gpt-4-1106-preview": "Turbo",
+  // "gpt-4": "GPT-4",
+  "gpt-3.5-turbo": "Default",
 };
 
 export const CHAT_PAGE_SIZE = 15;

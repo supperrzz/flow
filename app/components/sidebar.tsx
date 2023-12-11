@@ -257,6 +257,7 @@ export function SideBar(props: { className?: string }) {
           <IconButton
             icon={<BotIcon />}
             disabled={!isSubscribed}
+            type={"primary"}
             text={shouldNarrow ? undefined : Locale.Mask.Name}
             className={styles["sidebar-bar-button"]}
             onClick={() => {

@@ -7,13 +7,13 @@ export function countWords(text: string) {
 
 export function countTokens(text: string) {
   // Split the text into words and count them
-  // const wordCount = text.split(/\s+/).length;
+  const wordCount = text.split(/\s+/).length;
 
   // Count the number of individual characters
-  const charCount = text.split(/\s/).join("").length;
+  // const charCount = text.split(/\s/).join("").length;
 
   // The total token count is the sum of the word count and the character count
-  const tokenCount = charCount;
+  const tokenCount = wordCount * 0.75;
 
   return tokenCount;
 }
@@ -92,6 +92,7 @@ export const updateUsage = async (userId: string, usage: number) => {
     {
       user_id: userId,
       monthly_usage: newUsage,
+      updated_at: new Date(),
     },
     {
       onConflict: "user_id",
