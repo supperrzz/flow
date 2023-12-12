@@ -269,6 +269,19 @@ export function SideBar(props: { className?: string }) {
             }}
             shadow
           />
+          <IconButton
+            icon={<AddIcon />}
+            text={shouldNarrow ? undefined : Locale.Home.NewChat}
+            onClick={() => {
+              if (config.dontShowMaskSplashScreen) {
+                chatStore.newSession();
+                navigate(Path.Chat);
+              } else {
+                navigate(Path.NewChat);
+              }
+            }}
+            shadow
+          />
         </div>
       )}
 
@@ -289,6 +302,7 @@ export function SideBar(props: { className?: string }) {
           <div className={styles["sidebar-action"]}>
             {!isMobileScreen && Boolean(isSubscribed) && (
               <IconButton
+                type={"primary"}
                 onClick={() => setShowChat(!showChat)}
                 icon={showChat ? <PluginIcon /> : <ChatIcon />}
                 text={
@@ -309,7 +323,7 @@ export function SideBar(props: { className?: string }) {
               }}
             />
           </div>
-          {showChat && (
+          {/* {showChat && (
             <div className={styles["sidebar-action"]}>
               <IconButton
                 icon={<AddIcon />}
@@ -325,7 +339,7 @@ export function SideBar(props: { className?: string }) {
                 shadow
               />
             </div>
-          )}
+          )} */}
         </div>
         <Link onClick={() => setShowChat(true)} to={Path.Settings}>
           <IconButton icon={<SettingsIcon />} shadow />

@@ -5,8 +5,8 @@
   width: 100%;
   padding: 10px;
   background-color: var(--white);
-  border-radius: 10px;
-  margin-bottom: 10px;
+  border-radius: 7px;
+  margin-bottom: 5px;
   box-shadow: var(--card-shadow);
   transition: background-color 0.3s ease;
   transition: height 0.3s ease;
@@ -55,7 +55,7 @@
       color: var(--black);
       border: 0;
       padding: 10px 12px;
-      border-radius: 5px;
+      border-radius: 7px;
       font-size: small;
       box-shadow: var(--card-shadow);
       cursor: pointer;
@@ -64,6 +64,8 @@
       &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+        background: var(--primary);
+        color: var(--white);
       }
     }
 }

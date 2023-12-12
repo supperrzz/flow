@@ -128,7 +128,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--bar-color);
-  border-radius: 10px;
+  border-radius: 7px;
   background-clip: content-box;
   border: 1px solid transparent;
 }
@@ -136,7 +136,7 @@ body {
 select {
   border: var(--border-in-light);
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 7px;
   appearance: none;
   cursor: pointer;
   background-color: var(--white);
@@ -159,7 +159,7 @@ input[type="checkbox"] {
   color: var(--black);
   appearance: none;
   border: var(--border-in-light);
-  border-radius: 5px;
+  border-radius: 7px;
   height: 16px;
   width: 16px;
   display: inline-flex;
@@ -187,7 +187,7 @@ input[type="range"] {
   height: 8px;
   width: 20px;
   background-color: var(--primary);
-  border-radius: 10px;
+  border-radius: 7px;
   cursor: pointer;
   transition: all ease 0.3s;
   margin-left: 5px;
@@ -228,7 +228,7 @@ input[type="text"],
 input[type="password"],
 input[type="email"] {
   appearance: none;
-  border-radius: 10px;
+  border-radius: 7px;
   border: var(--border-in-light);
   min-height: 36px;
   box-sizing: border-box;
@@ -288,7 +288,7 @@ pre {
     background-color: var(--black);
     color: var(--white);
     border: var(--border-in-light);
-    border-radius: 10px;
+    border-radius: 7px;
     transform: translateX(10px);
     pointer-events: none;
     opacity: 0;
@@ -524,7 +524,7 @@ pre {
 }
 
 .tox .tox-edit-area {
-  padding: 0 20px;
+  padding: 0 10px;
 }
 
 .tox-tinymce {
@@ -608,7 +608,7 @@ pre {
   .tox .tox-dialog {
     background-color: var(--second) !important;
     border-color: #494949 !important;
-    border-radius: 10px;
+    border-radius: 7px;
     border-style: solid;
     border-width: 0;
     box-shadow: 0 16px 16px -10px rgba(34, 47, 62, .15), 0 0 40px 1px rgba(34, 47, 62, .15);

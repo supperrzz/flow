@@ -49,6 +49,7 @@ export default function Generator() {
       setPromptInputs(inputs);
       setInputValue({});
       setTone("Neutral");
+      setOutput("");
     }
   }, [action, setPromptInputs]);
 

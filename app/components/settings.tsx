@@ -648,7 +648,7 @@ export function Settings() {
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
 
   useEffect(() => {
-    handleGetUsage(user.id!);
+    handleGetUsage(user?.id!);
   }, []);
 
   useEffect(() => {
@@ -904,7 +904,10 @@ export function Settings() {
           <UserPromptModal onClose={() => setShowPromptModal(false)} />
         )}
 
-        <DangerItems isSubscribed={isSubscribed} userEmail={user.email ?? ""} />
+        <DangerItems
+          isSubscribed={isSubscribed}
+          userEmail={user?.email ?? ""}
+        />
       </div>
     </ErrorBoundary>
   );
