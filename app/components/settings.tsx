@@ -862,7 +862,7 @@ export function Settings() {
           </ListItem>
         </List>
 
-        {/* <SyncItems /> */}
+        <SyncItems />
 
         {/* Mask Splash */}
         {/* <List>

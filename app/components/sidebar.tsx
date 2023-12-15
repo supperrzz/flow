@@ -77,6 +77,7 @@ const DocumentSelector = () => {
         className={styles["document-selector"]}
         value={document}
         onChange={(e) => setDocument(e.target.value)}
+        darkIcon
       >
         {documents.map((doc) => {
           const documentName = doc.replace("document-", "");
@@ -89,6 +90,27 @@ const DocumentSelector = () => {
       </Select>
       <IconButton
         shadow
+        title="Create a new document"
+        onClick={() => {
+          const name = prompt("Enter a name for your document");
+          const docKey = `document-${name}`;
+          const docExists = documents.find((doc) => doc === docKey);
+          if (docExists) {
+            showToast("Document already exists");
+            setDocument(docKey);
+            return;
+          }
+          if (name) {
+            localStorage.setItem(docKey, "");
+            setDocuments([...documents, docKey]);
+            setDocument(docKey);
+          }
+        }}
+        icon={<AddIcon />}
+      />
+      <IconButton
+        shadow
+        title="Delete current document"
         icon={<DeleteIcon />}
         // text="Delete"
         onClick={async () => {
@@ -113,25 +135,6 @@ const DocumentSelector = () => {
             }
           }
         }}
-      />
-      <IconButton
-        shadow
-        onClick={() => {
-          const name = prompt("Enter a name for your document");
-          const docKey = `document-${name}`;
-          const docExists = documents.find((doc) => doc === docKey);
-          if (docExists) {
-            showToast("Document already exists");
-            setDocument(docKey);
-            return;
-          }
-          if (name) {
-            localStorage.setItem(docKey, "");
-            setDocuments([...documents, docKey]);
-            setDocument(docKey);
-          }
-        }}
-        icon={<AddIcon />}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import CloseIcon from "../icons/close.svg";
 import EyeIcon from "../icons/eye.svg";
 import EyeOffIcon from "../icons/eye-off.svg";
 import DownIcon from "../icons/down.svg";
+import DarkDownIcon from "../icons/select-down.svg";
 import ConfirmIcon from "../icons/confirm.svg";
 import CancelIcon from "../icons/cancel.svg";
 import MaxIcon from "../icons/max.svg";
@@ -288,7 +289,9 @@ export function Select(
   props: React.DetailedHTMLProps<
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
-  >,
+  > & {
+    darkIcon?: boolean;
+  },
 ) {
   const { className, children, ...otherProps } = props;
   return (
@@ -301,7 +304,11 @@ export function Select(
       >
         {children}
       </select>
-      <DownIcon className={styles["select-with-icon-icon"]} />
+      {props.darkIcon ? (
+        <DownIcon className={styles["select-with-icon-icon"]} />
+      ) : (
+        <DarkDownIcon className={styles["select-with-icon-icon"]} />
+      )}
     </div>
   );
 }

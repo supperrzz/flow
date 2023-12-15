@@ -10,9 +10,10 @@
   --gray: rgb(250, 250, 250);
   --primary: rgb(29, 147, 171);
   --second: rgb(231, 248, 255);
-  --hover-color: #f3f3f3;
+  --hover-color: #f9f9f9;
   --bar-color: rgba(0, 0, 0, 0.1);
   --theme-color: var(--gray);
+  --sidebar-background: #f4f6f6;
 
   /* shadow */
   --shadow: 50px 50px 100px 10px rgb(0, 0, 0, 0.1);
@@ -36,6 +37,7 @@
   --bar-color: rgba(255, 255, 255, 0.1);
 
   --border-in-light: 1px solid rgba(255, 255, 255, 0.192);
+  --sidebar-background: #333333;
 
   --theme-color: var(--gray);
 
@@ -521,10 +523,6 @@ pre {
 .ql-snow.ql-toolbar .ql-picker-item.ql-selected,
 .ql-snow .ql-toolbar .ql-picker-item.ql-selected {
   color: var(--primary) !important;
-}
-
-.tox .tox-edit-area {
-  padding: 0 10px;
 }
 
 .tox-tinymce {

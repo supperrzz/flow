@@ -26,9 +26,9 @@ export default function App() {
       init={{
         height: "100%",
         plugins:
-          "ai autolink charmap emoticons image link lists media searchreplace table wordcount checklist mediaembed casechange export formatpainter permanentpen footnotes advcode editimage tableofcontents powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss",
+          "fullscreen autolink charmap emoticons image link lists media searchreplace table wordcount",
         toolbar:
-          "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat | aidialog aishortcuts",
+          "fullscreen undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
         skin: themeColor === "light" ? "oxide" : "oxide-dark",
         content_css: themeColor === "light" ? "light" : "dark",
         content_style: `

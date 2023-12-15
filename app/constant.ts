@@ -45,9 +45,9 @@ export enum StoreKey {
   Sync = "sync",
 }
 
-export const DEFAULT_SIDEBAR_WIDTH = 300;
+export const DEFAULT_SIDEBAR_WIDTH = 330;
 export const MAX_SIDEBAR_WIDTH = 500;
-export const MIN_SIDEBAR_WIDTH = 230;
+export const MIN_SIDEBAR_WIDTH = 330;
 export const NARROW_SIDEBAR_WIDTH = 100;
 
 export const DEFAULT_DOCUMENT_WIDTH = 750;

@@ -178,22 +178,11 @@ export const BrainstormIdeas: Action = {
       id: "topicTwo",
       label: "Topic 2",
       placeholder: "Enter a topic to base the business idea on",
-    },
-    {
-      type: "text",
-      id: "topicThree",
-      label: "Topic 3",
-      placeholder: "Enter a topic to base the business idea on",
-    },
-    {
-      type: "text",
-      id: "topicFour",
-      label: "Topic 4",
-      placeholder: "Enter a topic to base the business idea on",
+      required: true,
     },
   ],
   prompt: (payload: Record<string, string>) =>
-    `Brainstorm 3 innovative business ideas for that intersect these themes: '${payload.topicOne}', '${payload.topicTwo}', '${payload.topicThree}', '${payload.topicFour}' ensuring they are unique, feasible, and address a clear need or gap in the market.`,
+    `Brainstorm 3 innovative business ideas for that intersect these two themes: '${payload.topicOne}', '${payload.topicTwo}' ensuring they are unique, feasible, and address a clear need or gap in the market.`,
 };
 
 const WebPageCopy: Action = {
