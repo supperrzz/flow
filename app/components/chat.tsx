@@ -497,7 +497,7 @@ export function ChatActions(props: {
 
       <ChatAction
         onClick={() => setShowModelSelector(true)}
-        text={currentModel}
+        text={MODEL_NAMES[currentModel as keyof typeof MODEL_NAMES]}
         icon={<RobotIcon />}
       />
 
