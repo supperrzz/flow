@@ -129,12 +129,12 @@ export default function Document() {
       <div className={styles["document"]}>
         <FullPad />
       </div>
-      {/* <div
+      <div
         className={styles["drag"]}
         onPointerDown={(e) => onDragStart(e as any)}
       >
         <DragIcon />
-      </div> */}
+      </div>
     </>
   );
 }

@@ -305,9 +305,9 @@ export function Select(
         {children}
       </select>
       {props.darkIcon ? (
-        <DownIcon className={styles["select-with-icon-icon"]} />
-      ) : (
         <DarkDownIcon className={styles["select-with-icon-icon"]} />
+      ) : (
+        <DownIcon className={styles["select-with-icon-icon"]} />
       )}
     </div>
   );
