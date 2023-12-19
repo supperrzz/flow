@@ -347,7 +347,7 @@ const en = {
   },
   Store: {
     DefaultTopic: "New Chat",
-    BotHello: "Hello! How can I assist you today?",
+    BotHello: "Hi there, send a message to start chatting.",
     Error: "Something went wrong, please try again later.",
     Prompt: {
       History: (content: string) =>

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { ChatMessage, useAppConfig, useChatStore } from "../store";
+import { ChatMessage, useAppConfig } from "../store";
 import Locale from "../locales";
 import styles from "./exporter.module.scss";
 import {
@@ -33,6 +33,7 @@ import { api } from "../client/api";
 import { prettyObject } from "../utils/format";
 import { EXPORT_MESSAGE_CLASS_NAME } from "../constant";
 import { getClientConfig } from "../config/client";
+import { useChatStore } from "../hooks/useChatSessions";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -142,7 +143,7 @@ export function MessageExporter() {
   }
 
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  const session = chatStore.currentSession;
   const { selection, updateSelection } = useMessageSelector();
   const selectedMessages = useMemo(() => {
     const ret: ChatMessage[] = [];
@@ -401,7 +402,7 @@ export function ImagePreviewer(props: {
   topic: string;
 }) {
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  const session = chatStore.currentSession;
   const mask = session.mask;
   const config = useAppConfig();
 

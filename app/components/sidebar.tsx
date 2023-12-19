@@ -13,7 +13,7 @@ import BotIcon from "../icons/robot.svg";
 import DragIcon from "../icons/drag.svg";
 import ChatIcon from "../icons/chat.svg";
 import Locale from "../locales";
-import { useAccessStore, useAppConfig, useChatStore } from "../store";
+import { useAccessStore, useAppConfig } from "../store";
 
 import {
   DEFAULT_SIDEBAR_WIDTH,
@@ -31,6 +31,7 @@ import { Select, showConfirm, showToast } from "./ui-lib";
 import { useRecoilState } from "recoil";
 import { currentDocumentState, showChatState } from "../state";
 import { Menu } from "./document";
+import { useChatStore } from "../hooks/useChatSessions";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
   loading: () => null,
@@ -277,6 +278,7 @@ export function SideBar(props: { className?: string }) {
             text={shouldNarrow ? undefined : Locale.Home.NewChat}
             onClick={() => {
               if (config.dontShowMaskSplashScreen) {
+                console.log("new session");
                 chatStore.newSession();
                 navigate(Path.Chat);
               } else {

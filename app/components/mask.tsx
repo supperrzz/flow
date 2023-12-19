@@ -23,7 +23,6 @@ import {
   ModelConfig,
   useAccessStore,
   useAppConfig,
-  useChatStore,
 } from "../store";
 import { ROLES } from "../client/api";
 import {
@@ -53,6 +52,7 @@ import {
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
 import { createRoot } from "react-dom/client";
+import { useChatStore } from "../hooks/useChatSessions";
 
 // drag and drop helper function
 function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {

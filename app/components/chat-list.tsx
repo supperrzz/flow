@@ -122,7 +122,6 @@ export function ChatList(props: { narrow?: boolean }) {
     moveSession,
     deleteSession,
   } = useChatStore();
-  // const chatStore = useChatStore();
   const navigate = useNavigate();
 
   const onDragEnd: OnDragEndResponder = (result) => {

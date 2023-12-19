@@ -27,9 +27,9 @@ import { EmojiAvatar } from "./emoji";
 import { IconButton } from "./button";
 import AddIcon from "../icons/add.svg";
 import DownloadIcon from "../icons/download.svg";
-import { useChatStore } from "../store";
 import { useNavigate } from "react-router-dom";
 import { Path } from "../constant";
+import { useChatStore } from "../hooks/useChatSessions";
 
 interface DocumentDefinition {
   watermark?: {

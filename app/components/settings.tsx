@@ -36,7 +36,6 @@ import { ModelConfigList } from "./model-config";
 import { IconButton } from "./button";
 import {
   SubmitKey,
-  useChatStore,
   Theme,
   useUpdateStore,
   useAccessStore,
@@ -72,6 +71,7 @@ import { ProviderType } from "../utils/cloud";
 import { supabase } from "../utils/supabaseClient";
 import { CancelSubscriptionButton, SubscribeButton } from "./StripeButtons";
 import { getUsage } from "../utils/usage";
+import { useChatStore } from "../hooks/useChatSessions";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();

@@ -70,7 +70,9 @@ export function useChatStore() {
   const newSession = useCallback(
     (mask?: Mask) => {
       const session = createEmptySession();
-      // ... setup the session with the mask if provided
+      if (mask) {
+        session.mask = mask;
+      }
       setSessions((prevSessions) => [session, ...prevSessions]);
       setCurrentSessionIndex(0);
     },
@@ -420,11 +422,9 @@ export function useChatStore() {
               return;
             }
             const tokens = countTokens(message);
-            if (session.mask.modelConfig.model !== "gpt-3.5-turbo") {
-              const error = await updateUsage(user.id, tokens);
-              if (error) {
-                console.error("[update usage error]: ", error);
-              }
+            const error = await updateUsage(user.id, tokens);
+            if (error) {
+              console.error("[update usage error]: ", error);
             }
           } catch (error) {
             console.error("Error updating usage:", error);
