@@ -139,6 +139,32 @@ export function selectOrCopy(el: HTMLElement, content: string) {
   return true;
 }
 
+export const handleCopyNodeContent = (selector: string) => {
+  const node = document.querySelector(selector);
+  if (!node) return;
+
+  const range = document.createRange();
+  range.selectNodeContents(node);
+
+  const selection = window.getSelection();
+  if (!selection) return;
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  try {
+    const successful = document.execCommand("copy");
+    const message = successful
+      ? "Text copied to clipboard"
+      : "Failed to copy text to clipboard";
+    console.log(message);
+  } catch (error) {
+    console.error("Error copying text to clipboard:", error);
+  }
+
+  selection.removeAllRanges();
+  showToast(Locale.Copy.Success);
+};
+
 function getDomContentWidth(dom: HTMLElement) {
   const style = window.getComputedStyle(dom);
   const paddingWidth =

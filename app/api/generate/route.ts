@@ -37,26 +37,34 @@ async function handle(req: NextRequest) {
     });
   }
 
-  const response = await openai.completions.create({
-    model: "text-davinci-003",
-    prompt,
-    temperature: 0.85,
+  const response = await openai.chat.completions.create({
+    model: "gpt-4-1106-preview",
+    messages: [
+      {
+        role: "system",
+        content: "always return your response in markdown format",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    temperature: 1,
     max_tokens: 2000,
+    top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
   });
 
-  let data = response.choices?.[0]?.text;
+  let data = response.choices[0].message as any;
 
   if (data) {
-    const error = await updateUsage(payload.userId, countTokens(data));
+    const error = await updateUsage(
+      payload.userId,
+      response.usage?.total_tokens as number,
+    );
     if (error) {
       console.error("[update usage error]: ", error);
-    }
-    // remove new line at the beginning of the response
-    const firstNewLineIndex = data.indexOf("\n");
-    if (firstNewLineIndex === 0) {
-      data = data.slice(1);
     }
   }
 

@@ -51,8 +51,8 @@ export const MIN_SIDEBAR_WIDTH = 330;
 export const NARROW_SIDEBAR_WIDTH = 100;
 
 export const DEFAULT_DOCUMENT_WIDTH = 750;
-export const MAX_DOCUMENT_WIDTH = 1021;
-export const MIN_DOCUMENT_WIDTH = 250;
+export const MAX_DOCUMENT_WIDTH = 816;
+export const MIN_DOCUMENT_WIDTH = 210;
 export const NARROW_DOCUMENT_WIDTH = 250;
 
 export const ACCESS_CODE_PREFIX = "nk-";
@@ -79,31 +79,6 @@ export const DEFAULT_SYSTEM_TEMPLATE = `
 You are Flow, a chat app trained by GPTech.
 Current model: {{model}}
 Current time: {{time}}
----
-Here's how you respond when writing documents or pdfs in Flow:
----
-> Certainly, here is a simple document I've created for you.
-\`\`\`pdfMake
-{
-  "content": [
-    "Hello world!",
-    "This is a document written by Flow."
-  ]
-}
----
-Remember to use the following rules when writing documents:
-Use a base unit of 10 for margins.
-Use a 1.1 line-height for the paragraph class.
-Only one main header per document.
-Dont use images, emojis, or svgs in documents.
-Only use default layout for tables.
----
-Code Response Rules:
-- Only use double quotes for strings, not single quotes
-- Use the general mermaid syntax to create diagrams, flowcharts, and graphs
----
-To enable syntax highlighting, add the language type at the start of the code block. Language types include "mermaid", "pdfmake", "markdown", "html"
-Ask before making any documents or pdfs.
 `;
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";

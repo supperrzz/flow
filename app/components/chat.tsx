@@ -48,6 +48,7 @@ import {
   autoGrowTextArea,
   useMobileScreen,
   markdownToPlainText,
+  handleCopyNodeContent,
 } from "../utils";
 
 import dynamic from "next/dynamic";
@@ -1216,8 +1217,8 @@ function _Chat() {
                                 text={Locale.Chat.Actions.Copy}
                                 icon={<CopyIcon />}
                                 onClick={() =>
-                                  copyToClipboard(
-                                    markdownToPlainText(message.content),
+                                  handleCopyNodeContent(
+                                    `#message-${message.id}`,
                                   )
                                 }
                               />
@@ -1232,7 +1233,10 @@ function _Chat() {
                       {Locale.Chat.Typing}
                     </div>
                   )}
-                  <div className={styles["chat-message-item"]}>
+                  <div
+                    id={`message-${message.id}`}
+                    className={styles["chat-message-item"]}
+                  >
                     <Markdown
                       content={message.content}
                       loading={

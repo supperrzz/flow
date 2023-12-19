@@ -4,12 +4,14 @@ import { getCSSVar } from "@/app/utils";
 import { currentDocumentState } from "@/app/state";
 import { useRecoilValue } from "recoil";
 import { fetchEventSource } from "@fortaine/fetch-event-source";
+import { useAppConfig } from "@/app/store";
 
 export default function App() {
   const themeColor = getCSSVar("--theme");
   const bgColor = getCSSVar("--white");
   const [value, setValue] = useState<string>();
   const storageKey = useRecoilValue(currentDocumentState);
+  const appConfigStore = useAppConfig();
 
   useEffect(() => {
     const data = localStorage.getItem(storageKey as string);
@@ -32,11 +34,14 @@ export default function App() {
         skin: themeColor === "light" ? "oxide" : "oxide-dark",
         content_css: themeColor === "light" ? "light" : "dark",
         content_style: `
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;700;900&display=swap');
           .mce-content-body { 
             background-color: ${bgColor};
+            padding: 40px;
           }
          body {
             font-family: "Noto Sans", sans-serif !important;
+            font-size: ${appConfigStore.fontSize}px;
          } 
         `,
         branding: false,

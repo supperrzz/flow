@@ -19,6 +19,7 @@ import ChatGptIcon from "../icons/chatgpt.svg";
 import CopyIcon from "../icons/copy.svg";
 import ClearIcon from "../icons/clear.svg";
 import LoadingIcon from "../icons/three-dots.svg";
+import ReactMarkdown from "react-markdown";
 
 export default function Generator() {
   const user = useRecoilValue(currentUserState);
@@ -74,7 +75,21 @@ export default function Generator() {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(output.trim());
+    const node = document.querySelector(".output-content");
+    if (!node) return;
+    const html = node.innerHTML;
+    navigator.clipboard
+      .write([
+        new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+        }),
+      ])
+      .then(() => {
+        console.log("Text copied to clipboard");
+      })
+      .catch((error) => {
+        console.error("Failed to copy text to clipboard:", error);
+      });
     setIsCopy(true);
     setTimeout(() => {
       setIsCopy(false);
@@ -100,9 +115,9 @@ export default function Generator() {
           tone,
         }),
       });
-      const output: { result: string } = await response.json();
+      const output = await response.json();
       const { result } = output;
-      setOutput(result);
+      setOutput(result.content);
     } catch (error) {
       console.log(error);
     } finally {
@@ -145,10 +160,11 @@ export default function Generator() {
         {output && (
           <div className={styles["output"]} style={{ marginTop: "20px" }}>
             <div className={loading ? "hidden" : "block"}>
-              <div
-                style={{ whiteSpace: "pre-line", userSelect: "text" }}
-                dangerouslySetInnerHTML={{ __html: output }}
-              />
+              <div>
+                <ReactMarkdown className="output-content">
+                  {output}
+                </ReactMarkdown>
+              </div>
             </div>
             <div>
               <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
