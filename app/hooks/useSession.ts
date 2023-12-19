@@ -2,15 +2,16 @@ import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import { Session } from "@supabase/supabase-js";
 import { useAccessStore } from "../store";
-import { useSetRecoilState } from "recoil";
-import { currentUserState } from "../state";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { currentUserState, sessionState, sessionsAtom } from "../state";
 import Stripe from "stripe";
-import { getUsage } from "../utils/usage";
+import { getSessionsFromDatabase, getUsage } from "../utils/usage";
 
 const useSession = () => {
   const [session, setSession] = useState<Session | null>();
   const [loading, setLoading] = useState(true);
   const setUser = useSetRecoilState(currentUserState);
+  const [sessions, setSessions] = useRecoilState(sessionsAtom);
   const accessStore = useAccessStore();
   const stripe = new Stripe(
     process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string,

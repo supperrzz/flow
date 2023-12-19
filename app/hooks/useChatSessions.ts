@@ -4,6 +4,7 @@ import {
   createEmptySession,
   currentSessionIndexAtom,
   currentSessionSelector,
+  currentUserState,
   sessionsAtom,
 } from "../state";
 import { Mask } from "../store/mask";
@@ -19,7 +20,12 @@ import { api } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { supabase } from "../utils/supabaseClient";
-import { countTokens, updateUsage } from "../utils/usage";
+import {
+  countTokens,
+  saveSessionsToDatabase,
+  updateUsage,
+} from "../utils/usage";
+import { saveSessionsToLocalStorage } from "../state";
 
 function getSummarizeModel(currentModel: string) {
   // if it is using gpt-* models, force to use 3.5 to summarize
@@ -50,6 +56,7 @@ function fillTemplateWith(input: string, modelConfig: ModelConfig) {
 }
 export function useChatStore() {
   const [sessions, setSessions] = useRecoilState(sessionsAtom);
+  const currentUser = useRecoilValue(currentUserState);
   const [currentSessionIndex, setCurrentSessionIndex] = useRecoilState(
     currentSessionIndexAtom,
   );
@@ -78,6 +85,16 @@ export function useChatStore() {
     },
     [setSessions, setCurrentSessionIndex],
   );
+
+  const saveSessions = useCallback(() => {
+    console.log("[Save sessions] ", sessions);
+    saveSessionsToLocalStorage(sessions);
+    if (currentUser) {
+      saveSessionsToDatabase(currentUser.id, sessions);
+    } else {
+      console.error("No user found, cannot save sessions to database");
+    }
+  }, [sessions, currentUser]);
 
   const deleteSession = useCallback(
     (index: number) => {
@@ -442,6 +459,7 @@ export function useChatStore() {
             };
             await updateCurrentSession(updatedSession);
             summarizeSession(updatedSession);
+            saveSessions();
           }
           ChatControllerPool.remove(session.id, updatedBotMessage.id);
         },

@@ -1,6 +1,12 @@
 import Stripe from "stripe";
 import { FREE_MONTHLY_USAGE, MAX_MONTHLY_USAGE } from "../constant";
 import { supabase } from "./supabaseClient";
+// @ts-ignore
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { ChatSession, createEmptySession } from "../store";
+
+// @ts-ignore
+
 export function countWords(text: string) {
   return text.trim().split(/\s+/).length;
 }
@@ -129,4 +135,57 @@ export const getUsage = async (userId: string) => {
   }
 
   return usageData[0]?.monthly_usage || 0;
+};
+
+// create table
+//   public.chat_sessions (
+//     id uuid not null default uuid_generate_v4 (),
+//     user_id uuid null,
+//     session_data jsonb not null,
+//     created_at timestamp with time zone null default current_timestamp,
+//     updated_at timestamp with time zone null default current_timestamp,
+//     constraint chat_sessions_pkey primary key (id),
+//     constraint chat_sessions_user_id_fkey foreign key (user_id) references auth.users (id) on delete set null
+//   ) tablespace pg_default;
+
+export const saveSessionsToDatabase = async (
+  userId: string,
+  sessions: ChatSession[],
+) => {
+  console.log("[saveSessionsToDatabase]: ", userId, sessions);
+  const supabaseClient = createClientComponentClient();
+  const { error } = await supabaseClient.from("chat_sessions").upsert(
+    {
+      user_id: userId,
+      session_data: sessions,
+      updated_at: new Date(),
+    },
+    {
+      onConflict: "user_id",
+    },
+  );
+
+  if (error) {
+    console.error("Error saving sessions to database:", error);
+    return error;
+  }
+};
+
+export const getSessionsFromDatabase = async (userId: string) => {
+  console.log("[getSessionsFromDatabase]: ", userId);
+  const { data, error } = await supabase
+    .from("chat_sessions")
+    .select("session_data")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error retrieving user sessions:", error);
+    return error;
+  }
+
+  if (data.length === 0) {
+    return [createEmptySession()];
+  }
+
+  return data[0]?.session_data || [];
 };

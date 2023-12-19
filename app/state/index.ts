@@ -97,10 +97,22 @@ export function createEmptySession(): ChatSession {
   };
 }
 
+const LOCAL_STORAGE_KEY = "flow-sessions";
+export function loadSessionsFromLocalStorage(): ChatSession[] {
+  const sessions: ChatSession[] = JSON.parse(
+    localStorage.getItem(LOCAL_STORAGE_KEY) || "[]",
+  );
+  return sessions;
+}
+
+export function saveSessionsToLocalStorage(sessions: ChatSession[]) {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sessions));
+}
+
 // Define atoms
 export const sessionsAtom = atom<ChatSession[]>({
   key: "sessions",
-  default: [...sampleSessions],
+  default: loadSessionsFromLocalStorage() || sampleSessions,
 });
 
 export const currentSessionIndexAtom = atom<number>({
