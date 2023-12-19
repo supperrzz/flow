@@ -32,7 +32,6 @@ import ChatGptIcon from "../icons/chatgpt.svg";
 import {
   ChatMessage,
   SubmitKey,
-  useChatStore,
   BOT_HELLO,
   createMessage,
   useAccessStore,
@@ -85,6 +84,7 @@ import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
+import { useChatStore } from "../hooks/useChatSessions";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -92,10 +92,9 @@ const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
 
 export function SessionConfigModel(props: { onClose: () => void }) {
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  const session = chatStore.currentSession;
   const maskStore = useMaskStore();
   const navigate = useNavigate();
-
   return (
     <div className="modal-mask">
       <Modal
@@ -109,9 +108,10 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             text={Locale.Chat.Config.Reset}
             onClick={async () => {
               if (await showConfirm(Locale.Memory.ResetConfirm)) {
-                chatStore.updateCurrentSession(
-                  (session) => (session.memoryPrompt = ""),
-                );
+                chatStore.updateCurrentSession({
+                  ...session,
+                  memoryPrompt: "",
+                });
               }
             }}
           />,
@@ -141,7 +141,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
           updateMask={(updater) => {
             const mask = { ...session.mask };
             updater(mask);
-            chatStore.updateCurrentSession((session) => (session.mask = mask));
+            chatStore.updateCurrentSession({ ...session, mask: mask });
           }}
           shouldSyncFromGlobal
           extraListItems={
@@ -164,7 +164,7 @@ function PromptToast(props: {
   setShowModal: (_: boolean) => void;
 }) {
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  const session = chatStore.currentSession;
   const context = session.mask.context;
 
   return (
@@ -313,9 +313,10 @@ function ClearContextDivider() {
     <div
       className={styles["clear-context"]}
       onClick={() =>
-        chatStore.updateCurrentSession(
-          (session) => (session.clearContextIndex = undefined),
-        )
+        chatStore.updateCurrentSession({
+          ...chatStore.currentSession,
+          clearContextIndex: undefined,
+        })
       }
     >
       <div className={styles["clear-context-tips"]}>{Locale.Context.Clear}</div>
@@ -431,7 +432,7 @@ export function ChatActions(props: {
   const stopAll = () => ChatControllerPool.stopAll();
 
   // switch model
-  const currentModel = chatStore.currentSession().mask.modelConfig.model;
+  const currentModel = chatStore.currentSession.mask.modelConfig.model;
   const [showModelSelector, setShowModelSelector] = useState(false);
   const { isSubscribed } = accessStore;
   const models = useMemo(() => {
@@ -511,9 +512,16 @@ export function ChatActions(props: {
           onClose={() => setShowModelSelector(false)}
           onSelection={(s) => {
             if (s.length === 0) return;
-            chatStore.updateCurrentSession((session) => {
-              session.mask.modelConfig.model = s[0] as ModelType;
-              session.mask.syncGlobalConfig = false;
+            chatStore.updateCurrentSession({
+              ...chatStore.currentSession,
+              mask: {
+                ...chatStore.currentSession.mask,
+                syncGlobalConfig: false,
+                modelConfig: {
+                  ...chatStore.currentSession.mask.modelConfig,
+                  model: s[0] as ModelType,
+                },
+              },
             });
             showToast(MODEL_NAMES[s[0] as keyof typeof MODEL_NAMES]);
           }}
@@ -525,7 +533,7 @@ export function ChatActions(props: {
 
 export function EditMessageModal(props: { onClose: () => void }) {
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  const session = chatStore.currentSession;
   const [messages, setMessages] = useState(session.messages.slice());
 
   return (
@@ -548,9 +556,10 @@ export function EditMessageModal(props: { onClose: () => void }) {
             icon={<ConfirmIcon />}
             key="ok"
             onClick={() => {
-              chatStore.updateCurrentSession(
-                (session) => (session.messages = messages),
-              );
+              chatStore.updateCurrentSession({
+                ...session,
+                messages: messages,
+              });
               props.onClose();
             }}
           />,
@@ -565,9 +574,10 @@ export function EditMessageModal(props: { onClose: () => void }) {
               type="text"
               value={session.topic}
               onInput={(e) =>
-                chatStore.updateCurrentSession(
-                  (session) => (session.topic = e.currentTarget.value),
-                )
+                chatStore.updateCurrentSession({
+                  ...session,
+                  topic: e.currentTarget.value,
+                })
               }
             ></input>
           </ListItem>
@@ -589,7 +599,7 @@ function _Chat() {
   type RenderMessage = ChatMessage & { preview?: boolean };
 
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  const session = chatStore.currentSession;
   const config = useAppConfig();
   const fontSize = config.fontSize;
 
@@ -644,9 +654,10 @@ function _Chat() {
     prev: () => chatStore.nextSession(-1),
     next: () => chatStore.nextSession(1),
     clear: () =>
-      chatStore.updateCurrentSession(
-        (session) => (session.clearContextIndex = session.messages.length),
-      ),
+      chatStore.updateCurrentSession({
+        ...chatStore.currentSession,
+        clearContextIndex: session.messages.length,
+      }),
     del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
   });
 
@@ -711,31 +722,35 @@ function _Chat() {
   };
 
   useEffect(() => {
-    chatStore.updateCurrentSession((session) => {
-      const stopTiming = Date.now() - REQUEST_TIMEOUT_MS;
-      session.messages.forEach((m) => {
-        // check if should stop all stale messages
-        if (m.isError || new Date(m.date).getTime() < stopTiming) {
-          if (m.streaming) {
-            m.streaming = false;
-          }
-
-          if (m.content.length === 0) {
-            m.isError = true;
-            m.content = prettyObject({
-              error: true,
-              message: "empty response",
-            });
-          }
+    const stopTiming = Date.now() - REQUEST_TIMEOUT_MS;
+    const updatedMessages = session.messages.map((m) => {
+      // check if should stop all stale messages
+      if (m.isError || new Date(m.date).getTime() < stopTiming) {
+        if (m.streaming) {
+          m.streaming = false;
         }
-      });
 
-      // auto sync mask config from global config
-      if (session.mask.syncGlobalConfig) {
-        console.log("[Mask] syncing from global, name = ", session.mask.name);
-        session.mask.modelConfig = { ...config.modelConfig };
+        if (m.content.length === 0) {
+          m.isError = true;
+          m.content = prettyObject({
+            error: true,
+            message: "empty response",
+          });
+        }
       }
+      return m;
     });
+
+    // Create a new session object with updated properties
+    const updatedSession = {
+      ...session,
+      messages: updatedMessages,
+      mask: {
+        ...session.mask,
+        modelConfig: { ...config.modelConfig },
+      },
+    };
+    chatStore.updateCurrentSession(updatedSession);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -769,10 +784,10 @@ function _Chat() {
   };
 
   const deleteMessage = (msgId?: string) => {
-    chatStore.updateCurrentSession(
-      (session) =>
-        (session.messages = session.messages.filter((m) => m.id !== msgId)),
-    );
+    chatStore.updateCurrentSession({
+      ...session,
+      messages: session.messages.filter((m) => m.id !== msgId),
+    });
   };
 
   const onDelete = (msgId: string) => {
@@ -834,9 +849,16 @@ function _Chat() {
   };
 
   const onPinMessage = (message: ChatMessage) => {
-    chatStore.updateCurrentSession((session) =>
-      session.mask.context.push(message),
-    );
+    chatStore.updateCurrentSession({
+      ...session,
+      mask: {
+        ...session.mask,
+        context: {
+          ...session.mask.context,
+          ...message,
+        },
+      },
+    });
 
     showToast(Locale.Chat.Actions.PinToastContent, {
       text: Locale.Chat.Actions.PinToastAction,
@@ -1138,13 +1160,14 @@ function _Chat() {
                                 message.content,
                                 10,
                               );
-                              chatStore.updateCurrentSession((session) => {
-                                const m = session.mask.context
-                                  .concat(session.messages)
-                                  .find((m) => m.id === message.id);
-                                if (m) {
-                                  m.content = newMessage;
-                                }
+                              chatStore.updateCurrentSession({
+                                ...session,
+                                messages: session.messages.map((m) => {
+                                  if (m.id === message.id) {
+                                    return { ...m, content: newMessage };
+                                  }
+                                  return m;
+                                }),
                               });
                             }}
                           ></IconButton>

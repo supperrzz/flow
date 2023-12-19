@@ -9,7 +9,7 @@ import {
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
 
-import { useChatStore } from "../store";
+// import { useChatStore } from "../store";
 
 import Locale from "../locales";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,7 @@ import { MaskAvatar } from "./mask";
 import { Mask } from "../store/mask";
 import { useRef, useEffect } from "react";
 import { showConfirm } from "./ui-lib";
+import { useChatStore } from "../hooks/useChatSessions";
 
 export function ChatItem(props: {
   onClick?: () => void;
@@ -114,15 +115,14 @@ export function ChatItem(props: {
 }
 
 export function ChatList(props: { narrow?: boolean }) {
-  const [sessions, selectedIndex, selectSession, moveSession] = useChatStore(
-    (state) => [
-      state.sessions,
-      state.currentSessionIndex,
-      state.selectSession,
-      state.moveSession,
-    ],
-  );
-  const chatStore = useChatStore();
+  const {
+    sessions,
+    currentSessionIndex,
+    selectSession,
+    moveSession,
+    deleteSession,
+  } = useChatStore();
+  // const chatStore = useChatStore();
   const navigate = useNavigate();
 
   const onDragEnd: OnDragEndResponder = (result) => {
@@ -158,7 +158,7 @@ export function ChatList(props: { narrow?: boolean }) {
                 key={item.id}
                 id={item.id}
                 index={i}
-                selected={i === selectedIndex}
+                selected={i === currentSessionIndex}
                 onClick={() => {
                   navigate(Path.Chat);
                   selectSession(i);
@@ -168,7 +168,7 @@ export function ChatList(props: { narrow?: boolean }) {
                     !props.narrow ||
                     (await showConfirm(Locale.Home.DeleteChat))
                   ) {
-                    chatStore.deleteSession(i);
+                    deleteSession(i);
                   }
                 }}
                 narrow={props.narrow}
