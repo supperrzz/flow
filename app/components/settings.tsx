@@ -264,6 +264,7 @@ function DangerItems({
 }) {
   const chatStore = useChatStore();
   const appConfig = useAppConfig();
+  const syncStore = useSyncStore();
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -289,6 +290,7 @@ function DangerItems({
           onClick={async () => {
             if (await showConfirm(Locale.Settings.Danger.Reset.Confirm)) {
               appConfig.reset();
+              syncStore.reset();
               window.location.reload();
             }
           }}

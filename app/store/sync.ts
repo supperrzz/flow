@@ -24,7 +24,7 @@ export type SyncStore = GetStoreState<typeof useSyncStore>;
 const DEFAULT_SYNC_STATE = {
   provider: ProviderType.Supabase,
   useProxy: true,
-  proxyUrl: corsPath(ApiPath.Cors),
+  proxyUrl: "",
 
   webdav: {
     endpoint: "",
@@ -128,6 +128,10 @@ export const useSyncStore = createPersistStore(
     async check() {
       const client = this.getClient();
       return await client.check();
+    },
+
+    reset() {
+      set(DEFAULT_SYNC_STATE);
     },
   }),
   {
