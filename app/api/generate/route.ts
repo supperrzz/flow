@@ -2,9 +2,11 @@ import { renderPrompt } from "@/app/utils-2";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import Locale from "../../locales";
-import { countTokens, updateUsage, usageLimitCheck } from "@/app/utils/usage";
+import { updateUsage, usageLimitCheck } from "@/app/utils/usage";
 
-const openai = new OpenAI();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 async function handle(req: NextRequest) {
   // Parse the JSON body from the request
@@ -79,3 +81,4 @@ async function handle(req: NextRequest) {
 }
 
 export const POST = handle;
+export const runtime = "edge";
