@@ -16,15 +16,15 @@ async function handle(req: NextRequest) {
   `;
   prompt = prompt + systemPrompt;
 
-  const moderation = await openai.moderations.create({
-    input: prompt,
-  });
+  // const moderation = await openai.moderations.create({
+  //   input: prompt,
+  // });
 
-  console.log("[moderation check]: ", moderation.results[0].flagged);
-  if (moderation.results[0].flagged) {
-    // return error
-    return NextResponse.error();
-  }
+  // console.log("[moderation check]: ", moderation.results[0].flagged);
+  // if (moderation.results[0].flagged) {
+  //   // return error
+  //   return NextResponse.error();
+  // }
 
   const usageLimit = await usageLimitCheck(payload.userId, payload.userEmail);
   console.log("[usage limit check]: ", usageLimit);
@@ -72,12 +72,10 @@ async function handle(req: NextRequest) {
 
   // Respond with a JSON object that includes the parsed parameters
   return NextResponse.json({
-    moderation,
+    // moderation,
     params: { key, payload, tone },
     result: data,
   });
 }
 
 export const POST = handle;
-
-export const runtime = "edge";
