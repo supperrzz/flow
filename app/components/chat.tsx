@@ -85,6 +85,7 @@ import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
+import { useSyncStore } from "../store/sync";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -94,6 +95,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
   const chatStore = useChatStore();
   const session = chatStore.currentSession();
   const maskStore = useMaskStore();
+  const syncStore = useSyncStore();
   const navigate = useNavigate();
 
   return (
@@ -112,6 +114,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
                 chatStore.updateCurrentSession(
                   (session) => (session.memoryPrompt = ""),
                 );
+                syncStore.saveToRemote();
               }
             }}
           />,
@@ -142,6 +145,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             const mask = { ...session.mask };
             updater(mask);
             chatStore.updateCurrentSession((session) => (session.mask = mask));
+            syncStore.saveToRemote();
           }}
           shouldSyncFromGlobal
           extraListItems={
@@ -308,15 +312,17 @@ export function PromptHints(props: {
 
 function ClearContextDivider() {
   const chatStore = useChatStore();
+  const syncStore = useSyncStore();
 
   return (
     <div
       className={styles["clear-context"]}
-      onClick={() =>
+      onClick={() => {
         chatStore.updateCurrentSession(
           (session) => (session.clearContextIndex = undefined),
-        )
-      }
+        );
+        syncStore.saveToRemote();
+      }}
     >
       <div className={styles["clear-context-tips"]}>{Locale.Context.Clear}</div>
       <div className={styles["clear-context-revert-btn"]}>
@@ -433,6 +439,7 @@ export function ChatActions(props: {
   // switch model
   const currentModel = chatStore.currentSession().mask.modelConfig.model;
   const [showModelSelector, setShowModelSelector] = useState(false);
+  const syncStore = useSyncStore();
   const { isSubscribed } = accessStore;
   const models = useMemo(() => {
     if (isSubscribed as boolean) {
@@ -515,6 +522,7 @@ export function ChatActions(props: {
               session.mask.modelConfig.model = s[0] as ModelType;
               session.mask.syncGlobalConfig = false;
             });
+            syncStore.saveToRemote();
             showToast(MODEL_NAMES[s[0] as keyof typeof MODEL_NAMES]);
           }}
         />
@@ -525,6 +533,7 @@ export function ChatActions(props: {
 
 export function EditMessageModal(props: { onClose: () => void }) {
   const chatStore = useChatStore();
+  const syncStore = useSyncStore();
   const session = chatStore.currentSession();
   const [messages, setMessages] = useState(session.messages.slice());
 
@@ -551,6 +560,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
               chatStore.updateCurrentSession(
                 (session) => (session.messages = messages),
               );
+              syncStore.saveToRemote();
               props.onClose();
             }}
           />,
@@ -564,11 +574,12 @@ export function EditMessageModal(props: { onClose: () => void }) {
             <input
               type="text"
               value={session.topic}
-              onInput={(e) =>
+              onInput={(e) => {
                 chatStore.updateCurrentSession(
                   (session) => (session.topic = e.currentTarget.value),
-                )
-              }
+                );
+                syncStore.saveToRemote();
+              }}
             ></input>
           </ListItem>
         </List>
@@ -586,6 +597,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
 }
 
 function _Chat() {
+  const syncStore = useSyncStore();
   type RenderMessage = ChatMessage & { preview?: boolean };
 
   const chatStore = useChatStore();
@@ -643,11 +655,16 @@ function _Chat() {
     newm: () => navigate(Path.NewChat),
     prev: () => chatStore.nextSession(-1),
     next: () => chatStore.nextSession(1),
-    clear: () =>
+    clear: () => {
       chatStore.updateCurrentSession(
         (session) => (session.clearContextIndex = session.messages.length),
-      ),
-    del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
+      );
+      syncStore.saveToRemote();
+    },
+    del: () => {
+      chatStore.deleteSession(chatStore.currentSessionIndex);
+      syncStore.saveToRemote();
+    },
   });
 
   // only search prompts when user input is short
@@ -773,6 +790,7 @@ function _Chat() {
       (session) =>
         (session.messages = session.messages.filter((m) => m.id !== msgId)),
     );
+    syncStore.saveToRemote();
   };
 
   const onDelete = (msgId: string) => {
@@ -837,6 +855,8 @@ function _Chat() {
     chatStore.updateCurrentSession((session) =>
       session.mask.context.push(message),
     );
+
+    syncStore.saveToRemote();
 
     showToast(Locale.Chat.Actions.PinToastContent, {
       text: Locale.Chat.Actions.PinToastAction,
@@ -1146,6 +1166,7 @@ function _Chat() {
                                   m.content = newMessage;
                                 }
                               });
+                              syncStore.saveToRemote();
                             }}
                           ></IconButton>
                         )}

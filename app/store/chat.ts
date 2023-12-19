@@ -22,6 +22,7 @@ import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
 import { countTokens, countWords, updateUsage } from "../utils/usage";
 import { supabase } from "../utils/supabaseClient";
+import { useSyncStore } from "./sync";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -165,6 +166,7 @@ export const useChatStore = createPersistStore(
           sessions: [createEmptySession()],
           currentSessionIndex: 0,
         }));
+        useSyncStore.getState().saveToRemote();
       },
 
       selectSession(index: number) {
@@ -196,6 +198,7 @@ export const useChatStore = createPersistStore(
             sessions: newSessions,
           };
         });
+        useSyncStore.getState().saveToRemote();
       },
 
       newSession(mask?: Mask) {
@@ -259,6 +262,8 @@ export const useChatStore = createPersistStore(
           sessions,
         }));
 
+        useSyncStore.getState().saveToRemote();
+
         showToast(
           Locale.Home.DeleteToast,
           {
@@ -291,6 +296,7 @@ export const useChatStore = createPersistStore(
           session.lastUpdate = Date.now();
         });
         get().updateStat(message);
+        useSyncStore.getState().saveToRemote();
         get().summarizeSession();
       },
 
@@ -528,6 +534,7 @@ export const useChatStore = createPersistStore(
           session.messages = [];
           session.memoryPrompt = "";
         });
+        useSyncStore.getState().saveToRemote();
       },
 
       summarizeSession() {
@@ -646,6 +653,7 @@ export const useChatStore = createPersistStore(
 
       clearAllData() {
         localStorage.clear();
+        useSyncStore.getState().saveToRemote();
         location.reload();
       },
     };

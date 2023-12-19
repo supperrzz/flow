@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 
 import styles from "./settings.module.scss";
 
-import ResetIcon from "../icons/reload.svg";
+import ResetIcon from "../icons/upload.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
 import CopyIcon from "../icons/copy.svg";
@@ -551,31 +551,29 @@ function SyncItems() {
   return (
     <>
       <List>
-        {/* <ListItem
+        <ListItem
           title={Locale.Settings.Sync.CloudState}
           subTitle={
             syncStore.lastProvider
-              ? `${new Date(syncStore.lastSyncTime).toLocaleString()} [${
-                  syncStore.lastProvider
-                }]`
+              ? new Date(syncStore.lastSyncTime).toLocaleString()
               : Locale.Settings.Sync.NotSyncYet
           }
         >
           <div style={{ display: "flex" }}>
-            <IconButton
+            {/* <IconButton
               icon={<ConfigIcon />}
               text={Locale.UI.Config}
               onClick={() => {
                 setShowSyncConfigModal(true);
               }}
-            />
-            {couldSync && (
+            /> */}
+            {!couldSync && (
               <IconButton
                 icon={<ResetIcon />}
                 text={Locale.UI.Sync}
                 onClick={async () => {
                   try {
-                    await syncStore.sync();
+                    await syncStore.saveToRemote();
                     showToast(Locale.Settings.Sync.Success);
                   } catch (e) {
                     showToast(Locale.Settings.Sync.Fail);
@@ -585,7 +583,7 @@ function SyncItems() {
               />
             )}
           </div>
-        </ListItem> */}
+        </ListItem>
 
         <ListItem
           title={Locale.Settings.Sync.LocalState}

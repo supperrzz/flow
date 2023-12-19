@@ -4,6 +4,7 @@ import Locale from "../locales";
 import { InputRange } from "./input-range";
 import { Input, ListItem, Select } from "./ui-lib";
 import { MODEL_NAMES } from "../constant";
+import { useSyncStore } from "../store/sync";
 
 export function ModelConfigList(props: {
   modelConfig: ModelConfig;
@@ -12,6 +13,7 @@ export function ModelConfigList(props: {
   isSubscribed: boolean;
 }) {
   const config = useAppConfig();
+  const syncStore = useSyncStore();
 
   return (
     <>
@@ -57,6 +59,7 @@ export function ModelConfigList(props: {
             props.updateConfig(
               (config) => (config.systemPrompt = e.currentTarget.value),
             );
+            syncStore.saveToRemote();
           }}
         />
       </ListItem>

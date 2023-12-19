@@ -195,10 +195,10 @@ const en = {
       SubTitle: "Generate a suitable title based on the conversation content",
     },
     Sync: {
-      CloudState: "Last Update",
-      NotSyncYet: "Not sync yet",
-      Success: "Sync Success",
-      Fail: "Sync Fail",
+      CloudState: "Last Save",
+      NotSyncYet: "Not saved yet",
+      Success: "Save Success",
+      Fail: "Save Fail",
 
       Config: {
         Modal: {
@@ -435,7 +435,7 @@ const en = {
     Edit: "Edit",
     Export: "Export",
     Import: "Import",
-    Sync: "Sync",
+    Sync: "Save Now",
     Config: "Config",
   },
   Exporter: {

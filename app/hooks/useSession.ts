@@ -6,12 +6,14 @@ import { useSetRecoilState } from "recoil";
 import { currentUserState } from "../state";
 import Stripe from "stripe";
 import { getUsage } from "../utils/usage";
+import { useSyncStore } from "../store/sync";
 
 const useSession = () => {
   const [session, setSession] = useState<Session | null>();
   const [loading, setLoading] = useState(true);
   const setUser = useSetRecoilState(currentUserState);
   const accessStore = useAccessStore();
+  const syncStore = useSyncStore();
   const stripe = new Stripe(
     process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string,
   );
@@ -60,6 +62,7 @@ const useSession = () => {
       if (mounted) {
         if (session) {
           setSession(session);
+          syncStore.sync();
         }
         setLoading(false);
       }
