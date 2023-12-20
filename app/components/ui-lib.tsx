@@ -293,7 +293,7 @@ export function Select(
     darkIcon?: boolean;
   },
 ) {
-  const { className, children, ...otherProps } = props;
+  const { className, children, darkIcon, ...otherProps } = props;
   return (
     <div className={`${styles["select-with-icon"]} ${className}`}>
       <select
@@ -304,7 +304,7 @@ export function Select(
       >
         {children}
       </select>
-      {props.darkIcon ? (
+      {darkIcon ? (
         <DarkDownIcon className={styles["select-with-icon-icon"]} />
       ) : (
         <DownIcon className={styles["select-with-icon-icon"]} />

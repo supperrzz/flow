@@ -79,6 +79,12 @@
     font-size: 14px;
     line-height: 1.6;
   }
+  .output-content {
+    // first element not getting margin-top
+    & > *:first-child {
+      margin-top: 0;
+    }
+  }
 }
 
 .document {

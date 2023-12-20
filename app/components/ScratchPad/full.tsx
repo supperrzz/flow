@@ -10,6 +10,7 @@ import { Selector, showToast } from "../ui-lib";
 export default function App() {
   const themeColor = getCSSVar("--theme");
   const bgColor = getCSSVar("--white");
+  const textColor = getCSSVar("--black");
   const [value, setValue] = useState<string>();
   const storageKey = useRecoilValue(currentDocumentState);
   const appConfigStore = useAppConfig();
@@ -59,6 +60,7 @@ export default function App() {
             .mce-content-body { 
               background-color: ${bgColor};
               padding: 10px 30px;
+              color: ${textColor};
             }
           body {
               font-family: "Noto Sans", sans-serif !important;
@@ -165,7 +167,7 @@ export default function App() {
           items={[
             ...documents.map((m) => ({
               title:
-                m === NEW_DOC_KEY ? "New Document" : m.replace("document-", ""),
+                m === NEW_DOC_KEY ? "Scratch Pad" : m.replace("document-", ""),
               value: m,
             })),
             {

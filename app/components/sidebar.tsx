@@ -77,7 +77,7 @@ const DocumentSelector = () => {
         className={styles["document-selector"]}
         value={document}
         onChange={(e) => setDocument(e.target.value)}
-        darkIcon
+        darkIcon={true}
       >
         {documents.map((doc) => {
           const documentName = doc.replace("document-", "");
