@@ -32,6 +32,10 @@ import useSession from "../hooks/useSession";
 import { RecoilRoot, useRecoilValue } from "recoil";
 import { showChatState } from "../state";
 
+const FullPad = dynamic(() => import("../components/ScratchPad/full"), {
+  ssr: false,
+});
+
 export function Loading(props: { noLogo?: boolean }) {
   return (
     <div className={styles["loading-content"] + " no-dark"}>
@@ -178,6 +182,9 @@ function Screen() {
           ) : (
             <Document />
           )}
+          <div style={{ width: "800px" }}>
+            {showChat && <FullPad chat={true} />}
+          </div>
         </>
       )}
     </div>

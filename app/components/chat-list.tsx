@@ -18,6 +18,8 @@ import { MaskAvatar } from "./mask";
 import { Mask } from "../store/mask";
 import { useRef, useEffect } from "react";
 import { showConfirm } from "./ui-lib";
+import { currentChatDocumentState } from "../state";
+import { useSetRecoilState } from "recoil";
 
 export function ChatItem(props: {
   onClick?: () => void;
@@ -141,6 +143,7 @@ export function ChatList(props: { narrow?: boolean }) {
     moveSession(source.index, destination.index);
   };
 
+  const setDocument = useSetRecoilState(currentChatDocumentState);
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="chat-list">
@@ -162,6 +165,7 @@ export function ChatList(props: { narrow?: boolean }) {
                 onClick={() => {
                   navigate(Path.Chat);
                   selectSession(i);
+                  setDocument(`scratchPad-${item.id}`);
                 }}
                 onDelete={async () => {
                   if (
@@ -169,6 +173,7 @@ export function ChatList(props: { narrow?: boolean }) {
                     (await showConfirm(Locale.Home.DeleteChat))
                   ) {
                     chatStore.deleteSession(i);
+                    localStorage.removeItem(`scratchPad-${item.id}`);
                   }
                 }}
                 narrow={props.narrow}

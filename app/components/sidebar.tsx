@@ -29,7 +29,11 @@ import { useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
 import { Select, showConfirm, showToast } from "./ui-lib";
 import { useRecoilState } from "recoil";
-import { currentDocumentState, showChatState } from "../state";
+import {
+  currentChatDocumentState,
+  currentDocumentState,
+  showChatState,
+} from "../state";
 import { Menu } from "./document";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
@@ -220,6 +224,7 @@ export function SideBar(props: { className?: string }) {
   const isMobileScreen = useMobileScreen();
   const accessStore = useAccessStore();
   const { isSubscribed } = accessStore;
+  const [document, setDocument] = useRecoilState(currentChatDocumentState);
 
   // drag side bar
   const { onDragStart, shouldNarrow } = useDragSideBar();
@@ -275,9 +280,14 @@ export function SideBar(props: { className?: string }) {
           <IconButton
             icon={<AddIcon />}
             text={shouldNarrow ? undefined : Locale.Home.NewChat}
-            onClick={() => {
+            onClick={async () => {
               if (config.dontShowMaskSplashScreen) {
                 chatStore.newSession();
+                localStorage.setItem(
+                  `scratchPad-${chatStore.currentSession().id}`,
+                  "Start typing here...",
+                );
+                setDocument(`scratchPad-${chatStore.currentSession().id}`);
                 navigate(Path.Chat);
               } else {
                 navigate(Path.NewChat);

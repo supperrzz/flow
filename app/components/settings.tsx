@@ -622,6 +622,7 @@ export function Settings() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const config = useAppConfig();
   const updateConfig = config.update;
+  const syncStore = useSyncStore();
 
   const [usage, setUsage] = useState(null);
   const [loadingUsage, setLoadingUsage] = useState(false);
@@ -819,6 +820,7 @@ export function Settings() {
                 updateConfig(
                   (config) => (config.theme = e.target.value as any as Theme),
                 );
+                syncStore.saveToRemote();
               }}
             >
               {Object.values(Theme).map((v) => (

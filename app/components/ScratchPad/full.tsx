@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { getCSSVar } from "@/app/utils";
-import { currentDocumentState } from "@/app/state";
+import { currentChatDocumentState, currentDocumentState } from "@/app/state";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useAppConfig } from "@/app/store";
 import { NEW_DOC_KEY } from "@/app/constant";
 import { Selector, showToast } from "../ui-lib";
 
-export default function App() {
+export default function App({ chat }: { chat?: boolean }) {
   const themeColor = getCSSVar("--theme");
   const bgColor = getCSSVar("--white");
   const textColor = getCSSVar("--black");
   const [value, setValue] = useState<string>();
-  const storageKey = useRecoilValue(currentDocumentState);
+  const state = chat ? currentChatDocumentState : currentDocumentState;
+  const storageKey = useRecoilValue(state);
   const appConfigStore = useAppConfig();
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function App() {
     }
     setDocuments(docs);
   }, []);
-  const [document, setDocument] = useRecoilState(currentDocumentState);
+  const [document, setDocument] = useRecoilState(state);
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -52,7 +53,7 @@ export default function App() {
           plugins:
             "fullscreen autolink charmap emoticons image link lists media searchreplace table wordcount",
           toolbar:
-            "selectDocument deleteDocument print | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+            "fullscreen selectDocument deleteDocument print | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
           skin: themeColor === "light" ? "oxide" : "oxide-dark",
           content_css: themeColor === "light" ? "light" : "dark",
           content_style: `

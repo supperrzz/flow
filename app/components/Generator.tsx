@@ -262,7 +262,9 @@ export default function Generator() {
           <div className={styles["output"]} style={{ marginTop: "20px" }}>
             <div className={loading ? "hidden" : "block"}>
               <div>
-                <ReactMarkdown className={styles["output-content"]}>
+                <ReactMarkdown
+                  className={`${styles["output-content"]} output-content`}
+                >
                   {output}
                 </ReactMarkdown>
               </div>
@@ -270,6 +272,7 @@ export default function Generator() {
             <div>
               <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
                 <IconButton
+                  disabled={!loading}
                   icon={<StopIcon />}
                   onClick={stopStream}
                   text="Stop"

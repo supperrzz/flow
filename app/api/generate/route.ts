@@ -33,7 +33,10 @@ const handle = async (req: Request): Promise<Response> => {
   console.log("[prompt]: ", prompt);
   const reqPayload: OpenAIStreamPayload = {
     model: "gpt-4-1106-preview",
-    messages: [{ role: "user", content: prompt }],
+    messages: [
+      { role: "system", content: "Always return your response in markdown" },
+      { role: "user", content: prompt },
+    ],
     temperature: 0.7,
     top_p: 1,
     frequency_penalty: 0,

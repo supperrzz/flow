@@ -18,6 +18,7 @@ const Category = ({ category }: { category: string }) => {
             return;
           }
           setActiveMenu(category);
+          setAction(Object.values(ACTIONS[category])[0].name);
         }}
         className={styles["category"]}
       >
