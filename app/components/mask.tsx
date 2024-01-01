@@ -467,9 +467,11 @@ export function MaskPage() {
   const [searchMasks, setSearchMasks] = useState<Mask[]>([]);
   const [searchText, setSearchText] = useState("");
   const masksquery = searchText.length > 0 ? searchMasks : allMasks;
+  const userMasks = masksquery.filter((m) => !m.builtin);
+  const builtinMasks = masksquery.filter((m) => m.builtin);
   // sort by date most recent
-  const masks = masksquery.sort((a, b) => b.createdAt - a.createdAt);
-
+  const sortedUserMasks = userMasks.sort((a, b) => b.createdAt - a.createdAt);
+  const masks = [...sortedUserMasks, ...builtinMasks];
   // simple search, will refactor later
   const onSearch = (text: string) => {
     setSearchText(text);

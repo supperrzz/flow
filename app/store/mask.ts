@@ -54,6 +54,7 @@ export const useMaskStore = createPersistStore(
         ...mask,
         id,
         builtin: false,
+        createdAt: Date.now(),
       };
 
       set(() => ({ masks }));

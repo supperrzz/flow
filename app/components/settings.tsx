@@ -274,7 +274,7 @@ function DangerItems({
   };
   return (
     <List>
-      <ListItem title={Locale.Settings.Danger.Logout}>
+      <ListItem title={Locale.Settings.Danger.Logout} subTitle={userEmail}>
         <IconButton
           text={Locale.Settings.Danger.Logout}
           onClick={handleSignOut}
@@ -314,10 +314,7 @@ function DangerItems({
       </ListItem>
       {/* Cancel subscription button */}
       {isSubscribed ? (
-        <ListItem
-          title={Locale.Settings.Danger.Cancel.Title}
-          subTitle={userEmail}
-        >
+        <ListItem title={Locale.Settings.Danger.Cancel.Title}>
           <CancelSubscriptionButton />
         </ListItem>
       ) : null}

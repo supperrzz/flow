@@ -116,7 +116,7 @@ export default function ScratchPad({
       <QuillNoSSRWrapper
         defaultValue={value}
         value={value}
-        placeholder={placeholder || "Start writing here..."}
+        placeholder={placeholder || ""}
         modules={modules}
         formats={formats}
         theme="bubble"

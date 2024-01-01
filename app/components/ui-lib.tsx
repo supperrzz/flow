@@ -102,7 +102,9 @@ interface ModalProps {
   children?: any;
   actions?: Array<JSX.Element | null>;
   defaultMax?: boolean;
+  removeMax?: boolean;
   onClose?: () => void;
+  maxWidth?: number;
 }
 export function Modal(props: ModalProps) {
   useEffect(() => {
@@ -127,17 +129,20 @@ export function Modal(props: ModalProps) {
       className={
         styles["modal-container"] + ` ${isMax && styles["modal-container-max"]}`
       }
+      style={{ maxWidth: props.maxWidth }}
     >
       <div className={styles["modal-header"]}>
         <div className={styles["modal-title"]}>{props.title}</div>
 
         <div className={styles["modal-header-actions"]}>
-          <div
-            className={styles["modal-header-action"]}
-            onClick={() => setMax(!isMax)}
-          >
-            {isMax ? <MinIcon /> : <MaxIcon />}
-          </div>
+          {!props.removeMax && (
+            <div
+              className={styles["modal-header-action"]}
+              onClick={() => setMax(!isMax)}
+            >
+              {isMax ? <MinIcon /> : <MaxIcon />}
+            </div>
+          )}
           <div
             className={styles["modal-header-action"]}
             onClick={props.onClose}

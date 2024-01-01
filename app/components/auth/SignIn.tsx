@@ -2,13 +2,11 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { supabase } from "../../utils/supabaseClient";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "../auth.module.scss";
 import { IconButton } from "../button";
 import Locale from "../../locales";
-import { useNavigate } from "react-router-dom";
-import { Path } from "../../constant";
+import { Modal } from "../ui-lib";
 
 export const signInSchema = yup.object().shape({
   email: yup
@@ -28,6 +26,7 @@ type SignInFormData = {
 
 export const SignIn = () => {
   const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
   const {
     register,
     handleSubmit,
@@ -56,7 +55,6 @@ export const SignIn = () => {
       setSignUpSuccess(true);
     }
   };
-
   if (signUpSuccess)
     return (
       <div className={styles["auth-signup-success"]}>
@@ -64,41 +62,100 @@ export const SignIn = () => {
       </div>
     );
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="">
-      <div className={styles["auth-inputs"]}>
-        <>
-          <input
-            placeholder="Email"
-            type="email"
-            {...register("email")}
-            className={styles["auth-input"]}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-xs">{errors.email.message}</p>
-          )}
-        </>
-        <>
-          <input
-            type="password"
-            placeholder="Password"
-            {...register("password")}
-            className={styles["auth-input"]}
-          />
-          {errors.password && (
-            <p className="text-red-500 text-xs">{errors.password.message}</p>
-          )}
-        </>
-      </div>
-      <div>
-        <div className={styles["auth-actions"]}>
-          <IconButton
-            text={Locale.Auth.Confirm}
-            type="primary"
-            onClick={handleSubmit(onSubmit)}
-          />
-          <IconButton text={"Sign Up"} onClick={handleSubmit(onSignup)} />
+    <>
+      <form className="">
+        <div className={styles["auth-inputs"]}>
+          <>
+            <input
+              placeholder="Email"
+              type="email"
+              {...register("email")}
+              className={styles["auth-input"]}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs">{errors.email.message}</p>
+            )}
+          </>
+          <>
+            <input
+              type="password"
+              placeholder="Password"
+              {...register("password")}
+              className={styles["auth-input"]}
+            />
+            {errors.password && (
+              <p className="text-red-500 text-xs">{errors.password.message}</p>
+            )}
+          </>
         </div>
-      </div>
-    </form>
+        <div>
+          <div className={styles["auth-actions"]}>
+            <IconButton
+              text={Locale.Auth.Confirm}
+              type="primary"
+              onClick={handleSubmit(onSubmit)}
+            />
+            <IconButton text={"Sign Up"} onClick={() => setShowSignUp(true)} />
+          </div>
+        </div>
+      </form>
+      {showSignUp && (
+        <div className="modal-mask">
+          <Modal
+            title="Sign Up for a Free Account"
+            onClose={() => setShowSignUp(false)}
+            maxWidth={500}
+            removeMax={true}
+          >
+            {!signUpSuccess && (
+              <form>
+                <div className={styles["auth-inputs"]}>
+                  <>
+                    <input
+                      placeholder="Email"
+                      type="email"
+                      {...register("email")}
+                      className={styles["auth-input"]}
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-xs">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </>
+                  <>
+                    <input
+                      type="password"
+                      placeholder="Password"
+                      {...register("password")}
+                      className={styles["auth-input"]}
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 text-xs">
+                        {errors.password.message}
+                      </p>
+                    )}
+                  </>
+                </div>
+                <div>
+                  <div className={styles["auth-actions"]}>
+                    <IconButton
+                      text="Sign Up"
+                      type="primary"
+                      onClick={handleSubmit(onSignup)}
+                    />
+                  </div>
+                </div>
+              </form>
+            )}
+            {signUpSuccess && (
+              <div className={styles["auth-signup-success"]}>
+                {Locale.Auth.SignUpSuccess}
+              </div>
+            )}
+          </Modal>
+        </div>
+      )}
+    </>
   );
 };
