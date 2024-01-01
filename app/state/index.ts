@@ -59,3 +59,8 @@ export const currentChatDocumentState = atom({
   key: "chatDocument",
   default: NEW_DOC_KEY as string,
 });
+
+export const showDocumentState = atom({
+  key: "showDocument",
+  default: false,
+});

@@ -46,12 +46,12 @@ export enum StoreKey {
 }
 
 export const DEFAULT_SIDEBAR_WIDTH = 330;
-export const MAX_SIDEBAR_WIDTH = 500;
-export const MIN_SIDEBAR_WIDTH = 330;
+export const MAX_SIDEBAR_WIDTH = 350;
+export const MIN_SIDEBAR_WIDTH = 250;
 export const NARROW_SIDEBAR_WIDTH = 100;
 
 export const DEFAULT_DOCUMENT_WIDTH = 750;
-export const MAX_DOCUMENT_WIDTH = 816;
+export const MAX_DOCUMENT_WIDTH = 800;
 export const MIN_DOCUMENT_WIDTH = 210;
 export const NARROW_DOCUMENT_WIDTH = 250;
 

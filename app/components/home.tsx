@@ -8,6 +8,8 @@ import styles from "./home.module.scss";
 
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
+import DragIcon from "../icons/drag.svg";
+import CloseIcon from "../icons/close.svg";
 
 import { getCSSVar, useMobileScreen } from "../utils";
 
@@ -29,8 +31,10 @@ import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
 import useSession from "../hooks/useSession";
-import { RecoilRoot, useRecoilValue } from "recoil";
-import { showChatState } from "../state";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
+import { showChatState, showDocumentState } from "../state";
+import { useDragDocument } from "./document";
+import { IconButton } from "./button";
 
 const FullPad = dynamic(() => import("../components/ScratchPad/full"), {
   ssr: false,
@@ -144,6 +148,8 @@ function Screen() {
   const { session, loading: sessionLoading } = useSession(); // Assuming useSession has a loading state
   const isHome = location.pathname === Path.Home;
   const isMobileScreen = useMobileScreen();
+  const { onDragStart } = useDragDocument();
+  const [showModal, setShowModal] = useRecoilState(showDocumentState);
   const shouldTightBorder =
     config.tightBorder && !isMobileScreen && !getClientConfig()?.isApp;
 
@@ -156,6 +162,37 @@ function Screen() {
   }
 
   const isAuth = !session?.user;
+
+  const renderMobileView = () => {
+    if (!showModal) return null;
+
+    return (
+      <div className={`${styles.document} ${styles.modal}`}>
+        <FullPad chat={true} />
+        <div className={styles.close}>
+          <IconButton
+            icon={<CloseIcon />}
+            bordered
+            onClick={() => setShowModal(false)}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderDesktopView = () => (
+    <>
+      <div className={styles.document}>
+        <FullPad chat={true} />
+      </div>
+      <div
+        className={`${styles.drag} drag-icon`}
+        onPointerDown={(e) => onDragStart(e as any)}
+      >
+        <DragIcon />
+      </div>
+    </>
+  );
 
   return (
     <div
@@ -170,21 +207,22 @@ function Screen() {
         <>
           <SideBar className={isHome ? styles["sidebar-show"] : ""} />
           {showChat ? (
-            <div className={styles["window-content"]} id={SlotID.AppBody}>
-              <Routes>
-                <Route path={Path.Home} element={<Chat />} />
-                <Route path={Path.NewChat} element={<NewChat />} />
-                <Route path={Path.Masks} element={<MaskPage />} />
-                <Route path={Path.Chat} element={<Chat />} />
-                <Route path={Path.Settings} element={<Settings />} />
-              </Routes>
+            <div className={styles["window-content-container"]}>
+              <div className={styles["window-content"]} id={SlotID.AppBody}>
+                <Routes>
+                  <Route path={Path.Home} element={<Chat />} />
+                  <Route path={Path.NewChat} element={<NewChat />} />
+                  <Route path={Path.Masks} element={<MaskPage />} />
+                  <Route path={Path.Chat} element={<Chat />} />
+                  <Route path={Path.Settings} element={<Settings />} />
+                </Routes>
+              </div>
             </div>
           ) : (
             <Document />
           )}
-          <div style={{ width: "800px" }}>
-            {showChat && <FullPad chat={true} />}
-          </div>
+          {showChat &&
+            (isMobileScreen ? renderMobileView() : renderDesktopView())}
         </>
       )}
     </div>

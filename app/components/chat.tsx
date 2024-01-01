@@ -19,6 +19,7 @@ import PinIcon from "../icons/pin.svg";
 import EditIcon from "../icons/rename.svg";
 import ConfirmIcon from "../icons/confirm.svg";
 import CancelIcon from "../icons/cancel.svg";
+import DocumentIcon from "../icons/edit.svg";
 import PluginIcon from "../icons/plugin.svg";
 
 import LightIcon from "../icons/light.svg";
@@ -87,6 +88,8 @@ import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
 import { useSyncStore } from "../store/sync";
+import { useSetRecoilState } from "recoil";
+import { showDocumentState } from "../state";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -607,6 +610,7 @@ function _Chat() {
   const fontSize = config.fontSize;
 
   const [showExport, setShowExport] = useState(false);
+  const setShowModal = useSetRecoilState(showDocumentState);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [userInput, setUserInput] = useState("");
@@ -1096,6 +1100,17 @@ function _Chat() {
               }}
             />
           </div>
+          {isMobileScreen && (
+            <div className="window-action-button">
+              <IconButton
+                icon={<DocumentIcon />}
+                bordered
+                onClick={() => {
+                  setShowModal(true);
+                }}
+              />
+            </div>
+          )}
           {showMaxIcon && (
             <div className="window-action-button">
               <IconButton

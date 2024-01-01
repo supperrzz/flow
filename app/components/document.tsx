@@ -30,7 +30,7 @@ export const Menu = ({ show }: { show: boolean }) => {
   );
 };
 
-function useDragDocument() {
+export function useDragDocument() {
   const limit = (x: number) => Math.min(MAX_DOCUMENT_WIDTH, x);
 
   const config = useAppConfig();
