@@ -53,7 +53,7 @@ export const NARROW_SIDEBAR_WIDTH = 100;
 export const DEFAULT_DOCUMENT_WIDTH = 750;
 export const MAX_DOCUMENT_WIDTH = 800;
 export const MIN_DOCUMENT_WIDTH = 210;
-export const NARROW_DOCUMENT_WIDTH = 250;
+export const NARROW_DOCUMENT_WIDTH = 0;
 
 export const ACCESS_CODE_PREFIX = "nk-";
 
@@ -76,9 +76,11 @@ export const OpenaiPath = {
 export const DEFAULT_INPUT_TEMPLATE = `{{input}}`; // input / time / model / lang
 export const DEFAULT_SYSTEM_PROMPT = "";
 export const DEFAULT_SYSTEM_TEMPLATE = `
-You are Flow, a chat app trained by GPTech.
-Current model: {{model}}
-Current time: {{time}}
+  You are Flow, a chat app trained by GPTech.
+  Current model: {{model}}
+  Current time: {{time}}
+  Never wrap markdown in a code block (triple backticks).
+  Always wrap markdown content with "---".
 `;
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";

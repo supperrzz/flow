@@ -6,11 +6,11 @@ import { IconButton } from "./button";
 import SettingsIcon from "../icons/config.svg";
 import ChatGptIcon from "../icons/chatgpt.svg";
 import AddIcon from "../icons/add.svg";
-import DeleteIcon from "../icons/delete.svg";
+import DeleteIcon from "../icons/clear.svg";
 import CloseIcon from "../icons/close.svg";
 import PluginIcon from "../icons/plugin.svg";
 import BotIcon from "../icons/robot.svg";
-import DragIcon from "../icons/drag.svg";
+// import DragIcon from "../icons/drag.svg";
 import ChatIcon from "../icons/chat.svg";
 import Locale from "../locales";
 import { useAccessStore, useAppConfig, useChatStore } from "../store";
@@ -285,7 +285,7 @@ export function SideBar(props: { className?: string }) {
                 chatStore.newSession();
                 localStorage.setItem(
                   `scratchPad-${chatStore.currentSession().id}`,
-                  "Start typing here...",
+                  "",
                 );
                 setDocument(`scratchPad-${chatStore.currentSession().id}`);
                 navigate(Path.Chat);
@@ -358,12 +358,12 @@ export function SideBar(props: { className?: string }) {
           <IconButton icon={<SettingsIcon />} shadow />
         </Link>
       </div>
-      <div
+      {/* <div
         className={styles["sidebar-drag"]}
         onPointerDown={(e) => onDragStart(e as any)}
       >
         <DragIcon />
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -158,29 +158,6 @@ export const LessonContent: Action = {
   tone: true,
 };
 
-export const ModuleQuiz: Action = {
-  name: "quizGenerator",
-  inputs: [
-    {
-      type: "text",
-      id: "moduleName",
-      label: "Module Name",
-      placeholder: "Name of the module",
-      required: true,
-    },
-    {
-      type: "textArea",
-      id: "moduleSubtopics",
-      label: "Module Subtopics",
-      placeholder: "List the subtopics covered in this module",
-      required: true,
-    },
-  ],
-  prompt: (payload: Record<string, string>) =>
-    `Generate a quiz to assess student understanding of the module named '${payload.moduleName}', which covers the following topics: '${payload.moduleSubtopics}'. The quiz should include a variety of question types (e.g., multiple choice, true/false, etc.) and cover all the main topics of the module.`,
-  tone: true,
-};
-
 export const CourseGuide: Action = {
   name: "courseGuide",
   inputs: [
@@ -219,7 +196,6 @@ const ACTIONS = {
   lessonPlan: LessonPlan,
   lessonContent: LessonContent,
   videoScript: VideoScript,
-  moduleQuiz: ModuleQuiz,
   courseGuide: CourseGuide,
 };
 

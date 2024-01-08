@@ -53,14 +53,14 @@ export default function App({ chat }: { chat?: boolean }) {
           plugins:
             "fullscreen autolink charmap emoticons image link lists media searchreplace table wordcount",
           toolbar:
-            "fullscreen selectDocument deleteDocument print | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+            "fullscreen deleteDocument print | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat | selectDocument",
           skin: themeColor === "light" ? "oxide" : "oxide-dark",
           content_css: themeColor === "light" ? "light" : "dark",
           content_style: `
             @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;700;900&display=swap');
             .mce-content-body { 
               background-color: ${bgColor};
-              padding: 10px 30px;
+              padding: 0 10px;
               color: ${textColor};
             }
           body {
@@ -154,7 +154,7 @@ export default function App({ chat }: { chat?: boolean }) {
           // },
           setup: function (editor) {
             editor.ui.registry.addButton("selectDocument", {
-              text: "My Documents",
+              text: "Change Document",
               onAction: function () {
                 setShowModal(true);
               },
@@ -172,7 +172,7 @@ export default function App({ chat }: { chat?: boolean }) {
               value: m,
             })),
             {
-              title: "Create new document",
+              title: "Create a New Document",
               value: "new",
             },
           ]}
