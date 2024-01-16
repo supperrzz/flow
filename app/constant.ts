@@ -76,11 +76,9 @@ export const OpenaiPath = {
 export const DEFAULT_INPUT_TEMPLATE = `{{input}}`; // input / time / model / lang
 export const DEFAULT_SYSTEM_PROMPT = "";
 export const DEFAULT_SYSTEM_TEMPLATE = `
-  You are Flow, a chat app trained by GPTech.
+  You are Flow, a productivity chat app.
   Current model: {{model}}
   Current time: {{time}}
-  Never wrap markdown in a code block (triple backticks).
-  Always wrap markdown content with "---".
 `;
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";

@@ -1,5 +1,5 @@
 import DeleteIcon from "../icons/delete.svg";
-import BotIcon from "../icons/bot.svg";
+import EditIcon from "../icons/edit.svg";
 
 import styles from "./home.module.scss";
 import {
@@ -19,7 +19,7 @@ import { Mask } from "../store/mask";
 import { useRef, useEffect } from "react";
 import { showConfirm } from "./ui-lib";
 import { currentChatDocumentState } from "../state";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 
 export function ChatItem(props: {
   onClick?: () => void;
@@ -32,6 +32,7 @@ export function ChatItem(props: {
   index: number;
   narrow?: boolean;
   mask: Mask;
+  documentLoaded?: boolean;
 }) {
   // date format: Today at 01:01 PM or Yesterday at 01:01 PM or 01/01 at 01:01 PM
   const formatTime = (time: string) => {
@@ -99,6 +100,11 @@ export function ChatItem(props: {
                 <div className={styles["chat-item-date"]}>
                   {formatTime(props.time)}
                 </div>
+                {props.documentLoaded && (
+                  <div className={styles["chat-item-loaded"]}>
+                    <EditIcon />
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -143,7 +149,12 @@ export function ChatList(props: { narrow?: boolean }) {
     moveSession(source.index, destination.index);
   };
 
-  const setDocument = useSetRecoilState(currentChatDocumentState);
+  const [currentDocument, setDocument] = useRecoilState(
+    currentChatDocumentState,
+  );
+  useEffect(() => {
+    setDocument(`scratchPad-${sessions[0].id}`);
+  }, []);
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="chat-list">
@@ -162,6 +173,7 @@ export function ChatList(props: { narrow?: boolean }) {
                 id={item.id}
                 index={i}
                 selected={i === selectedIndex}
+                documentLoaded={currentDocument === `scratchPad-${item.id}`}
                 onClick={() => {
                   navigate(Path.Chat);
                   selectSession(i);

@@ -44,7 +44,7 @@ import { useEffect, useState } from "react";
 import { copyToClipboard, downloadAs, readFromFile } from "../utils";
 import { Updater } from "../typing";
 import { ModelConfigList } from "./model-config";
-import { FileName, Path } from "../constant";
+import { FileName, MODEL_NAMES, Path } from "../constant";
 import { BUILTIN_MASK_STORE } from "../masks";
 import {
   DragDropContext,
@@ -140,6 +140,7 @@ export function MaskConfig(props: {
   extraListItems?: JSX.Element | null;
   readonly?: boolean;
   shouldSyncFromGlobal?: boolean;
+  hideContext?: boolean;
 }) {
   const [showPicker, setShowPicker] = useState(false);
   const accessStore = useAccessStore();
@@ -210,7 +211,7 @@ export function MaskConfig(props: {
           updateConfig={updateConfig}
           showFields={!props.mask.syncGlobalConfig}
         />
-        {/* <ListItem
+        <ListItem
           title={Locale.Mask.Config.HideContext.Title}
           subTitle={Locale.Mask.Config.HideContext.SubTitle}
         >
@@ -223,7 +224,7 @@ export function MaskConfig(props: {
               });
             }}
           ></input>
-        </ListItem> */}
+        </ListItem>
 
         {/* {!props.shouldSyncFromGlobal ? (
           <ListItem
@@ -269,14 +270,16 @@ export function MaskConfig(props: {
 
       {props.extraListItems && <List>{props.extraListItems}</List>}
 
-      <ContextPrompts
-        context={props.mask.context}
-        updateContext={(updater) => {
-          const context = props.mask.context.slice();
-          updater(context);
-          props.updateMask((mask) => (mask.context = context));
-        }}
-      />
+      {!props.hideContext && (
+        <ContextPrompts
+          context={props.mask.context}
+          updateContext={(updater) => {
+            const context = props.mask.context.slice();
+            updater(context);
+            props.updateMask((mask) => (mask.context = context));
+          }}
+        />
+      )}
     </>
   );
 }
@@ -595,7 +598,7 @@ export function MaskPage() {
                     <div className={styles["mask-name"]}>{m.name}</div>
                     <div className={styles["mask-info"] + " one-line"}>
                       {`${Locale.Mask.Item.Info(m.context.length)} / ${
-                        m.modelConfig.model
+                        MODEL_NAMES[m.modelConfig.model]
                       }`}
                     </div>
                   </div>

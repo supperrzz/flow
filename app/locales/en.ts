@@ -376,7 +376,7 @@ const en = {
     Sysmessage: "You are an assistant that",
   },
   Mask: {
-    Name: "Browse Virtual Assistants",
+    Name: "Virtual Assistants",
     Page: {
       Title: "Virtual Assistants Library",
       SubTitle: (count: number) => `${count} Virtual Assistants`,
@@ -394,9 +394,9 @@ const en = {
     EditModal: {
       Title: (readonly: boolean) =>
         `Edit Virtual Assistant ${readonly ? "(readonly)" : ""}`,
-      Download: "Download",
+      Download: "Export",
       Clone: "Clone",
-      Save: "Save",
+      Save: "Save Changes",
     },
     Config: {
       Avatar: "Chat Avatar",

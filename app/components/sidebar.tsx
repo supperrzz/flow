@@ -248,13 +248,9 @@ export function SideBar(props: { className?: string }) {
             Welcome to Flow
           </div>
           <div className={styles["sidebar-sub-title"]}>
-            Developed by{" "}
-            <a
-              href="https://www.mygptech.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              GPTech
+            Join the{" "}
+            <a href="" target="_blank" rel="noopener noreferrer">
+              Community 🌟
             </a>
           </div>
         </div>
@@ -277,7 +273,7 @@ export function SideBar(props: { className?: string }) {
             }}
             shadow
           />
-          <IconButton
+          {/* <IconButton
             icon={<AddIcon />}
             text={shouldNarrow ? undefined : Locale.Home.NewChat}
             onClick={async () => {
@@ -294,7 +290,7 @@ export function SideBar(props: { className?: string }) {
               }
             }}
             shadow
-          />
+          /> */}
         </div>
       )}
 
@@ -312,7 +308,7 @@ export function SideBar(props: { className?: string }) {
 
       <div className={styles["sidebar-tail"]}>
         <div className={styles["sidebar-actions"]}>
-          <div className={styles["sidebar-action"]}>
+          {/* <div className={styles["sidebar-action"]}>
             {!isMobileScreen && Boolean(isSubscribed) && (
               <IconButton
                 type={"primary"}
@@ -325,7 +321,7 @@ export function SideBar(props: { className?: string }) {
                 shadow
               />
             )}
-          </div>
+          </div> */}
           <div className={styles["sidebar-action"] + " " + styles.mobile}>
             <IconButton
               icon={<CloseIcon />}
@@ -336,27 +332,27 @@ export function SideBar(props: { className?: string }) {
               }}
             />
           </div>
-          {/* {showChat && (
-            <div className={styles["sidebar-action"]}>
-              <IconButton
-                icon={<AddIcon />}
-                text={shouldNarrow ? undefined : Locale.Home.NewChat}
-                onClick={() => {
-                  if (config.dontShowMaskSplashScreen) {
-                    chatStore.newSession();
-                    navigate(Path.Chat);
-                  } else {
-                    navigate(Path.NewChat);
-                  }
-                }}
-                shadow
-              />
-            </div>
-          )} */}
+          <Link onClick={() => setShowChat(true)} to={Path.Settings}>
+            <IconButton icon={<SettingsIcon />} shadow />
+          </Link>
         </div>
-        <Link onClick={() => setShowChat(true)} to={Path.Settings}>
-          <IconButton icon={<SettingsIcon />} shadow />
-        </Link>
+        {showChat && (
+          <div className={styles["sidebar-action"]}>
+            <IconButton
+              icon={<AddIcon />}
+              text={shouldNarrow ? undefined : Locale.Home.NewChat}
+              onClick={() => {
+                if (config.dontShowMaskSplashScreen) {
+                  chatStore.newSession();
+                  navigate(Path.Chat);
+                } else {
+                  navigate(Path.NewChat);
+                }
+              }}
+              shadow
+            />
+          </div>
+        )}
       </div>
       {/* <div
         className={styles["sidebar-drag"]}

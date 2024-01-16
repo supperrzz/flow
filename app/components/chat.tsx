@@ -108,20 +108,20 @@ export function SessionConfigModel(props: { onClose: () => void }) {
         title={Locale.Context.Edit}
         onClose={() => props.onClose()}
         actions={[
-          <IconButton
-            key="reset"
-            icon={<ResetIcon />}
-            bordered
-            text={Locale.Chat.Config.Reset}
-            onClick={async () => {
-              if (await showConfirm(Locale.Memory.ResetConfirm)) {
-                chatStore.updateCurrentSession(
-                  (session) => (session.memoryPrompt = ""),
-                );
-                syncStore.saveToRemote();
-              }
-            }}
-          />,
+          // <IconButton
+          //   key="reset"
+          //   icon={<ResetIcon />}
+          //   bordered
+          //   text={Locale.Chat.Config.Reset}
+          //   onClick={async () => {
+          //     if (await showConfirm(Locale.Memory.ResetConfirm)) {
+          //       chatStore.updateCurrentSession(
+          //         (session) => (session.memoryPrompt = ""),
+          //       );
+          //       syncStore.saveToRemote();
+          //     }
+          //   }}
+          // />,
           <IconButton
             key="copy"
             icon={<CopyIcon />}
@@ -130,7 +130,10 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             onClick={() => {
               navigate(Path.Masks);
               setTimeout(() => {
-                maskStore.create(session.mask);
+                maskStore.create({
+                  ...session.mask,
+                  context: session.messages,
+                });
               }, 500);
             }}
           />,
@@ -152,6 +155,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             syncStore.saveToRemote();
           }}
           shouldSyncFromGlobal
+          hideContext={true}
           extraListItems={
             session.memoryPrompt && session.mask.modelConfig.sendMemory ? (
               <ListItem
@@ -188,9 +192,6 @@ function PromptToast(props: {
             {Locale.Context.Toast(context.length)}
           </span>
         </div>
-      )}
-      {props.showModal && (
-        <SessionConfigModel onClose={() => props.setShowModal(false)} />
       )}
     </div>
   );
@@ -1125,12 +1126,14 @@ function _Chat() {
             </div>
           )}
         </div>
-
-        <PromptToast
+        {showPromptModal && (
+          <SessionConfigModel onClose={() => setShowPromptModal(false)} />
+        )}
+        {/* <PromptToast
           showToast={!hitBottom}
           showModal={showPromptModal}
-          setShowModal={setShowPromptModal}
-        />
+          setShowModal={showPromptModal}
+        /> */}
       </div>
 
       <div
@@ -1221,11 +1224,11 @@ function _Chat() {
                                 onClick={() => onDelete(message.id ?? i)}
                               />
 
-                              <ChatAction
+                              {/* <ChatAction
                                 text={Locale.Chat.Actions.Pin}
                                 icon={<PinIcon />}
                                 onClick={() => onPinMessage(message)}
-                              />
+                              /> */}
                               <ChatAction
                                 text={Locale.Chat.Actions.Copy}
                                 icon={<CopyIcon />}

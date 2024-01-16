@@ -177,6 +177,10 @@ export const HtmlContent = ({ code }: { code: string }) => {
   <html>
     <head>
       <title>Generated Document</title>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.7/tailwind.min.css"
+      />
       <style>
         body {
           font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -207,7 +211,7 @@ export const HtmlContent = ({ code }: { code: string }) => {
           srcDoc={htmlDocTemplate}
           style={{
             width: "100%",
-            height: "450px",
+            height: "auto",
             border: "none",
             borderRadius: "0 0 8px 8px",
           }}
@@ -367,7 +371,9 @@ export function PreCode(props: { children: any }) {
       dom instanceof HTMLElement &&
       dom.parentElement instanceof HTMLElement
     ) {
-      dom.parentElement.style.display = "none";
+      if (type !== "html") {
+        dom.parentElement.style.display = "none";
+      }
       setContent((prevContent) => ({ ...prevContent, [type]: dom.innerText }));
     }
   };
