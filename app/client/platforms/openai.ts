@@ -14,6 +14,8 @@ import {
 } from "@fortaine/fetch-event-source";
 import { prettyObject } from "@/app/utils/format";
 import { getClientConfig } from "@/app/config/client";
+import { supabase } from "@/app/utils/supabaseClient";
+import { getUsageLimit } from "@/app/utils/usage";
 
 export interface OpenAIListModelResponse {
   object: string;
@@ -72,8 +74,6 @@ export class ChatGPTApi implements LLMApi {
       top_p: modelConfig.top_p,
     };
 
-    console.log("[Request] openai payload: ", requestPayload);
-
     const shouldStream = !!options.config.stream;
     const controller = new AbortController();
     options.onController?.(controller);
@@ -105,6 +105,12 @@ export class ChatGPTApi implements LLMApi {
         };
 
         controller.signal.onabort = finish;
+
+        const result = await this.usageLimitCheck();
+        if (!result) {
+          options.onError?.(new Error(Locale.Error.UsageLimit));
+          return;
+        }
 
         fetchEventSource(chatPath, {
           ...chatPayload,
@@ -186,6 +192,7 @@ export class ChatGPTApi implements LLMApi {
       options.onError?.(e as Error);
     }
   }
+
   async usage() {
     const formatDate = (d: Date) =>
       `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
@@ -276,6 +283,47 @@ export class ChatGPTApi implements LLMApi {
       name: m.id,
       available: true,
     }));
+  }
+
+  async usageLimitCheck(): Promise<boolean | Error> {
+    try {
+      const { data: userResponse, error: userError } =
+        await supabase.auth.getUser();
+      if (userError) {
+        console.error("Error retrieving user:", userError);
+        return new Error("Authentication error");
+      }
+
+      if (!userResponse.user) {
+        return false; // User not logged in or not found.
+      }
+
+      const { data: usageData, error: usageError } = await supabase
+        .from("usage")
+        .select("monthly_usage")
+        .eq("user_id", userResponse.user.id); // Assuming the column is 'user_id'.
+
+      if (usageError) {
+        console.error("Error retrieving user usage:", usageError);
+        return new Error("Usage retrieval error");
+      }
+
+      console.log("[Usage]", usageData);
+      const usageLimit = await getUsageLimit(userResponse.user.email!);
+
+      if (!usageLimit) {
+        return false; // User has no usage limit.
+      }
+      console.log("[Usage Limit]", usageLimit);
+
+      if (usageData.length === 0 || usageData[0].monthly_usage >= usageLimit) {
+        return false; // User has no usage data or has exceeded the monthly usage.
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+      return new Error("Unexpected error");
+    }
+    return true; // User exists, has usage data, and has not exceeded the monthly usage.
   }
 }
 export { OpenaiPath };

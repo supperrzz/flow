@@ -1,4 +1,3 @@
-import { Updater } from "../typing";
 import { ApiPath, STORAGE_KEY, StoreKey } from "../constant";
 import { createPersistStore } from "../utils/store";
 import {
@@ -23,9 +22,9 @@ export interface WebDavConfig {
 export type SyncStore = GetStoreState<typeof useSyncStore>;
 
 const DEFAULT_SYNC_STATE = {
-  provider: ProviderType.WebDAV,
+  provider: ProviderType.Supabase,
   useProxy: true,
-  proxyUrl: corsPath(ApiPath.Cors),
+  proxyUrl: "",
 
   webdav: {
     endpoint: "",
@@ -36,6 +35,11 @@ const DEFAULT_SYNC_STATE = {
   upstash: {
     endpoint: "",
     username: STORAGE_KEY,
+    apiKey: "",
+  },
+
+  supabase: {
+    endpoint: "",
     apiKey: "",
   },
 
@@ -69,6 +73,7 @@ export const useSyncStore = createPersistStore(
         const localState = getLocalAppState();
         mergeAppState(localState, remoteState);
         setLocalAppState(localState);
+        await this.saveToRemote();
         location.reload();
       } catch (e) {
         console.error("[Import]", e);
@@ -89,23 +94,44 @@ export const useSyncStore = createPersistStore(
       const client = this.getClient();
 
       try {
-        const remoteState = JSON.parse(
-          await client.get(config.username),
-        ) as AppState;
+        const remoteState = JSON.parse(await client.get()) as AppState;
         mergeAppState(localState, remoteState);
         setLocalAppState(localState);
+        console.log("[Sync] remote state synced successfully");
       } catch (e) {
-        console.log("[Sync] failed to get remoate state", e);
+        console.log("[Sync] failed to get remote state", e);
       }
 
-      await client.set(config.username, JSON.stringify(localState));
+      await client.set(JSON.stringify(localState));
 
+      this.markSyncTime();
+    },
+
+    async saveToRemote() {
+      const localState = getLocalAppState();
+      const client = this.getClient();
+
+      await client.set(JSON.stringify(localState));
+      console.log("[Sync] local state saved to remote");
+      this.markSyncTime();
+    },
+
+    async loadFromRemote() {
+      const client = this.getClient();
+      const remoteState = JSON.parse(await client.get()) as AppState;
+      const localState = getLocalAppState();
+      mergeAppState(localState, remoteState);
+      setLocalAppState(localState);
       this.markSyncTime();
     },
 
     async check() {
       const client = this.getClient();
       return await client.check();
+    },
+
+    reset() {
+      set(DEFAULT_SYNC_STATE);
     },
   }),
   {

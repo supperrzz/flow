@@ -1,9 +1,11 @@
 import { LLMModel } from "../client/api";
 import { getClientConfig } from "../config/client";
 import {
+  DEFAULT_DOCUMENT_WIDTH,
   DEFAULT_INPUT_TEMPLATE,
   DEFAULT_MODELS,
   DEFAULT_SIDEBAR_WIDTH,
+  DEFAULT_SYSTEM_PROMPT,
   StoreKey,
 } from "../constant";
 import { createPersistStore } from "../utils/store";
@@ -35,7 +37,8 @@ export const DEFAULT_CONFIG = {
   sendPreviewBubble: true,
   enableAutoGenerateTitle: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
-
+  documentWidth: DEFAULT_DOCUMENT_WIDTH,
+  defaultSystemPrompt: DEFAULT_SYSTEM_PROMPT,
   disablePromptHint: false,
 
   dontShowMaskSplashScreen: true, // dont show splash screen when create chat
@@ -45,7 +48,7 @@ export const DEFAULT_CONFIG = {
   models: DEFAULT_MODELS as any as LLMModel[],
 
   modelConfig: {
-    model: "gpt-4" as ModelType,
+    model: "gpt-3.5-turbo" as ModelType,
     temperature: 0.5,
     top_p: 1,
     max_tokens: 2000,
@@ -56,6 +59,7 @@ export const DEFAULT_CONFIG = {
     compressMessageLengthThreshold: 1000,
     enableInjectSystemPrompts: true,
     template: DEFAULT_INPUT_TEMPLATE,
+    systemPrompt: DEFAULT_SYSTEM_PROMPT,
   },
 };
 
@@ -135,6 +139,12 @@ export const useAppConfig = createPersistStore(
 
       const models = get().models.concat(customModels);
       return models;
+    },
+
+    setDefaultSystemPrompt(prompt: string) {
+      set(() => ({
+        defaultSystemPrompt: prompt,
+      }));
     },
   }),
   {

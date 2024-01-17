@@ -2,12 +2,14 @@
 
 require("../polyfill");
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 
 import styles from "./home.module.scss";
 
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
+import DragIcon from "../icons/drag.svg";
+import CloseIcon from "../icons/close.svg";
 
 import { getCSSVar, useMobileScreen } from "../utils";
 
@@ -15,7 +17,7 @@ import dynamic from "next/dynamic";
 import { Path, SlotID } from "../constant";
 import { ErrorBoundary } from "./error";
 
-import { getISOLang, getLang } from "../locales";
+import { getISOLang } from "../locales";
 
 import {
   HashRouter as Router,
@@ -23,13 +25,20 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
 import useSession from "../hooks/useSession";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
+import { showChatState, showDocumentState } from "../state";
+import { useDragDocument } from "./document";
+import { IconButton } from "./button";
+
+const FullPad = dynamic(() => import("../components/ScratchPad/full"), {
+  ssr: false,
+});
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -40,19 +49,28 @@ export function Loading(props: { noLogo?: boolean }) {
   );
 }
 
+const SideBar = dynamic(async () => (await import("./sidebar")).SideBar, {
+  // loading: () => <Loading noLogo />,
+  ssr: false,
+});
+
 const Settings = dynamic(async () => (await import("./settings")).Settings, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const Chat = dynamic(async () => (await import("./chat")).Chat, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
+  // loading: () => <Loading noLogo />,
+});
+
+const Document = dynamic(async () => await import("./document"), {
   loading: () => <Loading noLogo />,
 });
 
@@ -124,12 +142,14 @@ const loadAsyncGoogleFont = () => {
 };
 
 function Screen() {
+  const showChat = useRecoilValue(showChatState);
   const config = useAppConfig();
   const location = useLocation();
-  const { session } = useSession();
+  const { session, loading: sessionLoading } = useSession(); // Assuming useSession has a loading state
   const isHome = location.pathname === Path.Home;
-  const [isAuth, setIsAuth] = useState<boolean>(false);
   const isMobileScreen = useMobileScreen();
+  const { onDragStart } = useDragDocument();
+  const [showModal, setShowModal] = useRecoilState(showDocumentState);
   const shouldTightBorder =
     config.tightBorder && !isMobileScreen && !getClientConfig()?.isApp;
 
@@ -137,34 +157,72 @@ function Screen() {
     loadAsyncGoogleFont();
   }, []);
 
-  useEffect(() => {
-    setIsAuth(!session);
-  }, [session]);
+  if (sessionLoading) {
+    return <Loading />;
+  }
+
+  const isAuth = !session?.user;
+
+  const renderMobileView = () => {
+    if (!showModal) return null;
+
+    return (
+      <div className={`${styles.document} ${styles.modal}`}>
+        <FullPad chat={true} />
+        <div className={styles.close}>
+          <IconButton
+            icon={<CloseIcon />}
+            bordered
+            onClick={() => setShowModal(false)}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderDesktopView = () => (
+    <>
+      <div className={styles.document}>
+        <FullPad chat={true} />
+      </div>
+      <div
+        className={`${styles.drag} drag-icon`}
+        onPointerDown={(e) => onDragStart(e as any)}
+      >
+        <DragIcon />
+      </div>
+    </>
+  );
 
   return (
     <div
       className={
         styles.container +
-        ` ${shouldTightBorder ? styles["tight-container"] : styles.container}`
+        ` ${shouldTightBorder ? styles["tight-container"] : ""}`
       }
     >
       {isAuth ? (
-        <>
-          <AuthPage />
-        </>
+        <AuthPage />
       ) : (
         <>
           <SideBar className={isHome ? styles["sidebar-show"] : ""} />
-
-          <div className={styles["window-content"]} id={SlotID.AppBody}>
-            <Routes>
-              <Route path={Path.Home} element={<Chat />} />
-              <Route path={Path.NewChat} element={<NewChat />} />
-              <Route path={Path.Masks} element={<MaskPage />} />
-              <Route path={Path.Chat} element={<Chat />} />
-              <Route path={Path.Settings} element={<Settings />} />
-            </Routes>
-          </div>
+          {showChat ? (
+            <div className={styles["window-content-container"]}>
+              <div className={styles["window-content"]} id={SlotID.AppBody}>
+                <Routes>
+                  <Route path={Path.Home} element={<Chat />} />
+                  <Route path={Path.NewChat} element={<NewChat />} />
+                  <Route path={Path.Masks} element={<MaskPage />} />
+                  <Route path={Path.Chat} element={<Chat />} />
+                  <Route path={Path.Settings} element={<Settings />} />
+                </Routes>
+              </div>
+            </div>
+          ) : (
+            <Document />
+          )}
+          {showChat &&
+            (isMobileScreen ? renderMobileView() : renderDesktopView())}
         </>
       )}
     </div>
@@ -199,9 +257,11 @@ export function Home() {
 
   return (
     <ErrorBoundary>
-      <Router>
-        <Screen />
-      </Router>
+      <RecoilRoot>
+        <Router>
+          <Screen />
+        </Router>
+      </RecoilRoot>
     </ErrorBoundary>
   );
 }

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 
 import styles from "./settings.module.scss";
 
-import ResetIcon from "../icons/reload.svg";
+import ResetIcon from "../icons/upload.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
 import CopyIcon from "../icons/copy.svg";
@@ -14,6 +14,7 @@ import DownloadIcon from "../icons/download.svg";
 import UploadIcon from "../icons/upload.svg";
 import ConfigIcon from "../icons/config.svg";
 import ConfirmIcon from "../icons/confirm.svg";
+import LogoutIcon from "../icons/logout.svg";
 
 import ConnectionIcon from "../icons/connection.svg";
 import CloudSuccessIcon from "../icons/cloud-success.svg";
@@ -50,7 +51,14 @@ import Locale, {
 } from "../locales";
 import { copyToClipboard } from "../utils";
 import Link from "next/link";
-import { Path, RELEASE_URL, STORAGE_KEY, UPDATE_URL } from "../constant";
+import {
+  FREE_MONTHLY_USAGE,
+  MAX_MONTHLY_USAGE,
+  Path,
+  RELEASE_URL,
+  STORAGE_KEY,
+  UPDATE_URL,
+} from "../constant";
 import { Prompt, SearchService, usePromptStore } from "../store/prompt";
 import { ErrorBoundary } from "./error";
 import { InputRange } from "./input-range";
@@ -61,6 +69,9 @@ import { useSyncStore } from "../store/sync";
 import { nanoid } from "nanoid";
 import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
+import { supabase } from "../utils/supabaseClient";
+import { CancelSubscriptionButton, SubscribeButton } from "./StripeButtons";
+import { getUsage } from "../utils/usage";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -216,12 +227,60 @@ function UserPromptModal(props: { onClose?: () => void }) {
   );
 }
 
-function DangerItems() {
+function SubscriptionModal(props: { onClose?: () => void }) {
+  return (
+    <div className="modal-mask">
+      <Modal
+        title={Locale.Settings.Subscription.Modal.Title}
+        onClose={() => props.onClose?.()}
+        actions={[
+          <IconButton
+            key="done"
+            onClick={() => {
+              props.onClose?.();
+            }}
+            icon={<ConfirmIcon />}
+            bordered
+            text={Locale.Settings.Subscription.Modal.Done}
+          />,
+        ]}
+      >
+        <div className={styles["user-prompt-modal"]}></div>
+      </Modal>
+    </div>
+  );
+}
+
+function cancelSubscription() {
+  console.log("cancel subscription");
+}
+
+function DangerItems({
+  isSubscribed,
+  userEmail,
+}: {
+  isSubscribed: boolean;
+  userEmail: string;
+}) {
   const chatStore = useChatStore();
   const appConfig = useAppConfig();
-
+  const syncStore = useSyncStore();
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error signing out:", error.message);
+    }
+    console.log("Signed out successfully");
+  };
   return (
     <List>
+      <ListItem title={Locale.Settings.Danger.Logout} subTitle={userEmail}>
+        <IconButton
+          text={Locale.Settings.Danger.Logout}
+          onClick={handleSignOut}
+          type="danger"
+        />
+      </ListItem>
       <ListItem
         title={Locale.Settings.Danger.Reset.Title}
         subTitle={Locale.Settings.Danger.Reset.SubTitle}
@@ -231,6 +290,8 @@ function DangerItems() {
           onClick={async () => {
             if (await showConfirm(Locale.Settings.Danger.Reset.Confirm)) {
               appConfig.reset();
+              syncStore.reset();
+              window.location.reload();
             }
           }}
           type="danger"
@@ -245,11 +306,18 @@ function DangerItems() {
           onClick={async () => {
             if (await showConfirm(Locale.Settings.Danger.Clear.Confirm)) {
               chatStore.clearAllData();
+              window.location.reload();
             }
           }}
           type="danger"
         />
       </ListItem>
+      {/* Cancel subscription button */}
+      {isSubscribed ? (
+        <ListItem title={Locale.Settings.Danger.Cancel.Title}>
+          <CancelSubscriptionButton />
+        </ListItem>
+      ) : null}
     </List>
   );
 }
@@ -482,31 +550,29 @@ function SyncItems() {
   return (
     <>
       <List>
-        {/* <ListItem
+        <ListItem
           title={Locale.Settings.Sync.CloudState}
           subTitle={
             syncStore.lastProvider
-              ? `${new Date(syncStore.lastSyncTime).toLocaleString()} [${
-                  syncStore.lastProvider
-                }]`
+              ? new Date(syncStore.lastSyncTime).toLocaleString()
               : Locale.Settings.Sync.NotSyncYet
           }
         >
           <div style={{ display: "flex" }}>
-            <IconButton
+            {/* <IconButton
               icon={<ConfigIcon />}
               text={Locale.UI.Config}
               onClick={() => {
                 setShowSyncConfigModal(true);
               }}
-            />
-            {couldSync && (
+            /> */}
+            {!couldSync && (
               <IconButton
                 icon={<ResetIcon />}
                 text={Locale.UI.Sync}
                 onClick={async () => {
                   try {
-                    await syncStore.sync();
+                    await syncStore.saveToRemote();
                     showToast(Locale.Settings.Sync.Success);
                   } catch (e) {
                     showToast(Locale.Settings.Sync.Fail);
@@ -516,7 +582,7 @@ function SyncItems() {
               />
             )}
           </div>
-        </ListItem> */}
+        </ListItem>
 
         <ListItem
           title={Locale.Settings.Sync.LocalState}
@@ -553,41 +619,21 @@ export function Settings() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const config = useAppConfig();
   const updateConfig = config.update;
+  const syncStore = useSyncStore();
 
-  const updateStore = useUpdateStore();
-  const [checkingUpdate, setCheckingUpdate] = useState(false);
-  const currentVersion = updateStore.formatVersion(updateStore.version);
-  const remoteId = updateStore.formatVersion(updateStore.remoteVersion);
-  const hasNewVersion = currentVersion !== remoteId;
-  const updateUrl = getClientConfig()?.isApp ? RELEASE_URL : UPDATE_URL;
-
-  function checkUpdate(force = false) {
-    setCheckingUpdate(true);
-    updateStore.getLatestVersion(force).then(() => {
-      setCheckingUpdate(false);
-    });
-
-    console.log("[Update] local version ", updateStore.version);
-    console.log("[Update] remote version ", updateStore.remoteVersion);
-  }
-
-  const usage = {
-    used: updateStore.used,
-    subscription: updateStore.subscription,
-  };
+  const [usage, setUsage] = useState(null);
   const [loadingUsage, setLoadingUsage] = useState(false);
-  function checkUsage(force = false) {
-    if (accessStore.hideBalanceQuery) {
-      return;
-    }
-
+  async function handleGetUsage(userId: string) {
     setLoadingUsage(true);
-    updateStore.updateUsage(force).finally(() => {
+    const usage = await getUsage(userId);
+    setUsage(usage);
+    setTimeout(() => {
       setLoadingUsage(false);
-    });
+    }, 500);
   }
 
   const accessStore = useAccessStore();
+  const { isSubscribed, user } = accessStore;
   const enabledAccessControl = useMemo(
     () => accessStore.enabledAccessControl(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -599,12 +645,8 @@ export function Settings() {
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
 
-  const showUsage = accessStore.isAuthorized();
   useEffect(() => {
-    // checks per minutes
-    checkUpdate();
-    showUsage && checkUsage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    handleGetUsage(user?.id!);
   }, []);
 
   useEffect(() => {
@@ -635,8 +677,6 @@ export function Settings() {
           </div>
         </div>
         <div className="window-actions">
-          <div className="window-action-button"></div>
-          <div className="window-action-button"></div>
           <div className="window-action-button">
             <IconButton
               icon={<CloseIcon />}
@@ -647,6 +687,85 @@ export function Settings() {
         </div>
       </div>
       <div className={styles["settings"]}>
+        <List>
+          <ListItem
+            title={Locale.Settings.Subscription.Subscription}
+            subTitle={
+              (isSubscribed as boolean)
+                ? Locale.Settings.Subscription.Status.Active
+                : Locale.Settings.Subscription.Status.Inactive
+            }
+          >
+            <div style={{ display: "flex" }}>
+              <SubscribeButton isSubscribed={isSubscribed} />
+            </div>
+          </ListItem>
+          <ListItem
+            title={Locale.Settings.Usage.Title}
+            subTitle={
+              loadingUsage
+                ? Locale.Settings.Usage.IsChecking
+                : Locale.Settings.Usage.SubTitle(
+                    usage ?? "[?]",
+                    ((isSubscribed as boolean)
+                      ? MAX_MONTHLY_USAGE
+                      : FREE_MONTHLY_USAGE) ?? "[?]",
+                  )
+            }
+          >
+            <IconButton
+              icon={<ResetIcon />}
+              text={
+                loadingUsage
+                  ? Locale.Settings.Usage.IsChecking
+                  : Locale.Settings.Usage.Check
+              }
+              onClick={() => handleGetUsage(user.id!)}
+              disabled={loadingUsage}
+            />
+          </ListItem>
+          {/* <ListItem
+            title={Locale.Settings.Token.Title}
+            subTitle={Locale.Settings.Token.SubTitle}
+          >
+            <PasswordInput
+              value={accessStore.token}
+              type="text"
+              placeholder={Locale.Settings.Token.Placeholder}
+              onChange={(e) => {
+                accessStore.updateToken(e.currentTarget.value);
+              }}
+            />
+          </ListItem> */}
+        </List>
+        <List>
+          <ModelConfigList
+            isSubscribed={isSubscribed}
+            showFields={false}
+            modelConfig={config.modelConfig}
+            updateConfig={(updater) => {
+              const modelConfig = { ...config.modelConfig };
+              updater(modelConfig);
+              config.update((config) => (config.modelConfig = modelConfig));
+            }}
+          />
+          {/* Custom Model */}
+          {/* <ListItem
+            title={Locale.Settings.CustomModel.Title}
+            subTitle={Locale.Settings.CustomModel.SubTitle}
+          >
+            <input
+              type="text"
+              value={config.customModels}
+              placeholder="model1,model2,model3"
+              onChange={(e) =>
+                config.update(
+                  (config) => (config.customModels = e.currentTarget.value),
+                )
+              }
+            ></input>
+          </ListItem> */}
+        </List>
         <List>
           <ListItem title={Locale.Settings.Avatar}>
             <Popover
@@ -669,31 +788,6 @@ export function Settings() {
               </div>
             </Popover>
           </ListItem>
-
-          {/* <ListItem
-            title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
-            subTitle={
-              checkingUpdate
-                ? Locale.Settings.Update.IsChecking
-                : hasNewVersion
-                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
-                : Locale.Settings.Update.IsLatest
-            }
-          >
-            {checkingUpdate ? (
-              <LoadingIcon />
-            ) : hasNewVersion ? (
-              <Link href={updateUrl} target="_blank" className="link">
-                {Locale.Settings.Update.GoToUpdate}
-              </Link>
-            ) : (
-              <IconButton
-                icon={<ResetIcon></ResetIcon>}
-                text={Locale.Settings.Update.CheckUpdate}
-                onClick={() => checkUpdate(true)}
-              />
-            )}
-          </ListItem> */}
 
           <ListItem
             title={Locale.Settings.SendKey.title}
@@ -723,6 +817,7 @@ export function Settings() {
                 updateConfig(
                   (config) => (config.theme = e.target.value as any as Theme),
                 );
+                syncStore.saveToRemote();
               }}
             >
               {Object.values(Theme).map((v) => (
@@ -804,116 +899,14 @@ export function Settings() {
           </ListItem>
         </List> */}
 
-        <List>
-          {showAccessCode ? (
-            <ListItem
-              title={Locale.Settings.AccessCode.Title}
-              subTitle={Locale.Settings.AccessCode.SubTitle}
-            >
-              <PasswordInput
-                value={accessStore.accessCode}
-                type="text"
-                placeholder={Locale.Settings.AccessCode.Placeholder}
-                onChange={(e) => {
-                  accessStore.updateCode(e.currentTarget.value);
-                }}
-              />
-            </ListItem>
-          ) : (
-            <></>
-          )}
-
-          {!accessStore.hideUserApiKey ? (
-            <>
-              {/* <ListItem
-                title={Locale.Settings.Endpoint.Title}
-                subTitle={Locale.Settings.Endpoint.SubTitle}
-              >
-                <input
-                  type="text"
-                  value={accessStore.openaiUrl}
-                  placeholder="https://api.openai.com/"
-                  onChange={(e) =>
-                    accessStore.updateOpenAiUrl(e.currentTarget.value)
-                  }
-                ></input>
-              </ListItem> */}
-              <ListItem
-                title={Locale.Settings.Token.Title}
-                subTitle={Locale.Settings.Token.SubTitle}
-              >
-                <PasswordInput
-                  value={accessStore.token}
-                  type="text"
-                  placeholder={Locale.Settings.Token.Placeholder}
-                  onChange={(e) => {
-                    accessStore.updateToken(e.currentTarget.value);
-                  }}
-                />
-              </ListItem>
-            </>
-          ) : null}
-
-          {!accessStore.hideBalanceQuery ? (
-            <ListItem
-              title={Locale.Settings.Usage.Title}
-              subTitle={
-                showUsage
-                  ? loadingUsage
-                    ? Locale.Settings.Usage.IsChecking
-                    : Locale.Settings.Usage.SubTitle(
-                        usage?.used ?? "[?]",
-                        usage?.subscription ?? "[?]",
-                      )
-                  : Locale.Settings.Usage.NoAccess
-              }
-            >
-              {!showUsage || loadingUsage ? (
-                <div />
-              ) : (
-                <IconButton
-                  icon={<ResetIcon></ResetIcon>}
-                  text={Locale.Settings.Usage.Check}
-                  onClick={() => checkUsage(true)}
-                />
-              )}
-            </ListItem>
-          ) : null}
-
-          {/* Custon Model */}
-          {/* <ListItem
-            title={Locale.Settings.CustomModel.Title}
-            subTitle={Locale.Settings.CustomModel.SubTitle}
-          >
-            <input
-              type="text"
-              value={config.customModels}
-              placeholder="model1,model2,model3"
-              onChange={(e) =>
-                config.update(
-                  (config) => (config.customModels = e.currentTarget.value),
-                )
-              }
-            ></input>
-          </ListItem> */}
-        </List>
-
-        <List>
-          <ModelConfigList
-            modelConfig={config.modelConfig}
-            updateConfig={(updater) => {
-              const modelConfig = { ...config.modelConfig };
-              updater(modelConfig);
-              config.update((config) => (config.modelConfig = modelConfig));
-            }}
-          />
-        </List>
-
         {shouldShowPromptModal && (
           <UserPromptModal onClose={() => setShowPromptModal(false)} />
         )}
 
-        <DangerItems />
+        <DangerItems
+          isSubscribed={isSubscribed}
+          userEmail={user?.email ?? ""}
+        />
       </div>
     </ErrorBoundary>
   );

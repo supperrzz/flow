@@ -9,6 +9,7 @@ import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { createEmptyMask, Mask } from "./mask";
 import {
   DEFAULT_INPUT_TEMPLATE,
+  DEFAULT_SYSTEM_PROMPT,
   DEFAULT_SYSTEM_TEMPLATE,
   StoreKey,
   SUMMARIZE_MODEL,
@@ -19,6 +20,9 @@ import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
+import { countTokens, countWords, updateUsage } from "../utils/usage";
+import { supabase } from "../utils/supabaseClient";
+import { useSyncStore } from "./sync";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -162,6 +166,7 @@ export const useChatStore = createPersistStore(
           sessions: [createEmptySession()],
           currentSessionIndex: 0,
         }));
+        useSyncStore.getState().saveToRemote();
       },
 
       selectSession(index: number) {
@@ -193,6 +198,7 @@ export const useChatStore = createPersistStore(
             sessions: newSessions,
           };
         });
+        useSyncStore.getState().saveToRemote();
       },
 
       newSession(mask?: Mask) {
@@ -256,6 +262,8 @@ export const useChatStore = createPersistStore(
           sessions,
         }));
 
+        useSyncStore.getState().saveToRemote();
+
         showToast(
           Locale.Home.DeleteToast,
           {
@@ -264,7 +272,7 @@ export const useChatStore = createPersistStore(
               set(() => restoreState);
             },
           },
-          5000,
+          7000,
         );
       },
 
@@ -288,6 +296,7 @@ export const useChatStore = createPersistStore(
           session.lastUpdate = Date.now();
         });
         get().updateStat(message);
+        useSyncStore.getState().saveToRemote();
         get().summarizeSession();
       },
 
@@ -326,6 +335,18 @@ export const useChatStore = createPersistStore(
           ]);
         });
 
+        if (modelConfig.systemPrompt) {
+          const systemPrompt = createMessage({
+            role: "system",
+            content: modelConfig.systemPrompt,
+          });
+
+          // Add systemPrompt at the beginning of the array
+          sendMessages.unshift(systemPrompt);
+        }
+
+        console.log("[Sent messages]", sendMessages);
+
         // make request
         api.llm.chat({
           messages: sendMessages,
@@ -339,8 +360,28 @@ export const useChatStore = createPersistStore(
               session.messages = session.messages.concat();
             });
           },
-          onFinish(message) {
+          async onFinish(message) {
             botMessage.streaming = false;
+
+            try {
+              const {
+                data: { user },
+              } = await supabase.auth.getUser();
+              if (!user) {
+                console.error("No user data found");
+                return;
+              }
+              const tokens = countTokens(message);
+              if (session.mask.modelConfig.model !== "gpt-3.5-turbo") {
+                const error = await updateUsage(user.id, tokens);
+                if (error) {
+                  console.error("[update usage error]: ", error);
+                }
+              }
+            } catch (error) {
+              console.error("Error updating usage:", error);
+            }
+
             if (message) {
               botMessage.content = message;
               get().onNewMessage(botMessage);
@@ -418,7 +459,7 @@ export const useChatStore = createPersistStore(
         if (shouldInjectSystemPrompts) {
           console.log(
             "[Global System Prompt] ",
-            systemPrompts.at(0)?.content ?? "empty",
+            // systemPrompts.at(0)?.content ?? "empty",
           );
         }
 
@@ -493,6 +534,7 @@ export const useChatStore = createPersistStore(
           session.messages = [];
           session.memoryPrompt = "";
         });
+        useSyncStore.getState().saveToRemote();
       },
 
       summarizeSession() {
@@ -594,7 +636,11 @@ export const useChatStore = createPersistStore(
       updateStat(message: ChatMessage) {
         get().updateCurrentSession((session) => {
           session.stat.charCount += message.content.length;
-          // TODO: should update chat count and word count
+          session.stat.wordCount += countWords(message.content);
+          session.stat.tokenCount += countTokens(message.content);
+        });
+        get().updateCurrentSession((session) => {
+          session.stat.charCount += message.content.length;
         });
       },
 
@@ -607,6 +653,7 @@ export const useChatStore = createPersistStore(
 
       clearAllData() {
         localStorage.clear();
+        useSyncStore.getState().saveToRemote();
         location.reload();
       },
     };

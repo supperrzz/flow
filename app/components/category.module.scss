@@ -1,0 +1,74 @@
+@import "../styles/animation.scss";
+
+.category {
+  color: var(--black);
+  width: 100%;
+  padding: 10px;
+  background-color: var(--white);
+  border-radius: 7px;
+  margin-bottom: 5px;
+  box-shadow: var(--card-shadow);
+  transition: background-color 0.3s ease;
+  transition: height 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+  border: 2px solid transparent;
+  position: relative;
+  content-visibility: auto;
+  animation: slide-in ease 0.3s;
+    &:hover {
+      background-color: var(--hover-color);
+    }
+  
+    &-selected {
+      border-color: var(--primary);
+    }
+  
+    &-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      h3 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+        font-size: small;
+        font-weight: normal;
+      }
+    }
+    &-content {
+      overflow: hidden;
+      height: 0;
+      display: grid;
+      grid-gap: 10px;
+      &-expanded {
+        height: auto;
+        margin-bottom: 20px;
+      }
+    }
+    &-item {
+      color: var(--black);
+      border: 0;
+      padding: 10px 12px;
+      border-radius: 7px;
+      font-size: small;
+      box-shadow: var(--card-shadow);
+      cursor: pointer;
+      background: var(--white);
+      animation: slide-in ease 0.3s;
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: var(--primary);
+        color: var(--white);
+        pointer-events: none;
+      }
+      &:hover {
+        background: var(--hover-color);
+      }
+    }
+}

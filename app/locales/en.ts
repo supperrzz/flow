@@ -5,6 +5,7 @@ const isApp = !!getClientConfig()?.isApp;
 const en = {
   WIP: "Coming Soon...",
   Error: {
+    UsageLimit: "Usage limit exceeded, please check your account balance.",
     Unauthorized: isApp
       ? "Invalid API Key, please check it in [Settings](/#/settings) page."
       : "Unauthorized access, please enter access code in [auth](/#/auth) page, or enter your OpenAI API Key.",
@@ -20,6 +21,8 @@ const en = {
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
+    Today: "Today at",
+    Yesterday: "Yesterday at",
   },
   Chat: {
     SubTitle: (count: number) => `${count} messages`,
@@ -37,18 +40,18 @@ const en = {
       Copy: "Copy",
       Stop: "Stop",
       Retry: "Retry",
-      Pin: "Pin",
-      PinToastContent: "Pinned 1 messages to contextual prompts",
+      Pin: "Add to Memory",
+      PinToastContent: "Message Added to Memory",
       PinToastAction: "View",
       Delete: "Delete",
-      Edit: "Edit",
+      Edit: "Edit Messages",
     },
     Commands: {
       new: "Start a new chat",
       newm: "Start a new chat with Virtual Assistants",
       next: "Next Chat",
       prev: "Previous Chat",
-      clear: "Clear Context",
+      clear: "Clear Memory",
       del: "Delete Chat",
     },
     InputActions: {
@@ -61,13 +64,13 @@ const en = {
       },
       Prompt: "Prompts",
       Masks: "Virtual Assistants",
-      Clear: "Clear Context",
+      Clear: "Clear Memory",
       Settings: "Chat Settings",
     },
     Rename: "Rename Chat",
     Typing: "Typing…",
     Input: (submitKey: string) => {
-      var inputHints = `${submitKey} to send`;
+      var inputHints = `Press ${submitKey} to send a message`;
       if (submitKey === String(SubmitKey.Enter)) {
         inputHints;
       }
@@ -77,8 +80,9 @@ const en = {
     Config: {
       Reset: "Reset to Default",
       SaveAs: "Save as Virtual Assistant",
+      Save: "Save Changes",
     },
-    IsContext: "Contextual Prompt",
+    IsContext: "System Prompt",
   },
   Export: {
     Title: "Export Messages",
@@ -127,9 +131,10 @@ const en = {
     Logout: "Logout",
   },
   Settings: {
-    Title: "Settings",
-    SubTitle: "All Settings",
+    Title: "Global Settings",
+    SubTitle: "Settings apply to all chats but can be individually modified",
     Danger: {
+      Logout: "Logout",
       Reset: {
         Title: "Reset All Settings",
         SubTitle: "Reset all setting items to default",
@@ -141,6 +146,12 @@ const en = {
         SubTitle: "Clear all messages and settings",
         Action: "Clear",
         Confirm: "Confirm to clear all messages and settings?",
+      },
+      Cancel: {
+        Title: "Cancel Subscription",
+        SubTitle: "Cancel your subscription plan",
+        Action: "Cancel",
+        Confirm: "Are you sure you want to cancel your subscription?",
       },
     },
     Lang: {
@@ -184,10 +195,10 @@ const en = {
       SubTitle: "Generate a suitable title based on the conversation content",
     },
     Sync: {
-      CloudState: "Last Update",
-      NotSyncYet: "Not sync yet",
-      Success: "Sync Success",
-      Fail: "Sync Fail",
+      CloudState: "Last Save",
+      NotSyncYet: "Not saved yet",
+      Success: "Save Success",
+      Fail: "Save Fail",
 
       Config: {
         Modal: {
@@ -223,7 +234,7 @@ const en = {
 
       LocalState: "Local Data",
       Overview: (overview: any) => {
-        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} Virtual Assistants`;
+        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} custom prompts，${overview.mask} virtual assistants`;
       },
       ImportFailed: "Failed to import from file",
     },
@@ -236,6 +247,24 @@ const en = {
       Builtin: {
         Title: "Hide System Virtual Assistants",
         SubTitle: "Hide system Virtual Assistants in Virtual Assistants list",
+      },
+    },
+    Subscription: {
+      Subscription: "Subscription Status",
+      Plan: (plan: string) => `Subscription Status: ${plan}`,
+      Upgrade: "Subscribe to Pro",
+      Cancel: "Cancel Subscription",
+      Subscribed: "Subscription Active",
+      Loading: "...",
+      Status: {
+        Active: "Active",
+        Expired: "Expired",
+        Cancelled: "Cancelled",
+        Inactive: "Inactive",
+      },
+      Modal: {
+        Title: "Subscription",
+        Done: "Done",
       },
     },
     Prompt: {
@@ -267,13 +296,13 @@ const en = {
     },
     Token: {
       Title: "API Key",
-      SubTitle: "Use your key to ignore access code limit",
+      SubTitle: "Use your key to ignore usage limit",
       Placeholder: "OpenAI API Key",
     },
     Usage: {
       Title: "Account Balance",
       SubTitle(used: any, total: any) {
-        return `Used this month $${used}, subscription $${total}`;
+        return `Usage this month ${used} / ${total}`;
       },
       IsChecking: "Checking...",
       Check: "Check",
@@ -317,7 +346,7 @@ const en = {
     },
   },
   Store: {
-    DefaultTopic: "New Virtual Assistant",
+    DefaultTopic: "New Chat",
     BotHello: "Hello! How can I assist you today?",
     Error: "Something went wrong, please try again later.",
     Prompt: {
@@ -334,10 +363,10 @@ const en = {
     Failed: "Copy failed, please grant permission to access clipboard",
   },
   Context: {
-    Toast: (x: any) => `With ${x} contextual prompts`,
-    Edit: "Current Chat Settings",
-    Add: "Add a Prompt",
-    Clear: "Context Cleared",
+    Toast: (x: any) => `${x} Message${x > 1 ? "s" : ""} in Memory`,
+    Edit: "Chat Settings",
+    Add: "Add a Message",
+    Clear: "Memory Cleared",
     Revert: "Revert",
   },
   Plugin: {
@@ -347,7 +376,7 @@ const en = {
     Sysmessage: "You are an assistant that",
   },
   Mask: {
-    Name: "Browse Virtual Assistants",
+    Name: "Virtual Assistants",
     Page: {
       Title: "Virtual Assistants Library",
       SubTitle: (count: number) => `${count} Virtual Assistants`,
@@ -364,9 +393,10 @@ const en = {
     },
     EditModal: {
       Title: (readonly: boolean) =>
-        `Edit Prompt Template ${readonly ? "(readonly)" : ""}`,
-      Download: "Download",
+        `Edit Virtual Assistant ${readonly ? "(readonly)" : ""}`,
+      Download: "Export",
       Clone: "Clone",
+      Save: "Save Changes",
     },
     Config: {
       Avatar: "Chat Avatar",
@@ -377,8 +407,8 @@ const en = {
         Confirm: "Confirm to override custom config with global config?",
       },
       HideContext: {
-        Title: "Hide Context Prompts",
-        SubTitle: "Do not show in-context prompts in chat",
+        Title: "Hide Memory Messages",
+        SubTitle: "Don't show in-memory messages in chat",
       },
       Share: {
         Title: "Share This Virtual Assistants",
@@ -405,7 +435,7 @@ const en = {
     Edit: "Edit",
     Export: "Export",
     Import: "Import",
-    Sync: "Sync",
+    Sync: "Save Now",
     Config: "Config",
   },
   Exporter: {

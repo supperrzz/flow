@@ -2,6 +2,7 @@ import { DEFAULT_API_HOST, DEFAULT_MODELS, StoreKey } from "../constant";
 import { getHeaders } from "../client/api";
 import { getClientConfig } from "../config/client";
 import { createPersistStore } from "../utils/store";
+import { User } from "@supabase/supabase-js";
 
 let fetchState = 0; // 0 not fetch, 1 fetching, 2 done
 
@@ -16,6 +17,8 @@ const DEFAULT_ACCESS_STATE = {
   hideUserApiKey: false,
   hideBalanceQuery: false,
   disableGPT4: false,
+  user: undefined as undefined | User,
+  isSubscribed: false,
 
   openaiUrl: DEFAULT_OPENAI_URL,
 };
@@ -58,7 +61,6 @@ export const useAccessStore = createPersistStore(
       })
         .then((res) => res.json())
         .then((res: DangerConfig) => {
-          console.log("[Config] got config from server", res);
           set(() => ({ ...res }));
 
           if (res.disableGPT4) {
@@ -73,6 +75,18 @@ export const useAccessStore = createPersistStore(
         .finally(() => {
           fetchState = 2;
         });
+    },
+    setUser(user: any) {
+      set(() => ({ user: user }));
+    },
+    user() {
+      return get().user;
+    },
+    setIsSubscribed(subscribed: boolean) {
+      set(() => ({ isSubscribed: subscribed }));
+    },
+    isSubscribed() {
+      return get().isSubscribed;
     },
   }),
   {

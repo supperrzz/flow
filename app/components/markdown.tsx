@@ -163,9 +163,10 @@ export const HtmlContent = ({ code }: { code: string }) => {
   const handleDownload = () => {
     const opt = {
       margin: 10,
-      filename: "document.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
+      filename: `document.pdf`,
+      enableLinks: true,
+      image: { type: "jpeg", quality: 1 },
+      html2canvas: { scale: 4 },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     };
     const trimmer = code.replace(/```html/g, "").replace(/```/g, "");
@@ -176,6 +177,10 @@ export const HtmlContent = ({ code }: { code: string }) => {
   <html>
     <head>
       <title>Generated Document</title>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.7/tailwind.min.css"
+      />
       <style>
         body {
           font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -206,7 +211,7 @@ export const HtmlContent = ({ code }: { code: string }) => {
           srcDoc={htmlDocTemplate}
           style={{
             width: "100%",
-            height: "450px",
+            height: "auto",
             border: "none",
             borderRadius: "0 0 8px 8px",
           }}
@@ -332,7 +337,7 @@ export const PptxGenContent = ({ code }: { code: string }) => {
   };
 
   return (
-    <div>
+    <div style={{ marginBottom: "10px" }}>
       <IconButton
         text="Download Presentation"
         icon={<DownloadIcon />}
@@ -362,12 +367,13 @@ export function PreCode(props: { children: any }) {
   const renderContent = (type: string) => {
     if (!ref.current) return;
     const dom = ref.current.querySelector(`code.language-${type}`);
-    console.log({ dom });
     if (
       dom instanceof HTMLElement &&
       dom.parentElement instanceof HTMLElement
     ) {
-      dom.parentElement.style.display = "none";
+      if (type !== "html") {
+        dom.parentElement.style.display = "none";
+      }
       setContent((prevContent) => ({ ...prevContent, [type]: dom.innerText }));
     }
   };

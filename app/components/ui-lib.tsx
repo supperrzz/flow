@@ -5,6 +5,7 @@ import CloseIcon from "../icons/close.svg";
 import EyeIcon from "../icons/eye.svg";
 import EyeOffIcon from "../icons/eye-off.svg";
 import DownIcon from "../icons/down.svg";
+import DarkDownIcon from "../icons/select-down.svg";
 import ConfirmIcon from "../icons/confirm.svg";
 import CancelIcon from "../icons/cancel.svg";
 import MaxIcon from "../icons/max.svg";
@@ -99,9 +100,11 @@ export function Loading() {
 interface ModalProps {
   title: string;
   children?: any;
-  actions?: JSX.Element[];
+  actions?: Array<JSX.Element | null>;
   defaultMax?: boolean;
+  removeMax?: boolean;
   onClose?: () => void;
+  maxWidth?: number;
 }
 export function Modal(props: ModalProps) {
   useEffect(() => {
@@ -126,17 +129,20 @@ export function Modal(props: ModalProps) {
       className={
         styles["modal-container"] + ` ${isMax && styles["modal-container-max"]}`
       }
+      style={{ maxWidth: props.maxWidth }}
     >
       <div className={styles["modal-header"]}>
         <div className={styles["modal-title"]}>{props.title}</div>
 
         <div className={styles["modal-header-actions"]}>
-          <div
-            className={styles["modal-header-action"]}
-            onClick={() => setMax(!isMax)}
-          >
-            {isMax ? <MinIcon /> : <MaxIcon />}
-          </div>
+          {!props.removeMax && (
+            <div
+              className={styles["modal-header-action"]}
+              onClick={() => setMax(!isMax)}
+            >
+              {isMax ? <MinIcon /> : <MaxIcon />}
+            </div>
+          )}
           <div
             className={styles["modal-header-action"]}
             onClick={props.onClose}
@@ -150,11 +156,14 @@ export function Modal(props: ModalProps) {
 
       <div className={styles["modal-footer"]}>
         <div className={styles["modal-actions"]}>
-          {props.actions?.map((action, i) => (
-            <div key={i} className={styles["modal-action"]}>
-              {action}
-            </div>
-          ))}
+          {props.actions?.map((action, i) => {
+            if (!action) return null;
+            return (
+              <div key={i} className={styles["modal-action"]}>
+                {action}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -193,7 +202,13 @@ export type ToastProps = {
 
 export function Toast(props: ToastProps) {
   return (
-    <div className={styles["toast-container"]}>
+    <div
+      onClick={() => {
+        props.action?.onClick?.();
+        props.onClose?.();
+      }}
+      className={styles["toast-container"]}
+    >
       <div className={styles["toast-content"]}>
         <span>{props.content}</span>
         {props.action && (
@@ -279,20 +294,31 @@ export function Select(
   props: React.DetailedHTMLProps<
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
-  >,
+  > & {
+    darkIcon?: boolean;
+  },
 ) {
-  const { className, children, ...otherProps } = props;
+  const { className, children, darkIcon, ...otherProps } = props;
   return (
     <div className={`${styles["select-with-icon"]} ${className}`}>
-      <select className={styles["select-with-icon-select"]} {...otherProps}>
+      <select
+        className={`${styles["select-with-icon-select"]} ${
+          className === "empty" && styles["empty"]
+        }`}
+        {...otherProps}
+      >
         {children}
       </select>
-      <DownIcon className={styles["select-with-icon-icon"]} />
+      {darkIcon ? (
+        <DarkDownIcon className={styles["select-with-icon-icon"]} />
+      ) : (
+        <DownIcon className={styles["select-with-icon-icon"]} />
+      )}
     </div>
   );
 }
 
-export function showConfirm(content: any) {
+export function showConfirm(content: any, title = "", buttonAction = "") {
   const div = document.createElement("div");
   div.className = "modal-mask";
   document.body.appendChild(div);
@@ -306,7 +332,7 @@ export function showConfirm(content: any) {
   return new Promise<boolean>((resolve) => {
     root.render(
       <Modal
-        title={Locale.UI.Confirm}
+        title={title ?? Locale.UI.Confirm}
         actions={[
           <IconButton
             key="cancel"
@@ -322,7 +348,7 @@ export function showConfirm(content: any) {
           ></IconButton>,
           <IconButton
             key="confirm"
-            text={Locale.UI.Confirm}
+            text={buttonAction || Locale.UI.Confirm}
             type="primary"
             onClick={() => {
               resolve(true);
@@ -337,7 +363,7 @@ export function showConfirm(content: any) {
         ]}
         onClose={closeModal}
       >
-        {content}
+        <div dangerouslySetInnerHTML={{ __html: content }}></div>
       </Modal>,
     );
   });
