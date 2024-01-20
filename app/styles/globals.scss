@@ -428,103 +428,6 @@ pre {
   }
 }
 
-.ql-container {
-  font-family: unset !important;
-  font-size: 14px !important;
-}
-
-.ql-editor {
-  p {
-    line-height: 1.4 !important;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin-bottom: 8px !important;
-
-    &:last-child {
-      margin-bottom: 0 !important;
-    }
-  }
-
-  p,
-  ul,
-  blockquote {
-    margin-bottom: 8px !important;
-
-    &:last-child {
-      margin-bottom: 0 !important;
-    }
-  }
-
-  li, ol {
-    margin-bottom: 8px !important;
-  }
-}
-
-.ql-editor.ql-blank::before {
-  color: var(--black) !important;
-}
-
-.ql-container.ql-snow {
-  border: none !important;
-}
-
-.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
-  border-color: var(--border-in-light);
-  background: var(--white);
-}
-
-.ql-toolbar.ql-snow {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  border: none !important;
-  margin-bottom: 1px !important;
-  display: flex;
-  background-color: var(--second);
-  flex-wrap: wrap;
-  color: var(--black) !important;
-}
-
-.ql-toolbar .ql-stroke {
-  fill: none;
-  stroke: var(--black) !important;
-}
-
-.ql-toolbar .ql-fill {
-  fill: var(--black) !important;
-  stroke: none;
-}
-
-.ql-toolbar .ql-picker {
-  color: var(--black) !important;
-}
-
-// style active buttons
-.ql-toolbar .ql-active .ql-fill,
-.ql-toolbar .ql-active .ql-stroke,
-.ql-toolbar .ql-active .ql-picker-label {
-  stroke: var(--primary) !important;
-}
-
-.ql-snow.ql-toolbar button.ql-active,
-.ql-snow .ql-toolbar button.ql-active,
-.ql-snow.ql-toolbar .ql-picker-label:hover,
-.ql-snow .ql-toolbar .ql-picker-label:hover,
-.ql-snow.ql-toolbar .ql-picker-label.ql-active,
-.ql-snow .ql-toolbar .ql-picker-label.ql-active,
-.ql-snow.ql-toolbar .ql-picker-item:hover,
-.ql-snow .ql-toolbar .ql-picker-item:hover,
-.ql-snow.ql-toolbar .ql-picker-item.ql-selected,
-.ql-snow .ql-toolbar .ql-picker-item.ql-selected {
-  color: var(--primary) !important;
-}
-
 .tox-tinymce {
   border-radius: 0 !important;
   border: none !important;
@@ -535,17 +438,16 @@ pre {
 }
 
 // Color Styles
-.dark {
   .tox-toolbar__primary {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
   }
 
   .tox .tox-toolbar-overlord {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
   }
   
   .tox:not(.tox-tinymce-inline) .tox-editor-header {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
   }
   
   .tox .tox-menubar,
@@ -553,24 +455,24 @@ pre {
   .tox .tox-toolbar__overflow,
   .tox .tox-toolbar__primary,
   .tox .tox-statusbar {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
   }
   
   .tox .tox-button--secondary:active:not(:disabled) {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     background-image: none;
-    border-color: var(--second) !important;
+    border-color: var(--white) !important;
     box-shadow: none;
     color: #fff
   }
   
   .tox .tox-collection--list .tox-collection__item--enabled {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     color: #fff
   }
   
   .tox .tox-collection--horizontal {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border: var(--border-in-light);
     border-radius: 6px;
     box-shadow: 0 0 2px 0 rgba(34, 47, 62, .2), 0 4px 8px 0 rgba(34, 47, 62, .15);
@@ -584,15 +486,15 @@ pre {
   }
   
   .tox .tox-comment__overlaytext p {
-    background-color: var(--second) !important;
-    box-shadow: 0 0 8px 8px var(--second) !important;
+    background-color: var(--white) !important;
+    box-shadow: 0 0 8px 8px var(--white) !important;
     color: #fff;
     text-align: center
   }
   
   .tox .tox-comment__busy-spinner {
     align-items: center;
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     bottom: 0;
     display: flex;
     justify-content: center;
@@ -604,7 +506,7 @@ pre {
   }
   
   .tox .tox-dialog {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border-color: #494949 !important;
     border-radius: 7px;
     border-style: solid;
@@ -622,7 +524,7 @@ pre {
   
   .tox .tox-dialog__header {
     align-items: center;
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border-bottom: none;
     color: #fff;
     display: flex;
@@ -634,7 +536,7 @@ pre {
   
   .tox .tox-dialog__footer {
     align-items: center;
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border-top: none;
     display: flex;
     justify-content: space-between;
@@ -649,7 +551,7 @@ pre {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border-color: #494949 !important;
     border-radius: 6px;
     border-style: solid;
@@ -673,7 +575,7 @@ pre {
   .tox .tox-textarea-wrap:focus-within,
   .tox .tox-textarea:focus,
   .tox .tox-textfield:focus {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 2px rgba(0, 108, 231, .25);
     outline: 0
@@ -683,7 +585,7 @@ pre {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border-color: #494949 !important;
     border-radius: 6px;
     border-style: solid;
@@ -703,14 +605,14 @@ pre {
   }
   
   .tox .tox-selectfield select:focus {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 2px rgba(0, 108, 231, .25);
     outline: 0
   }
   
   .tox .tox-menu {
-    background-color: var(--second) !important;
+    background-color: var(--white) !important;
     border: var(--border-in-light);
     border-radius: 6px;
     box-shadow: none;
@@ -721,12 +623,12 @@ pre {
   }
   
   .tox .tox-comment-thread {
-    background: var(--second) !important;
+    background: var(--white) !important;
     position: relative
   }
   
   .tox .tox-comment {
-    background: var(--second) !important;
+    background: var(--white) !important;
     border: 1px solid #161f29;
     border-radius: 6px;
     box-shadow: 0 4px 8px 0 rgba(34, 47, 62, .1);
@@ -735,7 +637,7 @@ pre {
   }
   
   .tox .tox-comment-thread__overlay::after {
-    background: var(--second) !important;
+    background: var(--white) !important;
     bottom: 0;
     content: "";
     display: flex;
@@ -748,7 +650,7 @@ pre {
   }
   
   .tox .tox-comment__overlay {
-    background: var(--second) !important;
+    background: var(--white) !important;
     bottom: 0;
     display: flex;
     flex-direction: column;
@@ -763,7 +665,7 @@ pre {
   }
   
   .tox .tox-comment__gradient::after {
-    background: linear-gradient(rgba(43, 59, 78, 0), var(--second) !important);
+    background: linear-gradient(rgba(43, 59, 78, 0), var(--white) !important);
     bottom: 0;
     content: "";
     display: block;
@@ -774,15 +676,15 @@ pre {
   }
   
   .tox .tox-comment__overlaytext p {
-    background-color: var(--second) !important;
-    box-shadow: 0 0 8px 8px var(--second) !important;
+    background-color: var(--white) !important;
+    box-shadow: 0 0 8px 8px var(--white) !important;
     color: #fff;
     text-align: center
   }
   
   .tox .tox-color-input span::before {
     background-image: linear-gradient(45deg, rgba(255, 255, 255, .25) 25%, transparent 25%), linear-gradient(-45deg, rgba(255, 255, 255, .25) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, .25) 75%), linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, .25) 75%);
-    border: 1px solid var(--second) !important;
+    border: 1px solid var(--white) !important;
   }
 
   .tox .tox-dialog__body-content .accessibility-issue--info a.tox-button--naked.tox-button--icon {
@@ -1006,24 +908,24 @@ pre {
   }
   
   .tox .tox-collection--toolbar .tox-collection__item--enabled {
-    background-color: #0e4753 !important;
+    background-color: var(--primary) !important;
     color: #fff
   }
   
   .tox .tox-collection--grid .tox-collection__item--enabled {
-    background-color: #0e4753 !important;
+    background-color: var(--primary) !important;
     color: #fff
   }
   
   .tox .tox-mbtn--active {
-    background: #0e4753 !important;
+    background: var(--primary) !important;
     border: 0;
     box-shadow: none;
     color: #fff
   }
   
   .tox .tox-tbtn:active {
-    background: #0e4753 !important;
+    background: var(--primary) !important;
     border: 0;
     box-shadow: none;
     color: #fff
@@ -1031,21 +933,21 @@ pre {
   
   .tox .tox-tbtn--enabled,
   .tox .tox-tbtn--enabled:hover {
-    background: #0e4753 !important;
+    background: var(--primary) !important;
     border: 0;
     box-shadow: none;
     color: #fff
   }
   
   .tox .tox-number-input button:active {
-    background: #0e4753 !important;
+    background: var(--primary) !important;
     border: 0;
     box-shadow: none;
     color: #fff
   }
   
   .tox .tox-tree .tox-trbtn:active {
-    background: #0e4753 !important;
+    background: var(--primary) !important;
     border: 0;
     box-shadow: none;
     color: #fff
@@ -1053,7 +955,7 @@ pre {
   
   .tox .tox-tree .tox-trbtn--enabled,
   .tox .tox-tree .tox-trbtn--enabled:hover {
-    background: #0e4753 !important;
+    background: var(--primary) !important;
     border: 0;
     box-shadow: none;
     color: #fff
@@ -1062,7 +964,6 @@ pre {
     background-color: rgb(29 147 171 / 40%) !important;
     border-color: rgb(29 147 171 / 40%) !important;
   }
-}
 
 .tox .tox-dialog__title {
   font-size: 16px !important;
