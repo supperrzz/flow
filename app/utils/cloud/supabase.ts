@@ -63,6 +63,9 @@ export function createSupabaseClient(store: SyncStore) {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      if (!session?.user?.id) {
+        return;
+      }
       const res = await supabase.from("chat_sessions").upsert(
         {
           user_id: session?.user?.id,

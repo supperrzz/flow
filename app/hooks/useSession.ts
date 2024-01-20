@@ -84,14 +84,11 @@ const useSession = () => {
   }, []);
 
   useEffect(() => {
-    if (session) {
+    if (session?.user) {
       accessStore.setUser(session.user);
       setUser(session.user);
       checkSubscription(session.user.email!);
       getUsage(session.user.id!);
-    } else {
-      accessStore.setUser(null);
-      setUser(null);
     }
   }, [session]);
 

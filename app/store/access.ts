@@ -77,7 +77,7 @@ export const useAccessStore = createPersistStore(
         });
     },
     setUser(user: any) {
-      set(() => ({ user: user }));
+      set(() => ({ user }));
     },
     user() {
       return get().user;

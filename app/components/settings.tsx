@@ -267,6 +267,7 @@ function DangerItems({
   const syncStore = useSyncStore();
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
+    chatStore.clearAllData();
     if (error) {
       console.error("Error signing out:", error.message);
     }
