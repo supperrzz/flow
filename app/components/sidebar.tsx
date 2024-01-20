@@ -343,7 +343,7 @@ export function SideBar(props: { className?: string }) {
             <IconButton
               icon={<AddIcon />}
               text={shouldNarrow ? undefined : Locale.Home.NewChat}
-              disabled={chatCount >= CHAT_COUNT_MAX}
+              disabled={!isSubscribed && chatCount >= CHAT_COUNT_MAX}
               onClick={() => {
                 if (config.dontShowMaskSplashScreen) {
                   chatStore.newSession();

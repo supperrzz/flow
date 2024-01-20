@@ -102,8 +102,8 @@ export function SessionConfigModel(props: { onClose: () => void }) {
   const maskStore = useMaskStore();
   const syncStore = useSyncStore();
   const navigate = useNavigate();
-  const chatCount = chatStore.sessions.length;
-
+  const accessStore = useAccessStore();
+  const { isSubscribed } = accessStore;
   return (
     <div className="modal-mask">
       <Modal
@@ -129,7 +129,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             icon={<CopyIcon />}
             bordered
             text={Locale.Chat.Config.SaveAs}
-            disabled={chatCount >= CHAT_COUNT_MAX}
+            disabled={!isSubscribed}
             onClick={() => {
               navigate(Path.Masks);
               setTimeout(() => {

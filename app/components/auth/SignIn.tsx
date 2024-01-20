@@ -44,6 +44,7 @@ export const SignIn = () => {
     if (res.error) {
       console.error("Error signing in");
     }
+    window.location.reload();
   };
 
   const onSignup = async (data: SignInFormData) => {

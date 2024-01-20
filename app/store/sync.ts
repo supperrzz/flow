@@ -82,8 +82,7 @@ export const useSyncStore = createPersistStore(
     },
 
     getClient() {
-      const provider = get().provider;
-      const client = createSyncClient(provider, get());
+      const client = createSyncClient(ProviderType.Supabase, get());
       return client;
     },
 
