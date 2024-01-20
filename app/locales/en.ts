@@ -301,8 +301,10 @@ const en = {
     },
     Usage: {
       Title: "Account Balance",
-      SubTitle(used: any, total: any) {
-        return `Usage this month ${used} / ${total}`;
+      SubTitle(used: any, total: any, isSubscribed: boolean) {
+        return `${
+          isSubscribed ? "Usage this month" : "Free Trial Tokens"
+        } ${used} / ${total}`;
       },
       IsChecking: "Checking...",
       Check: "Check",

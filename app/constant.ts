@@ -106,6 +106,7 @@ export const MODEL_NAMES = {
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
-export const FREE_MONTHLY_USAGE = 25000;
+export const FREE_MONTHLY_USAGE = 5000;
+export const CHAT_COUNT_MAX = 5;
 export const MAX_MONTHLY_USAGE = 150000;
 export const NEW_DOC_KEY = "Scratch Pad";

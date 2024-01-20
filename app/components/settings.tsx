@@ -710,6 +710,7 @@ export function Settings() {
                     ((isSubscribed as boolean)
                       ? MAX_MONTHLY_USAGE
                       : FREE_MONTHLY_USAGE) ?? "[?]",
+                    isSubscribed,
                   )
             }
           >

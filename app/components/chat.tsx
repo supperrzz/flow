@@ -72,6 +72,7 @@ import {
 } from "./ui-lib";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  CHAT_COUNT_MAX,
   CHAT_PAGE_SIZE,
   LAST_INPUT_KEY,
   MAX_RENDER_MSG_COUNT,
@@ -101,6 +102,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
   const maskStore = useMaskStore();
   const syncStore = useSyncStore();
   const navigate = useNavigate();
+  const chatCount = chatStore.sessions.length;
 
   return (
     <div className="modal-mask">
@@ -127,6 +129,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             icon={<CopyIcon />}
             bordered
             text={Locale.Chat.Config.SaveAs}
+            disabled={chatCount >= CHAT_COUNT_MAX}
             onClick={() => {
               navigate(Path.Masks);
               setTimeout(() => {

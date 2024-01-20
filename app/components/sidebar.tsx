@@ -16,6 +16,7 @@ import Locale from "../locales";
 import { useAccessStore, useAppConfig, useChatStore } from "../store";
 
 import {
+  CHAT_COUNT_MAX,
   DEFAULT_SIDEBAR_WIDTH,
   MAX_SIDEBAR_WIDTH,
   MIN_SIDEBAR_WIDTH,
@@ -225,6 +226,7 @@ export function SideBar(props: { className?: string }) {
   const accessStore = useAccessStore();
   const { isSubscribed } = accessStore;
   const [document, setDocument] = useRecoilState(currentChatDocumentState);
+  const chatCount = chatStore.sessions.length;
 
   // drag side bar
   const { onDragStart, shouldNarrow } = useDragSideBar();
@@ -245,7 +247,7 @@ export function SideBar(props: { className?: string }) {
         </div>
         <div>
           <div className={styles["sidebar-title"]} data-tauri-drag-region>
-            Welcome to Flow
+            Flow Chat
           </div>
           <div className={styles["sidebar-sub-title"]}>
             Join the{" "}
@@ -341,6 +343,7 @@ export function SideBar(props: { className?: string }) {
             <IconButton
               icon={<AddIcon />}
               text={shouldNarrow ? undefined : Locale.Home.NewChat}
+              disabled={chatCount >= CHAT_COUNT_MAX}
               onClick={() => {
                 if (config.dontShowMaskSplashScreen) {
                   chatStore.newSession();
