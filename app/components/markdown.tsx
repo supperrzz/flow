@@ -214,6 +214,7 @@ export const HtmlContent = ({ code }: { code: string }) => {
             height: "auto",
             border: "none",
             borderRadius: "0 0 8px 8px",
+            minHeight: "400px",
           }}
         />
       </div>
@@ -371,9 +372,9 @@ export function PreCode(props: { children: any }) {
       dom instanceof HTMLElement &&
       dom.parentElement instanceof HTMLElement
     ) {
-      if (type !== "html") {
-        dom.parentElement.style.display = "none";
-      }
+      dom.parentElement.style.display = "none";
+      // if (process.env.NODE_ENV !== "development") {
+      // }
       setContent((prevContent) => ({ ...prevContent, [type]: dom.innerText }));
     }
   };
