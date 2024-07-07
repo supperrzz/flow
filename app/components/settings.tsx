@@ -749,6 +749,7 @@ export function Settings() {
               const modelConfig = { ...config.modelConfig };
               updater(modelConfig);
               config.update((config) => (config.modelConfig = modelConfig));
+              syncStore.saveToRemote();
             }}
           />
           {/* Custom Model */}
@@ -777,6 +778,7 @@ export function Settings() {
                   onEmojiClick={(avatar: string) => {
                     updateConfig((config) => (config.avatar = avatar));
                     setShowEmojiPicker(false);
+                    syncStore.saveToRemote();
                   }}
                 />
               }
@@ -802,6 +804,7 @@ export function Settings() {
                   (config) =>
                     (config.submitKey = e.target.value as any as SubmitKey),
                 );
+                syncStore.saveToRemote();
               }}
             >
               {Object.values(SubmitKey).map((v) => (
@@ -837,12 +840,13 @@ export function Settings() {
               min="12"
               max="18"
               step="1"
-              onChange={(e) =>
+              onChange={(e) => {
                 updateConfig(
                   (config) =>
                     (config.fontSize = Number.parseInt(e.currentTarget.value)),
-                )
-              }
+                );
+                syncStore.saveToRemote();
+              }}
             ></InputRange>
           </ListItem>
 
@@ -853,12 +857,13 @@ export function Settings() {
             <input
               type="checkbox"
               checked={config.sendPreviewBubble}
-              onChange={(e) =>
+              onChange={(e) => {
                 updateConfig(
                   (config) =>
                     (config.sendPreviewBubble = e.currentTarget.checked),
-                )
-              }
+                );
+                syncStore.saveToRemote();
+              }}
             ></input>
           </ListItem>
         </List>
