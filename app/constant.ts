@@ -93,13 +93,13 @@ export const DEFAULT_MODELS = [
   //   available: true,
   // },
   {
-    name: "gpt-4-1106-preview",
+    name: "gpt-4o",
     available: true,
   },
 ] as const;
 
 export const MODEL_NAMES = {
-  "gpt-4-1106-preview": "Turbo",
+  "gpt-4o": "Turbo",
   // "gpt-4": "GPT-4",
   "gpt-3.5-turbo": "Default",
 };
