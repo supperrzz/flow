@@ -451,7 +451,7 @@ export function ChatActions(props: {
   const { isSubscribed } = accessStore;
   const models = useMemo(() => {
     if (isSubscribed as boolean) {
-      return config.allModels().map((m) => m.name);
+      return ["gpt-3.5-turbo", "gpt-4o"];
     } else {
       return ["gpt-3.5-turbo"];
     }
