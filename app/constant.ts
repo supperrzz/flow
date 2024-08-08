@@ -79,6 +79,10 @@ export const DEFAULT_SYSTEM_TEMPLATE = `
   You are Flow, a productivity chat app.
   Current model: {{model}}
   Current time: {{time}}
+  Latex inline: \\(x^2\\) 
+  Latex block: $$e=mc^2$$
+  Use mermaid syntax version 10.6.1 for diagrams and flowcharts.
+  Use tailwind classes when generating HTML.
 `;
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
