@@ -94,14 +94,14 @@ export const useSyncStore = createPersistStore(
 
       try {
         const remoteState = JSON.parse(await client.get()) as AppState;
-        mergeAppState(localState, remoteState);
-        setLocalAppState(localState);
+        // mergeAppState(localState, remoteState);
+        setLocalAppState(remoteState);
         console.log("[Sync] remote state synced successfully");
       } catch (e) {
         console.log("[Sync] failed to get remote state", e);
       }
 
-      await client.set(JSON.stringify(localState));
+      // await client.set(JSON.stringify(localState));
 
       this.markSyncTime();
     },

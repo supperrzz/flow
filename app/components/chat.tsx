@@ -131,7 +131,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             text={Locale.Chat.Config.SaveAs}
             disabled={!isSubscribed}
             onClick={() => {
-              navigate(Path.Masks);
+              navigate(Path.Assistants);
               setTimeout(() => {
                 maskStore.create({
                   ...session.mask,
@@ -451,7 +451,7 @@ export function ChatActions(props: {
   const { isSubscribed } = accessStore;
   const models = useMemo(() => {
     if (isSubscribed as boolean) {
-      return config.allModels().map((m) => m.name);
+      return ["gpt-3.5-turbo", "gpt-4o"];
     } else {
       return ["gpt-3.5-turbo"];
     }
@@ -504,7 +504,7 @@ export function ChatActions(props: {
 
       {/* <ChatAction
         onClick={() => {
-          navigate(Path.Masks);
+          navigate(Path.Assistants);
         }}
         text={Locale.Chat.InputActions.Masks}
         icon={<PluginIcon />}

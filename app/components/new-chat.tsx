@@ -166,7 +166,7 @@ export function NewChat() {
         <IconButton
           className={styles["more"]}
           text={Locale.NewChat.More}
-          onClick={() => navigate(Path.Masks)}
+          onClick={() => navigate(Path.Assistants)}
           icon={<EyeIcon />}
           bordered
           shadow

@@ -667,7 +667,7 @@ export function MaskPage() {
                 bordered
                 text={Locale.Mask.EditModal.Clone}
                 onClick={() => {
-                  navigate(Path.Masks);
+                  navigate(Path.Assistants);
                   maskStore.create(editingMask);
                   setEditingMaskId(undefined);
                 }}

@@ -16,7 +16,7 @@ export enum Path {
   Chat = "/chat",
   Settings = "/settings",
   NewChat = "/new-chat",
-  Masks = "/masks",
+  Assistants = "/assistants",
   Auth = "/auth",
   Content = "/content",
   Dashboard = "/dashboard",
@@ -79,6 +79,10 @@ export const DEFAULT_SYSTEM_TEMPLATE = `
   You are Flow, a productivity chat app.
   Current model: {{model}}
   Current time: {{time}}
+  Latex inline: \\(x^2\\) 
+  Latex block: $$e=mc^2$$
+  Use mermaid syntax version 10.6.1 for diagrams and flowcharts.
+  Use tailwind classes when generating HTML.
 `;
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
@@ -93,13 +97,13 @@ export const DEFAULT_MODELS = [
   //   available: true,
   // },
   {
-    name: "gpt-4-1106-preview",
+    name: "gpt-4o",
     available: true,
   },
 ] as const;
 
 export const MODEL_NAMES = {
-  "gpt-4-1106-preview": "Turbo",
+  "gpt-4o": "Turbo",
   // "gpt-4": "GPT-4",
   "gpt-3.5-turbo": "Default",
 };
