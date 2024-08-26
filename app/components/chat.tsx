@@ -9,7 +9,7 @@ import React, {
   RefObject,
 } from "react";
 
-import SendWhiteIcon from "../icons/send-white.svg";
+import SendWhiteIcon from "../icons/chatgpt.svg";
 import BrainIcon from "../icons/brain.svg";
 import RenameIcon from "../icons/rename.svg";
 import ExportIcon from "../icons/share.svg";
@@ -757,7 +757,7 @@ export function ChatActions(props: {
             });
           }}
         />
-      )}
+      )} */}
     </div>
   );
 }

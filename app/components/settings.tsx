@@ -1544,9 +1544,9 @@ export function Settings() {
 
           {!accessStore.hideUserApiKey && (
             <>
-              {useCustomConfigComponent}
+              {/* {useCustomConfigComponent} */}
 
-              {accessStore.useCustomConfig && (
+              {
                 <>
                   <ListItem
                     title={Locale.Settings.Access.Provider.Title}
@@ -1583,7 +1583,7 @@ export function Settings() {
                   {stabilityConfigComponent}
                   {lflytekConfigComponent}
                 </>
-              )}
+              }
             </>
           )}
 

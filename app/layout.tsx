@@ -10,14 +10,24 @@ import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 const serverConfig = getServerSideConfig();
 
 export const metadata: Metadata = {
-  title: "NextChat",
-  description: "Your personal ChatGPT Chat Bot.",
+  title: "Flow",
+  description: "AI-Powered Chat Application for Business & Life",
+  keywords:
+    "AI, Chat Application, Business, Personal, Generative Language Model, Communication, Collaboration, Productivity",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#151515" },
+  ],
   appleWebApp: {
-    title: "NextChat",
+    title: "Flow: AI-Powered Chat Application",
     statusBarStyle: "default",
   },
 };
-
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,

@@ -3,13 +3,13 @@ import React, { useEffect, useRef, useMemo, useState, Fragment } from "react";
 import styles from "./home.module.scss";
 
 import { IconButton } from "./button";
-import SettingsIcon from "../icons/settings.svg";
+import SettingsIcon from "../icons/chat-settings.svg";
 import GithubIcon from "../icons/github.svg";
-import ChatGptIcon from "../icons/chatgpt.svg";
+import ChatGptIcon from "../icons/bot.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
 import DeleteIcon from "../icons/delete.svg";
-import MaskIcon from "../icons/mask.svg";
+import MaskIcon from "../icons/robot.svg";
 import DragIcon from "../icons/drag.svg";
 import DiscoveryIcon from "../icons/discovery.svg";
 
@@ -171,13 +171,13 @@ export function SideBarHeader(props: {
   return (
     <Fragment>
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
+        <div className={styles["sidebar-logo"] + " no-dark"}>{logo}</div>
         <div className={styles["sidebar-title-container"]}>
           <div className={styles["sidebar-title"]} data-tauri-drag-region>
             {title}
           </div>
           <div className={styles["sidebar-sub-title"]}>{subTitle}</div>
         </div>
-        <div className={styles["sidebar-logo"] + " no-dark"}>{logo}</div>
       </div>
       {children}
     </Fragment>
@@ -225,13 +225,14 @@ export function SideBar(props: { className?: string }) {
       {...props}
     >
       <SideBarHeader
-        title="NextChat"
-        subTitle="Build your own AI assistant."
+        title="Flow Chat"
+        subTitle="Build your own AI assistant"
         logo={<ChatGptIcon />}
       >
         <div className={styles["sidebar-header-bar"]}>
           <IconButton
             icon={<MaskIcon />}
+            type="primary"
             text={shouldNarrow ? undefined : Locale.Mask.Name}
             className={styles["sidebar-bar-button"]}
             onClick={() => {
@@ -241,15 +242,15 @@ export function SideBar(props: { className?: string }) {
                 navigate(Path.Masks, { state: { fromHome: true } });
               }
             }}
-            shadow
+            // shadow
           />
-          <IconButton
+          {/* <IconButton
             icon={<DiscoveryIcon />}
             text={shouldNarrow ? undefined : Locale.Discovery.Name}
             className={styles["sidebar-bar-button"]}
             onClick={() => setShowPluginSelector(true)}
             shadow
-          />
+          /> */}
         </div>
         {showPluginSelector && (
           <Selector
@@ -304,7 +305,7 @@ export function SideBar(props: { className?: string }) {
                 />
               </Link>
             </div>
-            <div className={styles["sidebar-action"]}>
+            {/* <div className={styles["sidebar-action"]}>
               <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
                 <IconButton
                   aria={Locale.Export.MessageFromChatGPT}
@@ -312,7 +313,7 @@ export function SideBar(props: { className?: string }) {
                   shadow
                 />
               </a>
-            </div>
+            </div> */}
           </>
         }
         secondaryAction={

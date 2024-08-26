@@ -48,7 +48,7 @@ const en: LocaleType = {
     },
     Commands: {
       new: "Start a new chat",
-      newm: "Start a new chat with mask",
+      newm: "Start a new chat with a virtual assistant",
       next: "Next Chat",
       prev: "Previous Chat",
       clear: "Clear Context",
@@ -63,9 +63,9 @@ const en: LocaleType = {
         dark: "Dark Theme",
       },
       Prompt: "Prompts",
-      Masks: "Masks",
+      Masks: "Virtual Assistants",
       Clear: "Clear Context",
-      Settings: "Settings",
+      Settings: "Chat Settings",
       UploadImage: "Upload Images",
     },
     Rename: "Rename Chat",
@@ -80,7 +80,7 @@ const en: LocaleType = {
     Send: "Send",
     Config: {
       Reset: "Reset to Default",
-      SaveAs: "Save as Mask",
+      SaveAs: "Save as Virtual Assistant",
     },
     IsContext: "Contextual Prompt",
   },
@@ -97,7 +97,7 @@ const en: LocaleType = {
     },
     IncludeContext: {
       Title: "Including Context",
-      SubTitle: "Export context prompts in mask or not",
+      SubTitle: "Export context prompts in virtual assistant or not",
     },
     Steps: {
       Select: "Select",
@@ -234,18 +234,20 @@ const en: LocaleType = {
 
       LocalState: "Local Data",
       Overview: (overview: any) => {
-        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} masks`;
+        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} virtual assistants`;
       },
       ImportFailed: "Failed to import from file",
     },
     Mask: {
       Splash: {
-        Title: "Mask Splash Screen",
-        SubTitle: "Show a mask splash screen before starting new chat",
+        Title: "Virtual Assistant Splash Screen",
+        SubTitle:
+          "Show a virtual assistant splash screen before starting new chat",
       },
       Builtin: {
-        Title: "Hide Builtin Masks",
-        SubTitle: "Hide builtin masks in mask list",
+        Title: "Hide Builtin Virtual Assistants",
+        SubTitle:
+          "Hide builtin virtual assistants in the virtual assistants list",
       },
     },
     Prompt: {
@@ -580,7 +582,7 @@ const en: LocaleType = {
     },
   },
   Mask: {
-    Name: "Mask",
+    Name: "Virtual Assistant",
     Page: {
       Title: "Prompt Template",
       SubTitle: (count: number) => `${count} prompt templates`,
@@ -618,8 +620,8 @@ const en: LocaleType = {
         SubTitle: "Can render HTML page when enable artifacts.",
       },
       Share: {
-        Title: "Share This Mask",
-        SubTitle: "Generate a link to this mask",
+        Title: "Share This Virtual Assistant",
+        SubTitle: "Generate a link to this virtual assistant",
         Action: "Copy Link",
       },
     },
@@ -627,8 +629,8 @@ const en: LocaleType = {
   NewChat: {
     Return: "Return",
     Skip: "Just Start",
-    Title: "Pick a Mask",
-    SubTitle: "Chat with the Soul behind the Mask",
+    Title: "Pick a Virtual Assistant",
+    SubTitle: "Chat with the Soul behind the Virtual Assistant",
     More: "Find More",
     NotShow: "Never Show Again",
     ConfirmNoShow: "Confirm to disable？You can enable it in settings later.",

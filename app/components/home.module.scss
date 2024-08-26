@@ -42,7 +42,7 @@
   width: var(--sidebar-width);
   box-sizing: border-box;
   padding: 20px;
-  background-color: var(--second);
+  background-color: var(--sidebar-background);
   display: flex;
   flex-direction: column;
   box-shadow: inset -2px 0px 2px 0px rgb(0, 0, 0, 0.05);
@@ -138,7 +138,7 @@
   padding-top: 20px;
   padding-bottom: 20px;
   display: flex;
-  justify-content: space-between;
+  gap: 10px;
   align-items: center;
 }
 
@@ -211,12 +211,12 @@
   cursor: pointer;
 }
 
-.chat-item:hover > .chat-item-delete {
+.chat-item:hover>.chat-item-delete {
   opacity: 0.5;
   transform: translateX(-4px);
 }
 
-.chat-item:hover > .chat-item-delete:hover {
+.chat-item:hover>.chat-item-delete:hover {
   opacity: 1;
 }
 
@@ -237,10 +237,12 @@
 }
 
 .narrow-sidebar {
+
   .sidebar-title,
   .sidebar-sub-title {
     display: none;
   }
+
   .sidebar-logo {
     position: relative;
     display: flex;

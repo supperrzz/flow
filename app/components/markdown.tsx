@@ -79,12 +79,15 @@ export function PreCode(props: { children: any }) {
 
   const renderArtifacts = useDebouncedCallback(() => {
     if (!ref.current) return;
+    const refText = ref.current.querySelector("code")?.innerText;
     const mermaidDom = ref.current.querySelector("code.language-mermaid");
     if (mermaidDom) {
+      console.log(mermaidDom);
       setMermaidCode((mermaidDom as HTMLElement).innerText);
+    } else if (refText?.startsWith("mindmap")) {
+      setMermaidCode(refText);
     }
     const htmlDom = ref.current.querySelector("code.language-html");
-    const refText = ref.current.querySelector("code")?.innerText;
     if (htmlDom) {
       setHtmlCode((htmlDom as HTMLElement).innerText);
     } else if (refText?.startsWith("<!DOCTYPE")) {
