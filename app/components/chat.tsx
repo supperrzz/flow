@@ -757,7 +757,7 @@ export function ChatActions(props: {
             });
           }}
         />
-      )} */}
+      )}
     </div>
   );
 }
