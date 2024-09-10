@@ -10,7 +10,7 @@ const en: LocaleType = {
   Error: {
     Unauthorized: isApp
       ? "Invalid API Key, please check it in [Settings](/#/settings) page."
-      : "Unauthorized access, please enter access code in [auth](/#/auth) page, or enter your OpenAI API Key.",
+      : "**Chat Disabled:** Please input a valid access code or OpenAI API Key in the [settings](/#/settings)",
   },
   Auth: {
     Title: "Need Access Code",
@@ -584,9 +584,9 @@ const en: LocaleType = {
   Mask: {
     Name: "Virtual Assistant",
     Page: {
-      Title: "Prompt Template",
-      SubTitle: (count: number) => `${count} prompt templates`,
-      Search: "Search Templates",
+      Title: "Virtual Assistant",
+      SubTitle: (count: number) => `${count} virtual assistants`,
+      Search: "Search Virtual Assistants",
       Create: "Create",
     },
     Item: {
@@ -630,8 +630,8 @@ const en: LocaleType = {
     Return: "Return",
     Skip: "Just Start",
     Title: "Pick a Virtual Assistant",
-    SubTitle: "Chat with the Soul behind the Virtual Assistant",
-    More: "Find More",
+    SubTitle: "Pick your preferred Virtual Assistant or start a new chat",
+    More: "View All",
     NotShow: "Never Show Again",
     ConfirmNoShow: "Confirm to disable？You can enable it in settings later.",
   },

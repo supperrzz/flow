@@ -75,7 +75,7 @@ export function NewChat() {
   const chatStore = useChatStore();
   const maskStore = useMaskStore();
 
-  const masks = maskStore.getAll();
+  const masks = maskStore.getAll().filter((mask) => mask.lang === "en");
   const groups = useMaskGroup(masks);
 
   const navigate = useNavigate();

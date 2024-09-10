@@ -42,6 +42,7 @@ export const createEmptyMask = () =>
     lang: getLang(),
     builtin: false,
     createdAt: Date.now(),
+    hideContext: true,
     plugin: [],
   }) as Mask;
 

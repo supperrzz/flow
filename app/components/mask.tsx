@@ -428,9 +428,7 @@ export function MaskPage() {
 
   const filterLang = maskStore.language;
 
-  const allMasks = maskStore
-    .getAll()
-    .filter((m) => !filterLang || m.lang === filterLang);
+  const allMasks = maskStore.getAll().filter((m) => m.lang === "en");
 
   const [searchMasks, setSearchMasks] = useState<Mask[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -527,7 +525,7 @@ export function MaskPage() {
               autoFocus
               onInput={(e) => onSearch(e.currentTarget.value)}
             />
-            <Select
+            {/* <Select
               className={styles["mask-filter-lang"]}
               value={filterLang ?? Locale.Settings.Lang.All}
               onChange={(e) => {
@@ -547,7 +545,7 @@ export function MaskPage() {
                   {ALL_LANG_OPTIONS[lang]}
                 </option>
               ))}
-            </Select>
+            </Select> */}
 
             <IconButton
               className={styles["mask-create"]}
