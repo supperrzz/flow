@@ -8,7 +8,7 @@ import GithubIcon from "../icons/github.svg";
 import ChatGptIcon from "../icons/bot.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
-import DeleteIcon from "../icons/delete.svg";
+import DeleteIcon from "../icons/close.svg";
 import MaskIcon from "../icons/robot.svg";
 import DragIcon from "../icons/drag.svg";
 import DiscoveryIcon from "../icons/discovery.svg";
@@ -286,6 +286,15 @@ export function SideBar(props: { className?: string }) {
       <SideBarTail
         primaryAction={
           <>
+            <div className={styles["sidebar-action"]}>
+              <Link to={Path.Settings}>
+                <IconButton
+                  aria={Locale.Settings.Title}
+                  icon={<SettingsIcon />}
+                  shadow
+                />
+              </Link>
+            </div>
             <div className={styles["sidebar-action"] + " " + styles.mobile}>
               <IconButton
                 icon={<DeleteIcon />}
@@ -295,15 +304,6 @@ export function SideBar(props: { className?: string }) {
                   }
                 }}
               />
-            </div>
-            <div className={styles["sidebar-action"]}>
-              <Link to={Path.Settings}>
-                <IconButton
-                  aria={Locale.Settings.Title}
-                  icon={<SettingsIcon />}
-                  shadow
-                />
-              </Link>
             </div>
             {/* <div className={styles["sidebar-action"]}>
               <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
