@@ -10,7 +10,7 @@ const en: LocaleType = {
   Error: {
     Unauthorized: isApp
       ? "Invalid API Key, please check it in [Settings](/#/settings) page."
-      : "**Chat Disabled:** Please input a valid access code or OpenAI API Key in the [settings](/#/settings)",
+      : "**Chat Disabled:** Please input a valid access code or OpenAI API Key in the [settings](/#/settings).",
   },
   Auth: {
     Title: "Need Access Code",
