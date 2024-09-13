@@ -198,9 +198,7 @@ export function PluginPage() {
                 <div className={styles["mask-header"]}>
                   <div className={styles["mask-icon"]}></div>
                   <div className={styles["mask-title"]}>
-                    <div className={styles["mask-name"]}>
-                      {m.title}@<small>{m.version}</small>
-                    </div>
+                    <div className={styles["mask-name"]}>{m.title}</div>
                     <div className={styles["mask-info"] + " one-line"}>
                       {Locale.Plugin.Item.Info(
                         FunctionToolService.add(m).length,
