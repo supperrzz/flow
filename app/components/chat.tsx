@@ -732,7 +732,7 @@ export function ChatActions(props: {
           multiple
           defaultSelectedValue={chatStore.currentSession().mask?.plugin}
           items={pluginStore.getAll().map((item) => ({
-            title: `${item?.title}@${item?.version}`,
+            title: item?.title,
             value: item?.id,
           }))}
           onClose={() => setShowPluginSelector(false)}
@@ -1627,11 +1627,13 @@ function _Chat() {
                       defaultShow={i >= messages.length - 6}
                     />
                     {getMessageImages(message).length == 1 && (
-                      <img
-                        className={styles["chat-message-item-image"]}
-                        src={getMessageImages(message)[0]}
-                        alt=""
-                      />
+                      <a href={getMessageImages(message)[0]} target="_blank">
+                        <img
+                          className={styles["chat-message-item-image"]}
+                          src={getMessageImages(message)[0]}
+                          alt=""
+                        />
+                      </a>
                     )}
                     {getMessageImages(message).length > 1 && (
                       <div
@@ -1644,14 +1646,15 @@ function _Chat() {
                       >
                         {getMessageImages(message).map((image, index) => {
                           return (
-                            <img
-                              className={
-                                styles["chat-message-item-image-multi"]
-                              }
-                              key={index}
-                              src={image}
-                              alt=""
-                            />
+                            <a key={index} href={image} target="_blank">
+                              <img
+                                className={
+                                  styles["chat-message-item-image-multi"]
+                                }
+                                src={image}
+                                alt=""
+                              />
+                            </a>
                           );
                         })}
                       </div>
