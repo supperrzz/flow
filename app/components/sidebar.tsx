@@ -4,14 +4,11 @@ import styles from "./home.module.scss";
 
 import { IconButton } from "./button";
 import SettingsIcon from "../icons/chat-settings.svg";
-import GithubIcon from "../icons/github.svg";
 import ChatGptIcon from "../icons/bot.svg";
 import AddIcon from "../icons/add.svg";
-import CloseIcon from "../icons/close.svg";
 import DeleteIcon from "../icons/close.svg";
 import MaskIcon from "../icons/robot.svg";
 import DragIcon from "../icons/drag.svg";
-import DiscoveryIcon from "../icons/discovery.svg";
 
 import Locale from "../locales";
 
@@ -24,7 +21,6 @@ import {
   NARROW_SIDEBAR_WIDTH,
   Path,
   PLUGINS,
-  REPO_URL,
 } from "../constant";
 
 import { Link, useNavigate } from "react-router-dom";
