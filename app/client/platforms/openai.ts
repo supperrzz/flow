@@ -325,6 +325,7 @@ export class ChatGPTApi implements LLMApi {
       options.onError?.(e as Error);
     }
   }
+
   async usage() {
     const formatDate = (d: Date) =>
       `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
@@ -426,6 +427,47 @@ export class ChatGPTApi implements LLMApi {
         sorted: 1,
       },
     }));
+  }
+
+  async usageLimitCheck(): Promise<boolean | Error> {
+    try {
+      const { data: userResponse, error: userError } =
+        await supabase.auth.getUser();
+      if (userError) {
+        console.error("Error retrieving user:", userError);
+        return new Error("Authentication error");
+      }
+
+      if (!userResponse.user) {
+        return false; // User not logged in or not found.
+      }
+
+      const { data: usageData, error: usageError } = await supabase
+        .from("usage")
+        .select("monthly_usage")
+        .eq("user_id", userResponse.user.id); // Assuming the column is 'user_id'.
+
+      if (usageError) {
+        console.error("Error retrieving user usage:", usageError);
+        return new Error("Usage retrieval error");
+      }
+
+      console.log("[Usage]", usageData);
+      const usageLimit = await getUsageLimit(userResponse.user.email!);
+
+      if (!usageLimit) {
+        return false; // User has no usage limit.
+      }
+      console.log("[Usage Limit]", usageLimit);
+
+      if (usageData.length === 0 || usageData[0].monthly_usage >= usageLimit) {
+        return false; // User has no usage data or has exceeded the monthly usage.
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+      return new Error("Unexpected error");
+    }
+    return true; // User exists, has usage data, and has not exceeded the monthly usage.
   }
 }
 export { OpenaiPath };

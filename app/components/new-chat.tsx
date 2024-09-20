@@ -149,20 +149,19 @@ export function NewChat() {
 
       <div className={styles["actions"]}>
         <IconButton
-          text={Locale.NewChat.More}
-          onClick={() => navigate(Path.Masks)}
-          icon={<EyeIcon />}
-          bordered
-          shadow
-        />
-
-        <IconButton
           text={Locale.NewChat.Skip}
           onClick={() => startChat()}
           icon={<LightningIcon />}
           type="primary"
           shadow
-          className={styles["skip"]}
+        />
+        <IconButton
+          className={styles["more"]}
+          text={Locale.NewChat.More}
+          onClick={() => navigate(Path.Assistants)}
+          icon={<EyeIcon />}
+          bordered
+          shadow
         />
       </div>
 

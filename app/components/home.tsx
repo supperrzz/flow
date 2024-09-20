@@ -8,6 +8,7 @@ import styles from "./home.module.scss";
 
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
+import DragIcon from "../icons/drag.svg";
 
 import { getCSSVar, useMobileScreen } from "../utils";
 
@@ -23,12 +24,19 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
 import { type ClientApi, getClientApi } from "../client/api";
 import { useAccessStore } from "../store";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
+import { showChatState, showDocumentState } from "../state";
+import { useDragDocument } from "./document";
+import { SideBar } from "./sidebar";
+
+const FullPad = dynamic(() => import("../components/ScratchPad/full"), {
+  ssr: false,
+});
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -44,18 +52,22 @@ const Artifacts = dynamic(async () => (await import("./artifacts")).Artifacts, {
 });
 
 const Settings = dynamic(async () => (await import("./settings")).Settings, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const Chat = dynamic(async () => (await import("./chat")).Chat, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
-  loading: () => <Loading noLogo />,
+  // loading: () => <Loading noLogo />,
 });
 
 const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
+  // loading: () => <Loading noLogo />,
+});
+
+const Document = dynamic(async () => await import("./document"), {
   loading: () => <Loading noLogo />,
 });
 
@@ -143,13 +155,16 @@ const loadAsyncGoogleFont = () => {
 
 export function WindowContent(props: { children: React.ReactNode }) {
   return (
-    <div className={styles["window-content"]} id={SlotID.AppBody}>
-      {props?.children}
+    <div className={styles["window-content-container"]}>
+      <div className={styles["window-content"]} id={SlotID.AppBody}>
+        {props?.children}
+      </div>
     </div>
   );
 }
 
 function Screen() {
+  const showChat = useRecoilValue(showChatState);
   const config = useAppConfig();
   const location = useLocation();
   const isArtifact = location.pathname.includes(Path.Artifacts);
@@ -159,8 +174,9 @@ function Screen() {
   const isSdNew = location.pathname === Path.SdNew;
 
   const isMobileScreen = useMobileScreen();
-  const shouldTightBorder =
-    getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
+  const { onDragStart } = useDragDocument();
+  const [showModal, setShowModal] = useRecoilState(showDocumentState);
+  const shouldTightBorder = getClientConfig()?.isApp || !isMobileScreen;
 
   useEffect(() => {
     loadAsyncGoogleFont();
@@ -189,8 +205,23 @@ function Screen() {
             <Route path={Path.SearchChat} element={<SearchChat />} />
             <Route path={Path.Chat} element={<Chat />} />
             <Route path={Path.Settings} element={<Settings />} />
+            {/* Entry point for Liveo */}
+            {/* <Route path={Path.Document} element={<Document />} /> */}
           </Routes>
         </WindowContent>
+        {!isMobileScreen && (
+          <>
+            <div className={styles.document}>
+              <FullPad />
+            </div>
+            <div
+              className={`${styles.drag} drag-icon`}
+              onPointerDown={(e) => onDragStart(e as any)}
+            >
+              <DragIcon />
+            </div>
+          </>
+        )}
       </>
     );
   };
@@ -236,9 +267,11 @@ export function Home() {
 
   return (
     <ErrorBoundary>
-      <Router>
-        <Screen />
-      </Router>
+      <RecoilRoot>
+        <Router>
+          <Screen />
+        </Router>
+      </RecoilRoot>
     </ErrorBoundary>
   );
 }

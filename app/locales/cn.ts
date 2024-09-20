@@ -17,6 +17,7 @@ const cn = {
     Input: "在此处填写访问码",
     Confirm: "确认",
     Later: "稍后再说",
+    SignUpSuccess: "注册成功",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} 条对话`,
@@ -139,6 +140,7 @@ const cn = {
     DeleteChat: "确认删除选中的对话？",
     DeleteToast: "已删除会话",
     Revert: "撤销",
+    Logout: "退出登录",
   },
   Settings: {
     Title: "设置",
@@ -720,14 +722,5 @@ const cn = {
     Detail: "详情",
   },
 };
-
-type DeepPartial<T> = T extends object
-  ? {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
-  : T;
-
-export type LocaleType = typeof cn;
-export type PartialLocaleType = DeepPartial<typeof cn>;
 
 export default cn;

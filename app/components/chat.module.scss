@@ -140,6 +140,7 @@
 }
 
 .context-prompt {
+  animation: slide-in ease 0.3s;
   .context-prompt-insert {
     display: flex;
     justify-content: center;
@@ -203,7 +204,7 @@
     background-color: var(--white);
     color: var(--black);
     border: var(--border-in-light);
-    border-radius: 10px;
+    border-radius: 7px;
     padding: 10px;
     font-size: 12px;
     user-select: text;
@@ -434,8 +435,7 @@
   box-sizing: border-box;
   max-width: 100%;
   margin-top: 10px;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 7px;
   padding: 10px;
   font-size: 14px;
   user-select: text;
@@ -562,7 +562,7 @@
 
   background-color: var(--white);
   border: var(--border-in-light);
-  border-radius: 10px;
+  border-radius: 7px;
   margin-bottom: 10px;
   box-shadow: var(--shadow);
 

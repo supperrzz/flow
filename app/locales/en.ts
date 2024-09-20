@@ -22,6 +22,8 @@ const en: LocaleType = {
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
+    Today: "Today",
+    Yesterday: "Yesterday",
   },
   Chat: {
     SubTitle: (count: number) => `${count} messages`,

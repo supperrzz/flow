@@ -17,6 +17,23 @@ export function trimTopic(topic: string) {
   );
 }
 
+export const markdownToPlainText = (markdown: string) => {
+  // convert markdown to html
+  let html = marked(markdown);
+
+  // create a temporary DOM element to hold the HTML
+  let tmp = document.createElement("div");
+
+  // set the HTML content
+  tmp.innerHTML = html;
+
+  // extract the text content
+  let text = tmp.textContent || tmp.innerText || "";
+
+  // return the plain text
+  return text;
+};
+
 export async function copyToClipboard(text: string) {
   try {
     if (window.__TAURI__) {
@@ -158,6 +175,32 @@ export function selectOrCopy(el: HTMLElement, content: string) {
 
   return true;
 }
+
+export const handleCopyNodeContent = (selector: string) => {
+  const node = document.querySelector(selector);
+  if (!node) return;
+
+  const range = document.createRange();
+  range.selectNodeContents(node);
+
+  const selection = window.getSelection();
+  if (!selection) return;
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  try {
+    const successful = document.execCommand("copy");
+    const message = successful
+      ? "Text copied to clipboard"
+      : "Failed to copy text to clipboard";
+    console.log(message);
+  } catch (error) {
+    console.error("Error copying text to clipboard:", error);
+  }
+
+  selection.removeAllRanges();
+  showToast(Locale.Copy.Success);
+};
 
 function getDomContentWidth(dom: HTMLElement) {
   const style = window.getComputedStyle(dom);

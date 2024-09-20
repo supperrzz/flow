@@ -24,7 +24,6 @@ import ResetIcon from "../icons/reload.svg";
 import BreakIcon from "../icons/break.svg";
 import SettingsIcon from "../icons/chat-settings.svg";
 import DeleteIcon from "../icons/clear.svg";
-import PinIcon from "../icons/pin.svg";
 import EditIcon from "../icons/rename.svg";
 import ConfirmIcon from "../icons/confirm.svg";
 import CloseIcon from "../icons/close.svg";
@@ -109,6 +108,8 @@ import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
 import { useAllModels } from "../utils/hooks";
 import { MultimodalContent } from "../client/api";
+import { useSetRecoilState } from "recoil";
+import { showDocumentState } from "../state";
 
 const localStorage = safeLocalStorage();
 
@@ -121,26 +122,25 @@ export function SessionConfigModel(props: { onClose: () => void }) {
   const session = chatStore.currentSession();
   const maskStore = useMaskStore();
   const navigate = useNavigate();
-
   return (
     <div className="modal-mask">
       <Modal
         title={Locale.Context.Edit}
         onClose={() => props.onClose()}
         actions={[
-          <IconButton
-            key="reset"
-            icon={<ResetIcon />}
-            bordered
-            text={Locale.Chat.Config.Reset}
-            onClick={async () => {
-              if (await showConfirm(Locale.Memory.ResetConfirm)) {
-                chatStore.updateCurrentSession(
-                  (session) => (session.memoryPrompt = ""),
-                );
-              }
-            }}
-          />,
+          // <IconButton
+          //   key="reset"
+          //   icon={<ResetIcon />}
+          //   bordered
+          //   text={Locale.Chat.Config.Reset}
+          //   onClick={async () => {
+          //     if (await showConfirm(Locale.Memory.ResetConfirm)) {
+          //       chatStore.updateCurrentSession(
+          //         (session) => (session.memoryPrompt = ""),
+          //       );
+          //     }
+          //   }}
+          // />,
           <IconButton
             key="copy"
             icon={<CopyIcon />}
@@ -149,9 +149,19 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             onClick={() => {
               navigate(Path.Masks);
               setTimeout(() => {
-                maskStore.create(session.mask);
+                maskStore.create({
+                  ...session.mask,
+                  context: session.messages,
+                });
               }, 500);
             }}
+          />,
+          <IconButton
+            key="save"
+            icon={<ConfirmIcon />}
+            bordered
+            text={Locale.Chat.Config.Save}
+            onClick={() => props.onClose()}
           />,
         ]}
       >
@@ -164,7 +174,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
           }}
           shouldSyncFromGlobal
           extraListItems={
-            session.mask.modelConfig.sendMemory ? (
+            session.memoryPrompt && session.mask.modelConfig.sendMemory ? (
               <ListItem
                 className="copyable"
                 title={`${Locale.Memory.Title} (${session.lastSummarizeIndex} of ${session.messages.length})`}
@@ -202,9 +212,6 @@ function PromptToast(props: {
             {Locale.Context.Toast(context.length)}
           </span>
         </div>
-      )}
-      {props.showModal && (
-        <SessionConfigModel onClose={() => props.setShowModal(false)} />
       )}
     </div>
   );
@@ -332,15 +339,14 @@ export function PromptHints(props: {
 
 function ClearContextDivider() {
   const chatStore = useChatStore();
-
   return (
     <div
       className={styles["clear-context"]}
-      onClick={() =>
+      onClick={() => {
         chatStore.updateCurrentSession(
           (session) => (session.clearContextIndex = undefined),
-        )
-      }
+        );
+      }}
     >
       <div className={styles["clear-context-tips"]}>{Locale.Context.Clear}</div>
       <div className={styles["clear-context-revert-btn"]}>
@@ -496,6 +502,9 @@ export function ChatActions(props: {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [showQualitySelector, setShowQualitySelector] = useState(false);
   const [showStyleSelector, setShowStyleSelector] = useState(false);
+  const currentProviderModels = models.filter(
+    (m) => m?.provider?.providerName == currentProviderName,
+  );
   const dalle3Sizes: DalleSize[] = ["1024x1024", "1792x1024", "1024x1792"];
   const dalle3Qualitys: DalleQuality[] = ["standard", "hd"];
   const dalle3Styles: DalleStyle[] = ["vivid", "natural"];
@@ -575,7 +584,7 @@ export function ChatActions(props: {
 
       {/* <ChatAction
         onClick={() => {
-          navigate(Path.Masks);
+          navigate(Path.Assistants);
         }}
         text={Locale.Chat.InputActions.Masks}
         icon={<MaskIcon />}
@@ -601,16 +610,11 @@ export function ChatActions(props: {
         text={currentModelName}
         icon={<RobotIcon />}
       />
-
       {showModelSelector && (
         <Selector
           defaultSelectedValue={`${currentModel}@${currentProviderName}`}
-          items={models.map((m) => ({
-            title: `${m.displayName}${
-              m?.provider?.providerName
-                ? " (" + m?.provider?.providerName + ")"
-                : ""
-            }`,
+          items={currentProviderModels.map((m) => ({
+            title: `${m.displayName}`,
             value: `${m.name}@${m?.provider?.providerName}`,
           }))}
           onClose={() => setShowModelSelector(false)}
@@ -814,11 +818,11 @@ export function EditMessageModal(props: { onClose: () => void }) {
             <input
               type="text"
               value={session.topic}
-              onInput={(e) =>
+              onInput={(e) => {
                 chatStore.updateCurrentSession(
                   (session) => (session.topic = e.currentTarget.value),
-                )
-              }
+                );
+              }}
             ></input>
           </ListItem>
         </List>
@@ -914,6 +918,7 @@ function _Chat() {
   const fontFamily = config.fontFamily;
 
   const [showExport, setShowExport] = useState(false);
+  const setShowModal = useSetRecoilState(showDocumentState);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [userInput, setUserInput] = useState("");
@@ -975,11 +980,14 @@ function _Chat() {
     newm: () => navigate(Path.NewChat),
     prev: () => chatStore.nextSession(-1),
     next: () => chatStore.nextSession(1),
-    clear: () =>
+    clear: () => {
       chatStore.updateCurrentSession(
         (session) => (session.clearContextIndex = session.messages.length),
-      ),
-    del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
+      );
+    },
+    del: () => {
+      chatStore.deleteSession(chatStore.currentSessionIndex);
+    },
   });
 
   // only search prompts when user input is short
@@ -1092,6 +1100,7 @@ function _Chat() {
     }
   };
   const onRightClick = (e: any, message: ChatMessage) => {
+    return;
     // copy to clipboard
     if (selectOrCopy(e.currentTarget, getMessageTextContent(message))) {
       if (userInput.length === 0) {
@@ -1183,6 +1192,7 @@ function _Chat() {
   };
 
   const context: RenderMessage[] = useMemo(() => {
+    if (session.mask.hideContext === undefined) return [];
     return session.mask.hideContext ? [] : session.mask.context.slice();
   }, [session.mask.context, session.mask.hideContext]);
   const accessStore = useAccessStore();
@@ -1200,6 +1210,11 @@ function _Chat() {
 
   // preview messages
   const renderMessages = useMemo(() => {
+    const onlyDefaultMessage =
+      session.messages.at(0)?.content !== BOT_HELLO.content;
+    if (session.messages.length > 1 && onlyDefaultMessage) {
+      context.pop();
+    }
     return context
       .concat(session.messages as RenderMessage[])
       .concat(
@@ -1290,7 +1305,9 @@ function _Chat() {
   const clientConfig = useMemo(() => getClientConfig(), []);
 
   const autoFocus = !isMobileScreen; // wont auto focus on mobile screen
-  const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+
+  // Hide max icon permanantly
+  const showMaxIcon = false;
 
   useCommand({
     fill: setUserInput,
@@ -1554,6 +1571,7 @@ function _Chat() {
           {!isMobileScreen && (
             <div className="window-action-button">
               <IconButton
+                text={Locale.Chat.Actions.Edit}
                 icon={<RenameIcon />}
                 bordered
                 title={Locale.Chat.EditMessage.Title}
@@ -1572,6 +1590,17 @@ function _Chat() {
               }}
             />
           </div>
+          {/* {isMobileScreen && (
+            <div className="window-action-button">
+              <IconButton
+                icon={<DocumentIcon />}
+                bordered
+                onClick={() => {
+                  setShowModal(true);
+                }}
+              />
+            </div>
+          )} */}
           {showMaxIcon && (
             <div className="window-action-button">
               <IconButton
@@ -1588,12 +1617,14 @@ function _Chat() {
             </div>
           )}
         </div>
-
-        <PromptToast
+        {showPromptModal && (
+          <SessionConfigModel onClose={() => setShowPromptModal(false)} />
+        )}
+        {/* <PromptToast
           showToast={!hitBottom}
           showModal={showPromptModal}
-          setShowModal={setShowPromptModal}
-        />
+          setShowModal={showPromptModal}
+        /> */}
       </div>
 
       <div
@@ -1610,9 +1641,7 @@ function _Chat() {
           const isUser = message.role === "user";
           const isContext = i < context.length;
           const showActions =
-            i > 0 &&
-            !(message.preview || message.content.length === 0) &&
-            !isContext;
+            i >= 0 && !(message.preview || message.content.length === 0);
           const showTyping = message.preview || message.streaming;
 
           const shouldShowClearContextDivider = i === clearContextIndex - 1;
@@ -1708,11 +1737,11 @@ function _Chat() {
                                 onClick={() => onDelete(message.id ?? i)}
                               />
 
-                              <ChatAction
+                              {/* <ChatAction
                                 text={Locale.Chat.Actions.Pin}
                                 icon={<PinIcon />}
                                 onClick={() => onPinMessage(message)}
-                              />
+                              /> */}
                               <ChatAction
                                 text={Locale.Chat.Actions.Copy}
                                 icon={<CopyIcon />}
@@ -1808,9 +1837,7 @@ function _Chat() {
                   </div>
 
                   <div className={styles["chat-message-action-date"]}>
-                    {isContext
-                      ? Locale.Chat.IsContext
-                      : message.date.toLocaleString()}
+                    {isContext ? "" : message.date.toLocaleString()}
                   </div>
                 </div>
               </div>

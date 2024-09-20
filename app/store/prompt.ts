@@ -175,8 +175,7 @@ export const usePromptStore = createPersistStore(
           const allPromptsForSearch = builtinPrompts
             .reduce((pre, cur) => pre.concat(cur), [])
             .filter((v) => !!v.title && !!v.content);
-          SearchService.count.builtin =
-            res.en.length + res.cn.length + res.tw.length;
+          SearchService.count.builtin = res.en.length;
           SearchService.init(allPromptsForSearch, userPrompts);
         });
     },

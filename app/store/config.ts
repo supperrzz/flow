@@ -2,6 +2,7 @@ import { LLMModel } from "../client/api";
 import { DalleSize, DalleQuality, DalleStyle } from "../typing";
 import { getClientConfig } from "../config/client";
 import {
+  DEFAULT_DOCUMENT_WIDTH,
   DEFAULT_INPUT_TEMPLATE,
   DEFAULT_MODELS,
   DEFAULT_SIDEBAR_WIDTH,
@@ -17,7 +18,7 @@ export enum SubmitKey {
   CtrlEnter = "Ctrl + Enter",
   ShiftEnter = "Shift + Enter",
   AltEnter = "Alt + Enter",
-  MetaEnter = "Meta + Enter",
+  MetaEnter = "⌘ + Enter",
 }
 
 export enum Theme {
@@ -40,10 +41,10 @@ export const DEFAULT_CONFIG = {
   sendPreviewBubble: true,
   enableAutoGenerateTitle: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
-
+  documentWidth: DEFAULT_DOCUMENT_WIDTH,
   disablePromptHint: false,
 
-  dontShowMaskSplashScreen: false, // dont show splash screen when create chat
+  dontShowMaskSplashScreen: true, // dont show splash screen when create chat
   hideBuiltinMasks: false, // dont add builtin masks
 
   customModels: "",
@@ -58,7 +59,7 @@ export const DEFAULT_CONFIG = {
     presence_penalty: 0,
     frequency_penalty: 0,
     sendMemory: true,
-    historyMessageCount: 4,
+    historyMessageCount: 8,
     compressMessageLengthThreshold: 1000,
     compressModel: "gpt-4o-mini" as ModelType,
     compressProviderName: "OpenAI" as ServiceProvider,

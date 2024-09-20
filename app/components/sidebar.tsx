@@ -11,7 +11,6 @@ import MaskIcon from "../icons/robot.svg";
 import DragIcon from "../icons/drag.svg";
 
 import Locale from "../locales";
-
 import { useAppConfig, useChatStore } from "../store";
 
 import {

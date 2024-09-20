@@ -24,7 +24,6 @@ export function AvatarPicker(props: {
       width={"100%"}
       lazyLoadEmojis
       theme={EmojiTheme.AUTO}
-      getEmojiUrl={getEmojiUrl}
       onEmojiClick={(e) => {
         props.onEmojiClick(e.unified);
       }}
@@ -48,17 +47,13 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
 
   return (
     <div className="user-avatar">
-      {props.avatar && <EmojiAvatar avatar={props.avatar} />}
+      {props.avatar && (
+        <EmojiAvatar avatar={props.avatar.toLocaleLowerCase()} />
+      )}
     </div>
   );
 }
 
 export function EmojiAvatar(props: { avatar: string; size?: number }) {
-  return (
-    <Emoji
-      unified={props.avatar}
-      size={props.size ?? 18}
-      getEmojiUrl={getEmojiUrl}
-    />
-  );
+  return <Emoji unified={props.avatar} size={props.size ?? 18} />;
 }

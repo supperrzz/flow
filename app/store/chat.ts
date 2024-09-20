@@ -277,7 +277,7 @@ export const useChatStore = createPersistStore(
               set(() => restoreState);
             },
           },
-          5000,
+          7000,
         );
       },
 
@@ -373,8 +373,9 @@ export const useChatStore = createPersistStore(
               session.messages = session.messages.concat();
             });
           },
-          onFinish(message) {
+          async onFinish(message) {
             botMessage.streaming = false;
+
             if (message) {
               botMessage.content = message;
               get().onNewMessage(botMessage);
@@ -472,7 +473,7 @@ export const useChatStore = createPersistStore(
         if (shouldInjectSystemPrompts) {
           console.log(
             "[Global System Prompt] ",
-            systemPrompts.at(0)?.content ?? "empty",
+            // systemPrompts.at(0)?.content ?? "empty",
           );
         }
         const memoryPrompt = get().getMemoryPrompt();
@@ -673,7 +674,9 @@ export const useChatStore = createPersistStore(
       updateStat(message: ChatMessage) {
         get().updateCurrentSession((session) => {
           session.stat.charCount += message.content.length;
-          // TODO: should update chat count and word count
+        });
+        get().updateCurrentSession((session) => {
+          session.stat.charCount += message.content.length;
         });
       },
 

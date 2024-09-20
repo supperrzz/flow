@@ -1,5 +1,5 @@
-export const OWNER = "ChatGPTNextWeb";
-export const REPO = "ChatGPT-Next-Web";
+export const OWNER = "GPTech";
+export const REPO = "Flow";
 export const REPO_URL = `https://github.com/${OWNER}/${REPO}`;
 export const PLUGINS_REPO_URL = `https://github.com/${OWNER}/NextChat-Awesome-Plugins`;
 export const ISSUE_URL = `https://github.com/${OWNER}/${REPO}/issues`;
@@ -44,6 +44,7 @@ export enum Path {
   SdNew = "/sd-new",
   Artifacts = "/artifacts",
   SearchChat = "/search-chat",
+  Document = "/document",
 }
 
 export enum ApiPath {
@@ -84,10 +85,15 @@ export enum StoreKey {
   SdList = "sd-list",
 }
 
-export const DEFAULT_SIDEBAR_WIDTH = 300;
-export const MAX_SIDEBAR_WIDTH = 500;
-export const MIN_SIDEBAR_WIDTH = 230;
+export const DEFAULT_SIDEBAR_WIDTH = 330;
+export const MAX_SIDEBAR_WIDTH = 350;
+export const MIN_SIDEBAR_WIDTH = 250;
 export const NARROW_SIDEBAR_WIDTH = 100;
+
+export const DEFAULT_DOCUMENT_WIDTH = 0;
+export const MAX_DOCUMENT_WIDTH = 800;
+export const MIN_DOCUMENT_WIDTH = 210;
+export const NARROW_DOCUMENT_WIDTH = 0;
 
 export const ACCESS_CODE_PREFIX = "nk-";
 
@@ -225,12 +231,14 @@ export const DEFAULT_INPUT_TEMPLATE = `{{input}}`; // input / time / model / lan
 // Latex block: $$e=mc^2$$
 // `;
 export const DEFAULT_SYSTEM_TEMPLATE = `
-You are ChatGPT, a large language model trained by {{ServiceProvider}}.
+You are Flow, a large language model trained by {{ServiceProvider}}.
 Knowledge cutoff: {{cutoff}}
 Current model: {{model}}
 Current time: {{time}}
 Latex inline: \\(x^2\\) 
 Latex block: $$e=mc^2$$
+Use tailwind classes when generating HTML.
+You can generate images by outputting markdown like this ![description](https://image.pollinations.ai/prompt/description)
 `;
 
 export const SUMMARIZE_MODEL = "gpt-4o-mini";
@@ -276,8 +284,8 @@ const openaiModels = [
   // "gpt-4-turbo-2024-04-09",
   // "gpt-4-1106-preview",
   "dall-e-3",
-  "o1-mini",
-  "o1-preview",
+  // "o1-mini",
+  // "o1-preview",
 ];
 
 const googleModels = [
@@ -464,6 +472,12 @@ export const DEFAULT_MODELS = [
   // })),
 ] as const;
 
+export const MODEL_NAMES = {
+  "gpt-4o": "Turbo",
+  // "gpt-4": "GPT-4",
+  "gpt-3.5-turbo": "Default",
+};
+
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
 
@@ -486,3 +500,7 @@ export const PLUGINS = [
   { name: "Stable Diffusion", path: Path.Sd },
   { name: "Search Chat", path: Path.SearchChat },
 ];
+export const FREE_MONTHLY_USAGE = 5000;
+export const CHAT_COUNT_MAX = 5;
+export const MAX_MONTHLY_USAGE = 150000;
+export const NEW_DOC_KEY = "Scratch Pad";

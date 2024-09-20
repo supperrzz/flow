@@ -78,12 +78,20 @@ export const HTMLPreview = forwardRef<HTMLPreviewHander, HTMLPreviewProps>(
         : iframeHeight + 40;
     }, [props.autoHeight, props.height, iframeHeight]);
 
+    // <link
+    //   rel="stylesheet"
+    //   href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.7/tailwind.min.css"
+    // />;
     const srcDoc = useMemo(() => {
       const script = `<script>window.addEventListener("DOMContentLoaded", () => new ResizeObserver((entries) => parent.postMessage({id: '${frameId}', height: entries[0].target.clientHeight}, '*')).observe(document.body))</script>`;
+      const tailwind = `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.7/tailwind.min.css" />`;
       if (props.code.includes("<!DOCTYPE html>")) {
-        props.code.replace("<!DOCTYPE html>", "<!DOCTYPE html>" + script);
+        props.code.replace(
+          "<!DOCTYPE html>",
+          "<!DOCTYPE html>" + tailwind + script,
+        );
       }
-      return script + props.code;
+      return tailwind + script + props.code;
     }, [props.code, frameId]);
 
     const handleOnLoad = () => {

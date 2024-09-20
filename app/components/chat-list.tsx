@@ -18,6 +18,8 @@ import { Mask } from "../store/mask";
 import { useRef, useEffect } from "react";
 import { showConfirm } from "./ui-lib";
 import { useMobileScreen } from "../utils";
+import { useRecoilState } from "recoil";
+import { currentChatDocumentState } from "../state";
 
 export function ChatItem(props: {
   onClick?: () => void;
@@ -30,7 +32,29 @@ export function ChatItem(props: {
   index: number;
   narrow?: boolean;
   mask: Mask;
+  documentLoaded?: boolean;
 }) {
+  // date format: Today at 01:01 PM or Yesterday at 01:01 PM or 01/01 at 01:01 PM
+  const formatTime = (time: string) => {
+    const date = new Date(time);
+    const now = new Date();
+    const today = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    ).getTime();
+    const yesterday = today - 24 * 60 * 60 * 1000;
+    const dateStr =
+      date.getTime() >= today
+        ? Locale.ChatItem.Today
+        : date.getTime() >= yesterday
+        ? Locale.ChatItem.Yesterday
+        : `${date.getMonth() + 1}/${date.getDate()}`;
+    return `${dateStr} ${date.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "numeric",
+    })}`;
+  };
   const draggableRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (props.selected && draggableRef.current) {
@@ -80,7 +104,9 @@ export function ChatItem(props: {
                 <div className={styles["chat-item-count"]}>
                   {Locale.ChatItem.ChatItemCount(props.count)}
                 </div>
-                <div className={styles["chat-item-date"]}>{props.time}</div>
+                <div className={styles["chat-item-date"]}>
+                  {formatTime(props.time)} {props.documentLoaded && <>*</>}
+                </div>
               </div>
             </>
           )}
@@ -130,6 +156,12 @@ export function ChatList(props: { narrow?: boolean }) {
     moveSession(source.index, destination.index);
   };
 
+  const [currentDocument, setDocument] = useRecoilState(
+    currentChatDocumentState,
+  );
+  useEffect(() => {
+    setDocument(`scratchPad-${sessions[0].id}`);
+  }, []);
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="chat-list">
@@ -148,9 +180,11 @@ export function ChatList(props: { narrow?: boolean }) {
                 id={item.id}
                 index={i}
                 selected={i === selectedIndex}
+                documentLoaded={currentDocument === `scratchPad-${item.id}`}
                 onClick={() => {
                   navigate(Path.Chat);
                   selectSession(i);
+                  setDocument(`scratchPad-${item.id}`);
                 }}
                 onDelete={async () => {
                   if (
@@ -158,6 +192,7 @@ export function ChatList(props: { narrow?: boolean }) {
                     (await showConfirm(Locale.Home.DeleteChat))
                   ) {
                     chatStore.deleteSession(i);
+                    localStorage.removeItem(`scratchPad-${item.id}`);
                   }
                 }}
                 narrow={props.narrow}

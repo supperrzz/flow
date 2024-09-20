@@ -1,0 +1,117 @@
+@import "../styles/animation.scss";
+
+.generator {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: var(--theme-color);
+  animation: fade-in ease 0.3s;
+  overflow-y: auto;
+  .empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    margin-top: 40px;
+    border-radius: 7px;
+    border: var(--border-in-light);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-in-light);
+    & > * {
+      animation: fade-in ease 0.3s;
+    }
+  }
+  .action-title {
+    font-size: 20px;
+    font-weight: bolder;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    border-bottom: var(--border-in-light);
+  }
+  input, select, button, textarea {
+    font-family: inherit;
+    width: 100%;
+    max-width: unset;
+    border: var(--border-in-light);
+    outline: none;
+    border-radius: 7px;
+    box-sizing: border-box;
+  }
+  label span {
+    display: block;
+    cursor: unset;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  textarea {
+    padding: 10px;
+    background: var(--white);
+  }
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+    & > * {
+      animation: fade-in ease 0.3s;
+    }
+  }
+  hr {
+    border: var(--border-in-light);
+  }
+  .output {
+    font-family: inherit;
+    margin-top: 20px;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 7px;
+    border: var(--border-in-light);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .output-content {
+    // first element not getting margin-top
+    & > *:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+.document {
+  animation: fade-in ease 0.3s;
+  width: 40rem;
+  border-left: var(--border-in-light);
+  overflow-y: auto;
+  position: relative;
+  width: var(--document-width);
+}
+
+.drag {
+  position: absolute;
+  right: var(--document-width);
+  display: flex;
+  align-items: center;
+  width: 14px;
+  height: 24px;
+  padding: 0 2px;
+  cursor: ew-resize;
+  border-left: var(--border-in-light);
+  border-right: var(--border-in-light);
+  border-bottom: var(--border-in-light);
+  border-bottom-left-radius: 2px;
+  background-color: var(--white);
+  svg {
+    opacity: 0.2;
+    margin-left: -2px;
+  }
+}
