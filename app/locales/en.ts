@@ -1,11 +1,11 @@
+import { DeepPartial } from "react-hook-form";
 import { getClientConfig } from "../config/client";
 import { SubmitKey } from "../store/config";
-import { LocaleType } from "./index";
 
 // if you are adding a new translation, please use PartialLocaleType instead of LocaleType
 
 const isApp = !!getClientConfig()?.isApp;
-const en: LocaleType = {
+const en = {
   WIP: "Coming Soon...",
   Error: {
     Unauthorized: isApp
@@ -734,3 +734,6 @@ const en: LocaleType = {
 };
 
 export default en;
+
+export type LocaleType = typeof en;
+export type PartialLocaleType = DeepPartial<typeof en>;

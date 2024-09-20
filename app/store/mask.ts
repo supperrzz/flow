@@ -5,7 +5,6 @@ import { ModelConfig, useAppConfig } from "./config";
 import { StoreKey } from "../constant";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
-import { useSyncStore } from "./sync";
 
 export type Mask = {
   id: string;
@@ -63,7 +62,6 @@ export const useMaskStore = createPersistStore(
       };
 
       set(() => ({ masks }));
-      useSyncStore.getState().saveToRemote();
       get().markUpdate();
 
       return masks[id];
@@ -76,14 +74,12 @@ export const useMaskStore = createPersistStore(
       updater(updateMask);
       masks[id] = updateMask;
       set(() => ({ masks }));
-      useSyncStore.getState().saveToRemote();
       get().markUpdate();
     },
     delete(id: string) {
       const masks = get().masks;
       delete masks[id];
       set(() => ({ masks }));
-      useSyncStore.getState().saveToRemote();
       get().markUpdate();
     },
 

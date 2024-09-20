@@ -128,19 +128,19 @@ export function SessionConfigModel(props: { onClose: () => void }) {
         title={Locale.Context.Edit}
         onClose={() => props.onClose()}
         actions={[
-          // <IconButton
-          //   key="reset"
-          //   icon={<ResetIcon />}
-          //   bordered
-          //   text={Locale.Chat.Config.Reset}
-          //   onClick={async () => {
-          //     if (await showConfirm(Locale.Memory.ResetConfirm)) {
-          //       chatStore.updateCurrentSession(
-          //         (session) => (session.memoryPrompt = ""),
-          //       );
-          //     }
-          //   }}
-          // />,
+          <IconButton
+            key="reset"
+            icon={<ResetIcon />}
+            bordered
+            text={Locale.Chat.Config.Reset}
+            onClick={async () => {
+              if (await showConfirm(Locale.Memory.ResetConfirm)) {
+                chatStore.updateCurrentSession(
+                  (session) => (session.memoryPrompt = ""),
+                );
+              }
+            }}
+          />,
           <IconButton
             key="copy"
             icon={<CopyIcon />}
@@ -155,13 +155,6 @@ export function SessionConfigModel(props: { onClose: () => void }) {
                 });
               }, 500);
             }}
-          />,
-          <IconButton
-            key="save"
-            icon={<ConfirmIcon />}
-            bordered
-            text={Locale.Chat.Config.Save}
-            onClick={() => props.onClose()}
           />,
         ]}
       >
