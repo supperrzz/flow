@@ -2,15 +2,7 @@ import { inputValuesState } from "../../state";
 import { PromptInput } from "../../state/types";
 import React, { ChangeEvent } from "react";
 import { useRecoilState } from "recoil";
-import {
-  Input,
-  List,
-  ListItem,
-  Modal,
-  Popover,
-  Select,
-  showConfirm,
-} from "../ui-lib";
+
 import styles from "../ui-lib.module.scss";
 
 interface TextInputProps {

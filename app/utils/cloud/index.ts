@@ -1,17 +1,14 @@
 import { createWebDavClient } from "./webdav";
 import { createUpstashClient } from "./upstash";
-import { createSupabaseClient } from "./supabase";
 
 export enum ProviderType {
   WebDAV = "webdav",
   UpStash = "upstash",
-  Supabase = "supabase",
 }
 
 export const SyncClients = {
   [ProviderType.UpStash]: createUpstashClient,
   [ProviderType.WebDAV]: createWebDavClient,
-  [ProviderType.Supabase]: createSupabaseClient,
 } as const;
 
 type SyncClientConfig = {
@@ -23,8 +20,8 @@ type SyncClientConfig = {
 };
 
 export type SyncClient = {
-  get: (key?: string) => Promise<string>;
-  set: (key?: string, value?: string) => Promise<void>;
+  get: (key: string) => Promise<string>;
+  set: (key: string, value: string) => Promise<void>;
   check: () => Promise<boolean>;
 };
 

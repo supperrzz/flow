@@ -147,16 +147,17 @@
   position: relative;
   padding-bottom: 20px;
   display: flex;
-  gap: .75rem;
+  gap: 10px;
   align-items: center;
 }
 
 .sidebar-logo {
-  padding: 4px;
-  width: 30px;
-  height: 30px;
-  background: var(--primary);
-  border-radius: 8px;
+  display: inline-flex;
+}
+
+.sidebar-title-container {
+  display: inline-flex;
+  flex-direction: column;
 }
 
 .sidebar-title {
@@ -226,12 +227,12 @@
   cursor: pointer;
 }
 
-.chat-item:hover > .chat-item-delete {
+.chat-item:hover>.chat-item-delete {
   opacity: 0.5;
   transform: translateX(-4px);
 }
 
-.chat-item:hover > .chat-item-delete:hover {
+.chat-item:hover>.chat-item-delete:hover {
   opacity: 1;
 }
 
@@ -252,13 +253,10 @@
 }
 
 .narrow-sidebar {
+
   .sidebar-title,
   .sidebar-sub-title {
     display: none;
-  }
-  .sidebar-header {
-    gap: 0;
-    justify-content: center;
   }
   .sidebar-logo {
     position: relative;

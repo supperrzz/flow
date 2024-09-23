@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { getCSSVar } from "@/app/utils";
-import { currentChatDocumentState, currentDocumentState } from "@/app/state";
+import { currentChatDocumentState } from "@/app/state";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useAppConfig } from "@/app/store";
 import { NEW_DOC_KEY } from "@/app/constant";
 import { Selector, showToast } from "../ui-lib";
 
-export default function App({ chat }: { chat?: boolean }) {
+export default function App() {
   const themeColor = getCSSVar("--theme");
   const bgColor = getCSSVar("--white");
   const textColor = getCSSVar("--black");
   const [value, setValue] = useState<string>();
-  const state = chat ? currentChatDocumentState : currentDocumentState;
+  const state = currentChatDocumentState;
   const storageKey = useRecoilValue(state);
   const appConfigStore = useAppConfig();
 

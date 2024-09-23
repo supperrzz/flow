@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import styles from "./button.module.scss";
+import { CSSProperties } from "react";
 
 export type ButtonType = "primary" | "danger" | null;
 
@@ -16,7 +17,8 @@ export function IconButton(props: {
   disabled?: boolean;
   tabIndex?: number;
   autoFocus?: boolean;
-  fullWidth?: boolean;
+  style?: CSSProperties;
+  aria?: string;
 }) {
   return (
     <button
@@ -32,10 +34,12 @@ export function IconButton(props: {
       role="button"
       tabIndex={props.tabIndex}
       autoFocus={props.autoFocus}
-      style={props.fullWidth ? { width: "100%" } : {}}
+      style={props.style}
+      aria-label={props.aria}
     >
       {props.icon && (
         <div
+          aria-label={props.text || props.title}
           className={
             styles["icon-button-icon"] +
             ` ${props.type === "primary" && "no-dark"}`
@@ -46,7 +50,12 @@ export function IconButton(props: {
       )}
 
       {props.text && (
-        <div className={styles["icon-button-text"]}>{props.text}</div>
+        <div
+          aria-label={props.text || props.title}
+          className={styles["icon-button-text"]}
+        >
+          {props.text}
+        </div>
       )}
     </button>
   );

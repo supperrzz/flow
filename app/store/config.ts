@@ -1,12 +1,13 @@
 import { LLMModel } from "../client/api";
+import { DalleSize, DalleQuality, DalleStyle } from "../typing";
 import { getClientConfig } from "../config/client";
 import {
   DEFAULT_DOCUMENT_WIDTH,
   DEFAULT_INPUT_TEMPLATE,
   DEFAULT_MODELS,
   DEFAULT_SIDEBAR_WIDTH,
-  DEFAULT_SYSTEM_PROMPT,
   StoreKey,
+  ServiceProvider,
 } from "../constant";
 import { createPersistStore } from "../utils/store";
 
@@ -26,19 +27,21 @@ export enum Theme {
   Light = "light",
 }
 
+const config = getClientConfig();
+
 export const DEFAULT_CONFIG = {
   lastUpdate: Date.now(), // timestamp, to merge state
 
-  submitKey: SubmitKey.Enter as SubmitKey,
-  avatar: "1f600",
+  submitKey: SubmitKey.Enter,
+  avatar: "1f603",
   fontSize: 14,
+  fontFamily: "",
   theme: Theme.Auto as Theme,
-  tightBorder: true,
+  tightBorder: !!config?.isApp,
   sendPreviewBubble: true,
   enableAutoGenerateTitle: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
   documentWidth: DEFAULT_DOCUMENT_WIDTH,
-  defaultSystemPrompt: DEFAULT_SYSTEM_PROMPT,
   disablePromptHint: false,
 
   dontShowMaskSplashScreen: true, // dont show splash screen when create chat
@@ -48,18 +51,23 @@ export const DEFAULT_CONFIG = {
   models: DEFAULT_MODELS as any as LLMModel[],
 
   modelConfig: {
-    model: "gpt-3.5-turbo" as ModelType,
+    model: "gpt-4o-mini" as ModelType,
+    providerName: "OpenAI" as ServiceProvider,
     temperature: 0.5,
     top_p: 1,
-    max_tokens: 2000,
+    max_tokens: 4000,
     presence_penalty: 0,
     frequency_penalty: 0,
     sendMemory: true,
     historyMessageCount: 8,
     compressMessageLengthThreshold: 1000,
+    compressModel: "gpt-4o-mini" as ModelType,
+    compressProviderName: "OpenAI" as ServiceProvider,
     enableInjectSystemPrompts: true,
-    template: DEFAULT_INPUT_TEMPLATE,
-    systemPrompt: DEFAULT_SYSTEM_PROMPT,
+    template: config?.template ?? DEFAULT_INPUT_TEMPLATE,
+    size: "1024x1024" as DalleSize,
+    quality: "standard" as DalleQuality,
+    style: "vivid" as DalleStyle,
   },
 };
 
@@ -73,7 +81,7 @@ export function limitNumber(
   max: number,
   defaultValue: number,
 ) {
-  if (typeof x !== "number" || isNaN(x)) {
+  if (isNaN(x)) {
     return defaultValue;
   }
 
@@ -85,7 +93,7 @@ export const ModalConfigValidator = {
     return x as ModelType;
   },
   max_tokens(x: number) {
-    return limitNumber(x, 0, 100000, 2000);
+    return limitNumber(x, 0, 512000, 1024);
   },
   presence_penalty(x: number) {
     return limitNumber(x, -2, 2, 0);
@@ -94,7 +102,7 @@ export const ModalConfigValidator = {
     return limitNumber(x, -2, 2, 0);
   },
   temperature(x: number) {
-    return limitNumber(x, 0, 1, 1);
+    return limitNumber(x, 0, 2, 1);
   },
   top_p(x: number) {
     return limitNumber(x, 0, 1, 1);
@@ -118,12 +126,12 @@ export const useAppConfig = createPersistStore(
 
       for (const model of oldModels) {
         model.available = false;
-        modelMap[model.name] = model;
+        modelMap[`${model.name}@${model?.provider?.id}`] = model;
       }
 
       for (const model of newModels) {
         model.available = true;
-        modelMap[model.name] = model;
+        modelMap[`${model.name}@${model?.provider?.id}`] = model;
       }
 
       set(() => ({
@@ -131,25 +139,11 @@ export const useAppConfig = createPersistStore(
       }));
     },
 
-    allModels() {
-      const customModels = get()
-        .customModels.split(",")
-        .filter((v) => !!v && v.length > 0)
-        .map((m) => ({ name: m, available: true }));
-
-      const models = get().models.concat(customModels);
-      return models;
-    },
-
-    setDefaultSystemPrompt(prompt: string) {
-      set(() => ({
-        defaultSystemPrompt: prompt,
-      }));
-    },
+    allModels() {},
   }),
   {
     name: StoreKey.Config,
-    version: 3.8,
+    version: 4,
     migrate(persistedState, version) {
       const state = persistedState as ChatConfig;
 
@@ -178,6 +172,20 @@ export const useAppConfig = createPersistStore(
 
       if (version < 3.8) {
         state.lastUpdate = Date.now();
+      }
+
+      if (version < 3.9) {
+        state.modelConfig.template =
+          state.modelConfig.template !== DEFAULT_INPUT_TEMPLATE
+            ? state.modelConfig.template
+            : config?.template ?? DEFAULT_INPUT_TEMPLATE;
+      }
+
+      if (version < 4) {
+        state.modelConfig.compressModel =
+          DEFAULT_CONFIG.modelConfig.compressModel;
+        state.modelConfig.compressProviderName =
+          DEFAULT_CONFIG.modelConfig.compressProviderName;
       }
 
       return state as any;

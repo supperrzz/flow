@@ -1,47 +1,37 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useMemo, useState, Fragment } from "react";
 
 import styles from "./home.module.scss";
 
 import { IconButton } from "./button";
-import SettingsIcon from "../icons/config.svg";
-import ChatGptIcon from "../icons/chatgpt.svg";
+import SettingsIcon from "../icons/chat-settings.svg";
+import ChatGptIcon from "../icons/bot.svg";
 import AddIcon from "../icons/add.svg";
-import DeleteIcon from "../icons/clear.svg";
-import CloseIcon from "../icons/close.svg";
-import PluginIcon from "../icons/plugin.svg";
-import BotIcon from "../icons/robot.svg";
-// import DragIcon from "../icons/drag.svg";
-import ChatIcon from "../icons/chat.svg";
+import DeleteIcon from "../icons/close.svg";
+import MaskIcon from "../icons/robot.svg";
+import DragIcon from "../icons/drag.svg";
+
 import Locale from "../locales";
-import { useAccessStore, useAppConfig, useChatStore } from "../store";
+import { useAppConfig, useChatStore } from "../store";
 
 import {
-  CHAT_COUNT_MAX,
   DEFAULT_SIDEBAR_WIDTH,
   MAX_SIDEBAR_WIDTH,
   MIN_SIDEBAR_WIDTH,
   NARROW_SIDEBAR_WIDTH,
-  NEW_DOC_KEY,
   Path,
+  PLUGINS,
 } from "../constant";
 
 import { Link, useNavigate } from "react-router-dom";
-import { useMobileScreen } from "../utils";
+import { isIOS, useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
-import { Select, showConfirm, showToast } from "./ui-lib";
-import { useRecoilState } from "recoil";
-import {
-  currentChatDocumentState,
-  currentDocumentState,
-  showChatState,
-} from "../state";
-import { Menu } from "./document";
+import { showConfirm, Selector } from "./ui-lib";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
   loading: () => null,
 });
 
-function useHotKey() {
+export function useHotKey() {
   const chatStore = useChatStore();
 
   useEffect(() => {
@@ -60,92 +50,7 @@ function useHotKey() {
   });
 }
 
-const DocumentSelector = () => {
-  const [document, setDocument] = useRecoilState(currentDocumentState);
-  const [documents, setDocuments] = useState<string[]>([]);
-
-  useEffect(() => {
-    const docs: string[] = [NEW_DOC_KEY];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith("document-")) {
-        docs.push(key);
-      }
-    }
-
-    setDocuments(docs);
-  }, []);
-
-  return (
-    <div className={styles["document-selector-container"]}>
-      <Select
-        className={styles["document-selector"]}
-        value={document}
-        onChange={(e) => setDocument(e.target.value)}
-        darkIcon={true}
-      >
-        {documents.map((doc) => {
-          const documentName = doc.replace("document-", "");
-          return (
-            <option key={doc} value={doc}>
-              {documentName}
-            </option>
-          );
-        })}
-      </Select>
-      <IconButton
-        shadow
-        title="Create a new document"
-        onClick={() => {
-          const name = prompt("Enter a name for your document");
-          const docKey = `document-${name}`;
-          const docExists = documents.find((doc) => doc === docKey);
-          if (docExists) {
-            showToast("Document already exists");
-            setDocument(docKey);
-            return;
-          }
-          if (name) {
-            localStorage.setItem(docKey, "");
-            setDocuments([...documents, docKey]);
-            setDocument(docKey);
-          }
-        }}
-        icon={<AddIcon />}
-      />
-      <IconButton
-        shadow
-        title="Delete current document"
-        icon={<DeleteIcon />}
-        // text="Delete"
-        onClick={async () => {
-          if (
-            await showConfirm(
-              `Are you sure you want to delete ${document.replace(
-                "document-",
-                "",
-              )}?`,
-            )
-          ) {
-            const isLast = documents.length === 1;
-            console.log("isLast", isLast);
-            localStorage.removeItem(document);
-            if (isLast) {
-              localStorage.setItem(NEW_DOC_KEY, "");
-              setDocuments([NEW_DOC_KEY]);
-              setDocument(NEW_DOC_KEY);
-            } else {
-              setDocuments(documents.filter((d) => d !== document));
-              setDocument(documents[0]);
-            }
-          }
-        }}
-      />
-    </div>
-  );
-};
-
-function useDragSideBar() {
+export function useDragSideBar() {
   const limit = (x: number) => Math.min(MAX_SIDEBAR_WIDTH, x);
 
   const config = useAppConfig();
@@ -218,151 +123,210 @@ function useDragSideBar() {
     shouldNarrow,
   };
 }
-
-export function SideBar(props: { className?: string }) {
-  const chatStore = useChatStore();
-  const [showChat, setShowChat] = useRecoilState(showChatState);
+export function SideBarContainer(props: {
+  children: React.ReactNode;
+  onDragStart: (e: MouseEvent) => void;
+  shouldNarrow: boolean;
+  className?: string;
+}) {
   const isMobileScreen = useMobileScreen();
-  const accessStore = useAccessStore();
-  const { isSubscribed } = accessStore;
-  const [document, setDocument] = useRecoilState(currentChatDocumentState);
-  const chatCount = chatStore.sessions.length;
-
-  // drag side bar
-  const { onDragStart, shouldNarrow } = useDragSideBar();
-  const navigate = useNavigate();
-  const config = useAppConfig();
-
-  useHotKey();
-
+  const isIOSMobile = useMemo(
+    () => isIOS() && isMobileScreen,
+    [isMobileScreen],
+  );
+  const { children, className, onDragStart, shouldNarrow } = props;
   return (
     <div
-      className={`${styles.sidebar} ${props.className} ${
+      className={`${styles.sidebar} ${className} ${
         shouldNarrow && styles["narrow-sidebar"]
       }`}
+      style={{
+        // #3016 disable transition on ios mobile screen
+        transition: isMobileScreen && isIOSMobile ? "none" : undefined,
+      }}
     >
+      {children}
+      <div
+        className={styles["sidebar-drag"]}
+        onPointerDown={(e) => onDragStart(e as any)}
+      >
+        <DragIcon />
+      </div>
+    </div>
+  );
+}
+
+export function SideBarHeader(props: {
+  title?: string | React.ReactNode;
+  subTitle?: string | React.ReactNode;
+  logo?: React.ReactNode;
+  children?: React.ReactNode;
+}) {
+  const { title, subTitle, logo, children } = props;
+  return (
+    <Fragment>
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
-        <div className={styles["sidebar-logo"] + " no-dark"}>
-          <ChatGptIcon />
-        </div>
-        <div>
+        <div className={styles["sidebar-logo"] + " no-dark"}>{logo}</div>
+        <div className={styles["sidebar-title-container"]}>
           <div className={styles["sidebar-title"]} data-tauri-drag-region>
-            Flow Chat
+            {title}
           </div>
-          <div className={styles["sidebar-sub-title"]}>
-            Join the{" "}
-            <a href="" target="_blank" rel="noopener noreferrer">
-              Community 🌟
-            </a>
-          </div>
+          <div className={styles["sidebar-sub-title"]}>{subTitle}</div>
         </div>
       </div>
+      {children}
+    </Fragment>
+  );
+}
 
-      {showChat && (
+export function SideBarBody(props: {
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+}) {
+  const { onClick, children } = props;
+  return (
+    <div className={styles["sidebar-body"]} onClick={onClick}>
+      {children}
+    </div>
+  );
+}
+
+export function SideBarTail(props: {
+  primaryAction?: React.ReactNode;
+  secondaryAction?: React.ReactNode;
+}) {
+  const { primaryAction, secondaryAction } = props;
+
+  return (
+    <div className={styles["sidebar-tail"]}>
+      <div className={styles["sidebar-actions"]}>{primaryAction}</div>
+      <div className={styles["sidebar-actions"]}>{secondaryAction}</div>
+    </div>
+  );
+}
+
+export function SideBar(props: { className?: string }) {
+  useHotKey();
+  const { onDragStart, shouldNarrow } = useDragSideBar();
+  const [showPluginSelector, setShowPluginSelector] = useState(false);
+  const navigate = useNavigate();
+  const config = useAppConfig();
+  const chatStore = useChatStore();
+
+  return (
+    <SideBarContainer
+      onDragStart={onDragStart}
+      shouldNarrow={shouldNarrow}
+      {...props}
+    >
+      <SideBarHeader
+        title="Flow Chat"
+        subTitle="Build your own AI assistant"
+        logo={<ChatGptIcon />}
+      >
         <div className={styles["sidebar-header-bar"]}>
           <IconButton
-            icon={<BotIcon />}
-            disabled={!isSubscribed}
-            type={"primary"}
+            icon={<MaskIcon />}
+            type="primary"
             text={shouldNarrow ? undefined : Locale.Mask.Name}
             className={styles["sidebar-bar-button"]}
             onClick={() => {
               if (config.dontShowMaskSplashScreen !== true) {
                 navigate(Path.NewChat, { state: { fromHome: true } });
               } else {
-                navigate(Path.Assistants, { state: { fromHome: true } });
+                navigate(Path.Masks, { state: { fromHome: true } });
               }
             }}
-            shadow
+            // shadow
           />
           {/* <IconButton
+            icon={<DiscoveryIcon />}
+            text={shouldNarrow ? undefined : Locale.Discovery.Name}
+            className={styles["sidebar-bar-button"]}
+            onClick={() => setShowPluginSelector(true)}
+            shadow
+          /> */}
+        </div>
+        {showPluginSelector && (
+          <Selector
+            items={[
+              {
+                title: "👇 Please select the plugin you need to use",
+                value: "-",
+                disable: true,
+              },
+              ...PLUGINS.map((item) => {
+                return {
+                  title: item.name,
+                  value: item.path,
+                };
+              }),
+            ]}
+            onClose={() => setShowPluginSelector(false)}
+            onSelection={(s) => {
+              navigate(s[0], { state: { fromHome: true } });
+            }}
+          />
+        )}
+      </SideBarHeader>
+      <SideBarBody
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            navigate(Path.Home);
+          }
+        }}
+      >
+        <ChatList narrow={shouldNarrow} />
+      </SideBarBody>
+      <SideBarTail
+        primaryAction={
+          <>
+            <div className={styles["sidebar-action"]}>
+              <Link to={Path.Settings}>
+                <IconButton
+                  aria={Locale.Settings.Title}
+                  icon={<SettingsIcon />}
+                  shadow
+                />
+              </Link>
+            </div>
+            <div className={styles["sidebar-action"] + " " + styles.mobile}>
+              <IconButton
+                icon={<DeleteIcon />}
+                onClick={async () => {
+                  if (await showConfirm(Locale.Home.DeleteChat)) {
+                    chatStore.deleteSession(chatStore.currentSessionIndex);
+                  }
+                }}
+              />
+            </div>
+            {/* <div className={styles["sidebar-action"]}>
+              <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+                <IconButton
+                  aria={Locale.Export.MessageFromChatGPT}
+                  icon={<GithubIcon />}
+                  shadow
+                />
+              </a>
+            </div> */}
+          </>
+        }
+        secondaryAction={
+          <IconButton
             icon={<AddIcon />}
             text={shouldNarrow ? undefined : Locale.Home.NewChat}
-            onClick={async () => {
+            onClick={() => {
               if (config.dontShowMaskSplashScreen) {
                 chatStore.newSession();
-                localStorage.setItem(
-                  `scratchPad-${chatStore.currentSession().id}`,
-                  "",
-                );
-                setDocument(`scratchPad-${chatStore.currentSession().id}`);
                 navigate(Path.Chat);
               } else {
                 navigate(Path.NewChat);
               }
             }}
             shadow
-          /> */}
-        </div>
-      )}
-
-      <div
-        className={styles["sidebar-body"]}
-        onClick={(e) => {
-          if (showChat && e.target === e.currentTarget) {
-            navigate(Path.Home);
-          }
-        }}
-      >
-        {!showChat && !shouldNarrow && <DocumentSelector />}
-        {showChat ? <ChatList /> : <Menu show={true} />}
-      </div>
-
-      <div className={styles["sidebar-tail"]}>
-        <div className={styles["sidebar-actions"]}>
-          {/* <div className={styles["sidebar-action"]}>
-            {!isMobileScreen && Boolean(isSubscribed) && (
-              <IconButton
-                type={"primary"}
-                onClick={() => setShowChat(!showChat)}
-                icon={showChat ? <PluginIcon /> : <ChatIcon />}
-                text={
-                  (!shouldNarrow && (showChat ? "Workflows" : "Chat")) ||
-                  undefined
-                }
-                shadow
-              />
-            )}
-          </div> */}
-          <div className={styles["sidebar-action"] + " " + styles.mobile}>
-            <IconButton
-              icon={<CloseIcon />}
-              onClick={async () => {
-                if (await showConfirm(Locale.Home.DeleteChat)) {
-                  chatStore.deleteSession(chatStore.currentSessionIndex);
-                }
-              }}
-            />
-          </div>
-          <Link onClick={() => setShowChat(true)} to={Path.Settings}>
-            <IconButton icon={<SettingsIcon />} shadow />
-          </Link>
-        </div>
-        {showChat && (
-          <div className={styles["sidebar-action"]}>
-            <IconButton
-              icon={<AddIcon />}
-              text={shouldNarrow ? undefined : Locale.Home.NewChat}
-              disabled={!isSubscribed && chatCount >= CHAT_COUNT_MAX}
-              onClick={() => {
-                if (config.dontShowMaskSplashScreen) {
-                  chatStore.newSession();
-                  navigate(Path.Chat);
-                } else {
-                  navigate(Path.NewChat);
-                }
-              }}
-              shadow
-            />
-          </div>
-        )}
-      </div>
-      {/* <div
-        className={styles["sidebar-drag"]}
-        onPointerDown={(e) => onDragStart(e as any)}
-      >
-        <DragIcon />
-      </div> */}
-    </div>
+          />
+        }
+      />
+    </SideBarContainer>
   );
 }

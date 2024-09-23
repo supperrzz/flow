@@ -1,3 +1,4 @@
+import { getClientConfig } from "../config/client";
 import { ApiPath, STORAGE_KEY, StoreKey } from "../constant";
 import { createPersistStore } from "../utils/store";
 import {
@@ -19,12 +20,13 @@ export interface WebDavConfig {
   password: string;
 }
 
+const isApp = !!getClientConfig()?.isApp;
 export type SyncStore = GetStoreState<typeof useSyncStore>;
 
 const DEFAULT_SYNC_STATE = {
-  provider: ProviderType.Supabase,
+  provider: ProviderType.WebDAV,
   useProxy: true,
-  proxyUrl: "",
+  proxyUrl: corsPath(ApiPath.Cors),
 
   webdav: {
     endpoint: "",
@@ -38,11 +40,6 @@ const DEFAULT_SYNC_STATE = {
     apiKey: "",
   },
 
-  supabase: {
-    endpoint: "",
-    apiKey: "",
-  },
-
   lastSyncTime: 0,
   lastProvider: "",
 };
@@ -50,7 +47,7 @@ const DEFAULT_SYNC_STATE = {
 export const useSyncStore = createPersistStore(
   DEFAULT_SYNC_STATE,
   (set, get) => ({
-    coundSync() {
+    cloudSync() {
       const config = get()[get().provider];
       return Object.values(config).every((c) => c.toString().length > 0);
     },
@@ -61,7 +58,13 @@ export const useSyncStore = createPersistStore(
 
     export() {
       const state = getLocalAppState();
-      const fileName = `Backup-${new Date().toLocaleString()}.json`;
+      const datePart = isApp
+        ? `${new Date().toLocaleDateString().replace(/\//g, "_")} ${new Date()
+            .toLocaleTimeString()
+            .replace(/:/g, "_")}`
+        : new Date().toLocaleString();
+
+      const fileName = `Backup-${datePart}.json`;
       downloadAs(JSON.stringify(state), fileName);
     },
 
@@ -73,7 +76,6 @@ export const useSyncStore = createPersistStore(
         const localState = getLocalAppState();
         mergeAppState(localState, remoteState);
         setLocalAppState(localState);
-        await this.saveToRemote();
         location.reload();
       } catch (e) {
         console.error("[Import]", e);
@@ -82,7 +84,8 @@ export const useSyncStore = createPersistStore(
     },
 
     getClient() {
-      const client = createSyncClient(ProviderType.Supabase, get());
+      const provider = get().provider;
+      const client = createSyncClient(provider, get());
       return client;
     },
 
@@ -93,34 +96,27 @@ export const useSyncStore = createPersistStore(
       const client = this.getClient();
 
       try {
-        const remoteState = JSON.parse(await client.get()) as AppState;
-        // mergeAppState(localState, remoteState);
-        setLocalAppState(remoteState);
-        console.log("[Sync] remote state synced successfully");
+        const remoteState = await client.get(config.username);
+        if (!remoteState || remoteState === "") {
+          await client.set(config.username, JSON.stringify(localState));
+          console.log(
+            "[Sync] Remote state is empty, using local state instead.",
+          );
+          return;
+        } else {
+          const parsedRemoteState = JSON.parse(
+            await client.get(config.username),
+          ) as AppState;
+          mergeAppState(localState, parsedRemoteState);
+          setLocalAppState(localState);
+        }
       } catch (e) {
         console.log("[Sync] failed to get remote state", e);
+        throw e;
       }
 
-      // await client.set(JSON.stringify(localState));
+      await client.set(config.username, JSON.stringify(localState));
 
-      this.markSyncTime();
-    },
-
-    async saveToRemote() {
-      const localState = getLocalAppState();
-      const client = this.getClient();
-
-      await client.set(JSON.stringify(localState));
-      console.log("[Sync] local state saved to remote");
-      this.markSyncTime();
-    },
-
-    async loadFromRemote() {
-      const client = this.getClient();
-      const remoteState = JSON.parse(await client.get()) as AppState;
-      const localState = getLocalAppState();
-      mergeAppState(localState, remoteState);
-      setLocalAppState(localState);
       this.markSyncTime();
     },
 
@@ -128,20 +124,25 @@ export const useSyncStore = createPersistStore(
       const client = this.getClient();
       return await client.check();
     },
-
-    reset() {
-      set(DEFAULT_SYNC_STATE);
-    },
   }),
   {
     name: StoreKey.Sync,
-    version: 1.1,
+    version: 1.2,
 
     migrate(persistedState, version) {
       const newState = persistedState as typeof DEFAULT_SYNC_STATE;
 
       if (version < 1.1) {
         newState.upstash.username = STORAGE_KEY;
+      }
+
+      if (version < 1.2) {
+        if (
+          (persistedState as typeof DEFAULT_SYNC_STATE).proxyUrl ===
+          "/api/cors/"
+        ) {
+          newState.proxyUrl = "";
+        }
       }
 
       return newState as any;

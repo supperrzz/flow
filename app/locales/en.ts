@@ -1,28 +1,29 @@
+import { DeepPartial } from "react-hook-form";
 import { getClientConfig } from "../config/client";
 import { SubmitKey } from "../store/config";
+
+// if you are adding a new translation, please use PartialLocaleType instead of LocaleType
 
 const isApp = !!getClientConfig()?.isApp;
 const en = {
   WIP: "Coming Soon...",
   Error: {
-    UsageLimit: "Usage limit exceeded, please check your account balance.",
     Unauthorized: isApp
       ? "Invalid API Key, please check it in [Settings](/#/settings) page."
-      : "Unauthorized access, please enter access code in [auth](/#/auth) page, or enter your OpenAI API Key.",
+      : "**Chat Disabled:** Please input a valid access code or OpenAI API Key in the [settings](/#/settings).",
   },
   Auth: {
-    Title: "Welcome to Flow",
-    Tips: "Innovative Chat for LLMs",
+    Title: "Need Access Code",
+    Tips: "Please enter access code below",
+    SubTips: "Or enter your OpenAI or Google API Key",
     Input: "access code",
-    Confirm: "Login",
-    Later: "Sign Up",
-    SignUpSuccess:
-      "Sign up successful! Please check your email to verify your account.",
+    Confirm: "Confirm",
+    Later: "Later",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
-    Today: "Today at",
-    Yesterday: "Yesterday at",
+    Today: "Today",
+    Yesterday: "Yesterday",
   },
   Chat: {
     SubTitle: (count: number) => `${count} messages`,
@@ -40,18 +41,21 @@ const en = {
       Copy: "Copy",
       Stop: "Stop",
       Retry: "Retry",
-      Pin: "Add to Memory",
-      PinToastContent: "Message Added to Memory",
+      Pin: "Pin",
+      PinToastContent: "Pinned 1 messages to contextual prompts",
       PinToastAction: "View",
       Delete: "Delete",
-      Edit: "Edit Messages",
+      Edit: "Edit",
+      FullScreen: "FullScreen",
+      RefreshTitle: "Refresh Title",
+      RefreshToast: "Title refresh request sent",
     },
     Commands: {
       new: "Start a new chat",
-      newm: "Start a new chat with Virtual Assistants",
+      newm: "Start a new chat with a virtual assistant",
       next: "Next Chat",
       prev: "Previous Chat",
-      clear: "Clear Memory",
+      clear: "Clear Context",
       del: "Delete Chat",
     },
     InputActions: {
@@ -64,25 +68,33 @@ const en = {
       },
       Prompt: "Prompts",
       Masks: "Virtual Assistants",
-      Clear: "Clear Memory",
+      Clear: "Clear Context",
       Settings: "Chat Settings",
+      UploadImage: "Upload Images",
     },
     Rename: "Rename Chat",
     Typing: "Typing…",
     Input: (submitKey: string) => {
-      var inputHints = `Press ${submitKey} to send a message`;
+      var inputHints = `${submitKey} to send`;
       if (submitKey === String(SubmitKey.Enter)) {
-        inputHints;
+        inputHints += ", Shift + Enter to wrap";
       }
-      return inputHints;
+      return inputHints + ", / to search prompts, : to use commands";
     },
     Send: "Send",
     Config: {
       Reset: "Reset to Default",
       SaveAs: "Save as Virtual Assistant",
-      Save: "Save Changes",
     },
-    IsContext: "System Prompt",
+    IsContext: "Contextual Prompt",
+    ShortcutKey: {
+      Title: "Keyboard Shortcuts",
+      newChat: "Open New Chat",
+      focusInput: "Focus Input Field",
+      copyLastMessage: "Copy Last Reply",
+      copyLastCode: "Copy Last Code Block",
+      showShortcutKey: "Show Shortcuts",
+    },
   },
   Export: {
     Title: "Export Messages",
@@ -97,7 +109,7 @@ const en = {
     },
     IncludeContext: {
       Title: "Including Context",
-      SubTitle: "Export context prompts in Virtual Assistant or not",
+      SubTitle: "Export context prompts in virtual assistant or not",
     },
     Steps: {
       Select: "Select",
@@ -106,6 +118,10 @@ const en = {
     Image: {
       Toast: "Capturing Image...",
       Modal: "Long press or right click to save image",
+    },
+    Artifacts: {
+      Title: "Share Artifacts",
+      Error: "Share Error",
     },
   },
   Select: {
@@ -128,13 +144,12 @@ const en = {
     DeleteChat: "Confirm to delete the selected conversation?",
     DeleteToast: "Chat Deleted",
     Revert: "Revert",
-    Logout: "Logout",
   },
   Settings: {
-    Title: "Global Settings",
-    SubTitle: "Settings apply to all chats but can be individually modified",
+    Title: "Settings",
+    SubTitle: "All Settings",
+    ShowPassword: "ShowPassword",
     Danger: {
-      Logout: "Logout",
       Reset: {
         Title: "Reset All Settings",
         SubTitle: "Reset all setting items to default",
@@ -147,12 +162,6 @@ const en = {
         Action: "Clear",
         Confirm: "Confirm to clear all messages and settings?",
       },
-      Cancel: {
-        Title: "Cancel Subscription",
-        SubTitle: "Cancel your subscription plan",
-        Action: "Cancel",
-        Confirm: "Are you sure you want to cancel your subscription?",
-      },
     },
     Lang: {
       Name: "Language", // ATTENTION: if you wanna add a new translation, please do not translate this value, leave it as `Language`
@@ -162,6 +171,12 @@ const en = {
     FontSize: {
       Title: "Font Size",
       SubTitle: "Adjust font size of chat content",
+    },
+    FontFamily: {
+      Title: "Chat Font Family",
+      SubTitle:
+        "Font Family of the chat content, leave empty to apply global default font",
+      Placeholder: "Font Family Name",
     },
     InjectSystemPrompts: {
       Title: "Inject System Prompts",
@@ -180,25 +195,22 @@ const en = {
       FoundUpdate: (x: string) => `Found new version: ${x}`,
       GoToUpdate: "Update",
     },
-    SendKey: {
-      title: "Submit Key",
-      subTitle: "Send message with this key",
-    },
+    SendKey: "Send Key",
     Theme: "Theme",
     TightBorder: "Tight Border",
     SendPreviewBubble: {
-      Title: "Preview Message",
-      SubTitle: "Show preview message before sending",
+      Title: "Send Preview Bubble",
+      SubTitle: "Preview markdown in bubble",
     },
     AutoGenerateTitle: {
       Title: "Auto Generate Title",
       SubTitle: "Generate a suitable title based on the conversation content",
     },
     Sync: {
-      CloudState: "Last Save",
-      NotSyncYet: "Not saved yet",
-      Success: "Save Success",
-      Fail: "Save Fail",
+      CloudState: "Last Update",
+      NotSyncYet: "Not sync yet",
+      Success: "Sync Success",
+      Fail: "Sync Fail",
 
       Config: {
         Modal: {
@@ -234,37 +246,20 @@ const en = {
 
       LocalState: "Local Data",
       Overview: (overview: any) => {
-        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} custom prompts，${overview.mask} virtual assistants`;
+        return `${overview.chat} chats，${overview.message} messages，${overview.prompt} prompts，${overview.mask} virtual assistants`;
       },
       ImportFailed: "Failed to import from file",
     },
     Mask: {
       Splash: {
-        Title: "Virtual Assistants Splash Screen",
+        Title: "Virtual Assistant Splash Screen",
         SubTitle:
-          "Show a Virtual Assistants splash screen before starting new chat",
+          "Show a virtual assistant splash screen before starting new chat",
       },
       Builtin: {
-        Title: "Hide System Virtual Assistants",
-        SubTitle: "Hide system Virtual Assistants in Virtual Assistants list",
-      },
-    },
-    Subscription: {
-      Subscription: "Subscription Status",
-      Plan: (plan: string) => `Subscription Status: ${plan}`,
-      Upgrade: "Subscribe to Pro",
-      Cancel: "Cancel Subscription",
-      Subscribed: "Subscription Active",
-      Loading: "...",
-      Status: {
-        Active: "Active",
-        Expired: "Expired",
-        Cancelled: "Cancelled",
-        Inactive: "Inactive",
-      },
-      Modal: {
-        Title: "Subscription",
-        Done: "Done",
+        Title: "Hide Builtin Virtual Assistants",
+        SubTitle:
+          "Hide builtin virtual assistants in the virtual assistants list",
       },
     },
     Prompt: {
@@ -294,36 +289,201 @@ const en = {
       SubTitle:
         "Will compress if uncompressed messages length exceeds the value",
     },
-    Token: {
-      Title: "API Key",
-      SubTitle: "Use your key to ignore usage limit",
-      Placeholder: "OpenAI API Key",
-    },
+
     Usage: {
       Title: "Account Balance",
-      SubTitle(used: any, total: any, isSubscribed: boolean) {
-        return `${
-          isSubscribed ? "Usage this month" : "Free Trial Tokens"
-        } ${used} / ${total}`;
+      SubTitle(used: any, total: any) {
+        return `Used this month $${used}, subscription $${total}`;
       },
       IsChecking: "Checking...",
       Check: "Check",
       NoAccess: "Enter API Key to check balance",
     },
-    AccessCode: {
-      Title: "Access Code",
-      SubTitle: "Access control enabled",
-      Placeholder: "Need Access Code",
+    Access: {
+      AccessCode: {
+        Title: "Access Code",
+        SubTitle: "Access control Enabled",
+        Placeholder: "Enter Code",
+      },
+      CustomEndpoint: {
+        Title: "Custom Endpoint",
+        SubTitle: "Use custom Azure or OpenAI service",
+      },
+      Provider: {
+        Title: "Model Provider",
+        SubTitle: "Select Azure or OpenAI",
+      },
+      OpenAI: {
+        ApiKey: {
+          Title: "OpenAI API Key",
+          SubTitle: "User custom OpenAI Api Key",
+          Placeholder: "sk-xxx",
+        },
+
+        Endpoint: {
+          Title: "OpenAI Endpoint",
+          SubTitle: "Must start with http(s):// or use /api/openai as default",
+        },
+      },
+      Azure: {
+        ApiKey: {
+          Title: "Azure Api Key",
+          SubTitle: "Check your api key from Azure console",
+          Placeholder: "Azure Api Key",
+        },
+
+        Endpoint: {
+          Title: "Azure Endpoint",
+          SubTitle: "Example: ",
+        },
+
+        ApiVerion: {
+          Title: "Azure Api Version",
+          SubTitle: "Check your api version from azure console",
+        },
+      },
+      Anthropic: {
+        ApiKey: {
+          Title: "Anthropic API Key",
+          SubTitle:
+            "Use a custom Anthropic Key to bypass password access restrictions",
+          Placeholder: "Anthropic API Key",
+        },
+
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Example: ",
+        },
+
+        ApiVerion: {
+          Title: "API Version (claude api version)",
+          SubTitle: "Select and input a specific API version",
+        },
+      },
+      Baidu: {
+        ApiKey: {
+          Title: "Baidu API Key",
+          SubTitle: "Use a custom Baidu API Key",
+          Placeholder: "Baidu API Key",
+        },
+        SecretKey: {
+          Title: "Baidu Secret Key",
+          SubTitle: "Use a custom Baidu Secret Key",
+          Placeholder: "Baidu Secret Key",
+        },
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "not supported, configure in .env",
+        },
+      },
+      Tencent: {
+        ApiKey: {
+          Title: "Tencent API Key",
+          SubTitle: "Use a custom Tencent API Key",
+          Placeholder: "Tencent API Key",
+        },
+        SecretKey: {
+          Title: "Tencent Secret Key",
+          SubTitle: "Use a custom Tencent Secret Key",
+          Placeholder: "Tencent Secret Key",
+        },
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "not supported, configure in .env",
+        },
+      },
+      ByteDance: {
+        ApiKey: {
+          Title: "ByteDance API Key",
+          SubTitle: "Use a custom ByteDance API Key",
+          Placeholder: "ByteDance API Key",
+        },
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Example: ",
+        },
+      },
+      Alibaba: {
+        ApiKey: {
+          Title: "Alibaba API Key",
+          SubTitle: "Use a custom Alibaba Cloud API Key",
+          Placeholder: "Alibaba Cloud API Key",
+        },
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Example: ",
+        },
+      },
+      Moonshot: {
+        ApiKey: {
+          Title: "Moonshot API Key",
+          SubTitle: "Use a custom Moonshot API Key",
+          Placeholder: "Moonshot API Key",
+        },
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Example: ",
+        },
+      },
+      Stability: {
+        ApiKey: {
+          Title: "Stability API Key",
+          SubTitle: "Use a custom Stability API Key",
+          Placeholder: "Stability API Key",
+        },
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Example: ",
+        },
+      },
+      Iflytek: {
+        ApiKey: {
+          Title: "Iflytek API Key",
+          SubTitle: "Use a Iflytek API Key",
+          Placeholder: "Iflytek API Key",
+        },
+        ApiSecret: {
+          Title: "Iflytek API Secret",
+          SubTitle: "Use a Iflytek API Secret",
+          Placeholder: "Iflytek API Secret",
+        },
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Example: ",
+        },
+      },
+      CustomModel: {
+        Title: "Custom Models",
+        SubTitle: "Custom model options, seperated by comma",
+      },
+      Google: {
+        ApiKey: {
+          Title: "API Key",
+          SubTitle: "Obtain your API Key from Google AI",
+          Placeholder: "Enter your Google AI Studio API Key",
+        },
+
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Example: ",
+        },
+
+        ApiVersion: {
+          Title: "API Version (specific to gemini-pro)",
+          SubTitle: "Select a specific API version",
+        },
+        GoogleSafetySettings: {
+          Title: "Google Safety Settings",
+          SubTitle: "Select a safety filtering level",
+        },
+      },
     },
-    Endpoint: {
-      Title: "Endpoint",
-      SubTitle: "Custom endpoint must start with http(s)://",
-    },
-    CustomModel: {
-      Title: "Custom Models",
-      SubTitle: "Add extra model options, separate by comma",
-    },
+
     Model: "Model",
+    CompressModel: {
+      Title: "Compression Model",
+      SubTitle: "Model used to compress history",
+    },
     Temperature: {
       Title: "Temperature",
       SubTitle: "A larger value makes the more random output",
@@ -348,14 +508,14 @@ const en = {
     },
   },
   Store: {
-    DefaultTopic: "New Chat",
+    DefaultTopic: "New Conversation",
     BotHello: "Hello! How can I assist you today?",
     Error: "Something went wrong, please try again later.",
     Prompt: {
       History: (content: string) =>
         "This is a summary of the chat history as a recap: " + content,
       Topic:
-        "Please generate a four to five word title summarizing our conversation without any lead-in, punctuation, quotation marks, periods, symbols, or additional text. Remove enclosing quotation marks.",
+        "Please generate a four to five word title summarizing our conversation without any lead-in, punctuation, quotation marks, periods, symbols, bold text, or additional text. Remove enclosing quotation marks.",
       Summarize:
         "Summarize the discussion briefly in 200 words or less to use as a prompt for future context.",
     },
@@ -364,24 +524,84 @@ const en = {
     Success: "Copied to clipboard",
     Failed: "Copy failed, please grant permission to access clipboard",
   },
+  Download: {
+    Success: "Content downloaded to your directory.",
+    Failed: "Download failed.",
+  },
   Context: {
-    Toast: (x: any) => `${x} Message${x > 1 ? "s" : ""} in Memory`,
-    Edit: "Chat Settings",
-    Add: "Add a Message",
-    Clear: "Memory Cleared",
+    Toast: (x: any) => `With ${x} contextual prompts`,
+    Edit: "Current Chat Settings",
+    Add: "Add a Prompt",
+    Clear: "Context Cleared",
     Revert: "Revert",
   },
-  Plugin: {
-    Name: "Plugin",
+  Discovery: {
+    Name: "Discovery",
   },
   FineTuned: {
     Sysmessage: "You are an assistant that",
   },
-  Mask: {
-    Name: "Virtual Assistants",
+  SearchChat: {
+    Name: "Search",
     Page: {
-      Title: "Virtual Assistants Library",
-      SubTitle: (count: number) => `${count} Virtual Assistants`,
+      Title: "Search Chat History",
+      Search: "Enter search query to search chat history",
+      NoResult: "No results found",
+      NoData: "No data",
+      Loading: "Loading...",
+
+      SubTitle: (count: number) => `Found ${count} results`,
+    },
+    Item: {
+      View: "View",
+    },
+  },
+  Plugin: {
+    Name: "Plugin",
+    Page: {
+      Title: "Plugins",
+      SubTitle: (count: number) => `${count} plugins`,
+      Search: "Search Plugin",
+      Create: "Create",
+      Find: "You can find awesome plugins on github: ",
+    },
+    Item: {
+      Info: (count: number) => `${count} method`,
+      View: "View",
+      Edit: "Edit",
+      Delete: "Delete",
+      DeleteConfirm: "Confirm to delete?",
+    },
+    Auth: {
+      None: "None",
+      Basic: "Basic",
+      Bearer: "Bearer",
+      Custom: "Custom",
+      CustomHeader: "Parameter Name",
+      Token: "Token",
+      Proxy: "Using Proxy",
+      ProxyDescription: "Using proxies to solve CORS error",
+      Location: "Location",
+      LocationHeader: "Header",
+      LocationQuery: "Query",
+      LocationBody: "Body",
+    },
+    EditModal: {
+      Title: (readonly: boolean) =>
+        `Edit Plugin ${readonly ? "(readonly)" : ""}`,
+      Download: "Download",
+      Auth: "Authentication Type",
+      Content: "OpenAPI Schema",
+      Load: "Load From URL",
+      Method: "Method",
+      Error: "OpenAPI Schema Error",
+    },
+  },
+  Mask: {
+    Name: "Virtual Assistant",
+    Page: {
+      Title: "Virtual Assistant",
+      SubTitle: (count: number) => `${count} virtual assistants`,
       Search: "Search Virtual Assistants",
       Create: "Create",
     },
@@ -395,36 +615,39 @@ const en = {
     },
     EditModal: {
       Title: (readonly: boolean) =>
-        `Edit Virtual Assistant ${readonly ? "(readonly)" : ""}`,
-      Download: "Export",
+        `Edit Prompt Template ${readonly ? "(readonly)" : ""}`,
+      Download: "Download",
       Clone: "Clone",
-      Save: "Save Changes",
     },
     Config: {
-      Avatar: "Chat Avatar",
-      Name: "Virtual Assistant Name",
+      Avatar: "Bot Avatar",
+      Name: "Bot Name",
       Sync: {
         Title: "Use Global Config",
         SubTitle: "Use global config in this chat",
         Confirm: "Confirm to override custom config with global config?",
       },
       HideContext: {
-        Title: "Hide Memory Messages",
-        SubTitle: "Don't show in-memory messages in chat",
+        Title: "Hide Context Prompts",
+        SubTitle: "Do not show in-context prompts in chat",
+      },
+      Artifacts: {
+        Title: "Enable Artifacts",
+        SubTitle: "Can render HTML page when enable artifacts.",
       },
       Share: {
-        Title: "Share This Virtual Assistants",
-        SubTitle: "Generate a link to this Virtual Assistants",
+        Title: "Share This Virtual Assistant",
+        SubTitle: "Generate a link to this virtual assistant",
         Action: "Copy Link",
       },
     },
   },
   NewChat: {
     Return: "Return",
-    Skip: "Start Chat",
-    Title: "Pick a Virtual Assistants",
-    SubTitle: "Chat with the Model behind the Virtual Assistants",
-    More: "View Virtual Assistants",
+    Skip: "Just Start",
+    Title: "Pick a Virtual Assistant",
+    SubTitle: "Pick your preferred Virtual Assistant or start a new chat",
+    More: "View All",
     NotShow: "Never Show Again",
     ConfirmNoShow: "Confirm to disable？You can enable it in settings later.",
   },
@@ -437,28 +660,80 @@ const en = {
     Edit: "Edit",
     Export: "Export",
     Import: "Import",
-    Sync: "Save Now",
+    Sync: "Sync",
     Config: "Config",
   },
   Exporter: {
+    Description: {
+      Title: "Only messages after clearing the context will be displayed",
+    },
     Model: "Model",
     Messages: "Messages",
     Topic: "Topic",
     Time: "Time",
   },
-
   URLCommand: {
     Code: "Detected access code from url, confirm to apply? ",
     Settings: "Detected settings from url, confirm to apply?",
   },
+  SdPanel: {
+    Prompt: "Prompt",
+    NegativePrompt: "Negative Prompt",
+    PleaseInput: (name: string) => `Please input ${name}`,
+    AspectRatio: "Aspect Ratio",
+    ImageStyle: "Image Style",
+    OutFormat: "Output Format",
+    AIModel: "AI Model",
+    ModelVersion: "Model Version",
+    Submit: "Submit",
+    ParamIsRequired: (name: string) => `${name} is required`,
+    Styles: {
+      D3Model: "3d-model",
+      AnalogFilm: "analog-film",
+      Anime: "anime",
+      Cinematic: "cinematic",
+      ComicBook: "comic-book",
+      DigitalArt: "digital-art",
+      Enhance: "enhance",
+      FantasyArt: "fantasy-art",
+      Isometric: "isometric",
+      LineArt: "line-art",
+      LowPoly: "low-poly",
+      ModelingCompound: "modeling-compound",
+      NeonPunk: "neon-punk",
+      Origami: "origami",
+      Photographic: "photographic",
+      PixelArt: "pixel-art",
+      TileTexture: "tile-texture",
+    },
+  },
+  Sd: {
+    SubTitle: (count: number) => `${count} images`,
+    Actions: {
+      Params: "See Params",
+      Copy: "Copy Prompt",
+      Delete: "Delete",
+      Retry: "Retry",
+      ReturnHome: "Return Home",
+      History: "History",
+    },
+    EmptyRecord: "No images yet",
+    Status: {
+      Name: "Status",
+      Success: "Success",
+      Error: "Error",
+      Wait: "Waiting",
+      Running: "Running",
+    },
+    Danger: {
+      Delete: "Confirm to delete?",
+    },
+    GenerateParams: "Generate Params",
+    Detail: "Detail",
+  },
 };
 
-type DeepPartial<T> = T extends object
-  ? {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
-  : T;
-export type LocaleType = typeof en;
-export type PartialLocaleType = any;
-
 export default en;
+
+export type LocaleType = typeof en;
+export type PartialLocaleType = DeepPartial<typeof en>;

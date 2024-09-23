@@ -9,7 +9,6 @@ import styles from "./home.module.scss";
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import DragIcon from "../icons/drag.svg";
-import CloseIcon from "../icons/close.svg";
 
 import { getCSSVar, useMobileScreen } from "../utils";
 
@@ -17,7 +16,7 @@ import dynamic from "next/dynamic";
 import { Path, SlotID } from "../constant";
 import { ErrorBoundary } from "./error";
 
-import { getISOLang } from "../locales";
+import { getISOLang, getLang } from "../locales";
 
 import {
   HashRouter as Router,
@@ -28,13 +27,12 @@ import {
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
-import { api } from "../client/api";
+import { type ClientApi, getClientApi } from "../client/api";
 import { useAccessStore } from "../store";
-import useSession from "../hooks/useSession";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import { showChatState, showDocumentState } from "../state";
 import { useDragDocument } from "./document";
-import { IconButton } from "./button";
+import { SideBar } from "./sidebar";
 
 const FullPad = dynamic(() => import("../components/ScratchPad/full"), {
   ssr: false,
@@ -49,9 +47,8 @@ export function Loading(props: { noLogo?: boolean }) {
   );
 }
 
-const SideBar = dynamic(async () => (await import("./sidebar")).SideBar, {
-  // loading: () => <Loading noLogo />,
-  ssr: false,
+const Artifacts = dynamic(async () => (await import("./artifacts")).Artifacts, {
+  loading: () => <Loading noLogo />,
 });
 
 const Settings = dynamic(async () => (await import("./settings")).Settings, {
@@ -71,6 +68,21 @@ const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
 });
 
 const Document = dynamic(async () => await import("./document"), {
+  loading: () => <Loading noLogo />,
+});
+
+const PluginPage = dynamic(async () => (await import("./plugin")).PluginPage, {
+  loading: () => <Loading noLogo />,
+});
+
+const SearchChat = dynamic(
+  async () => (await import("./search-chat")).SearchChatPage,
+  {
+    loading: () => <Loading noLogo />,
+  },
+);
+
+const Sd = dynamic(async () => (await import("./sd")).Sd, {
   loading: () => <Loading noLogo />,
 });
 
@@ -141,96 +153,94 @@ const loadAsyncGoogleFont = () => {
   document.head.appendChild(linkEl);
 };
 
+export function WindowContent(props: { children: React.ReactNode }) {
+  return (
+    <div className={styles["window-content-container"]}>
+      <div className={styles["window-content"]} id={SlotID.AppBody}>
+        {props?.children}
+      </div>
+    </div>
+  );
+}
+
 function Screen() {
   const showChat = useRecoilValue(showChatState);
   const config = useAppConfig();
   const location = useLocation();
-  const { session, loading: sessionLoading } = useSession(); // Assuming useSession has a loading state
+  const isArtifact = location.pathname.includes(Path.Artifacts);
   const isHome = location.pathname === Path.Home;
+  const isAuth = location.pathname === Path.Auth;
+  const isSd = location.pathname === Path.Sd;
+  const isSdNew = location.pathname === Path.SdNew;
+
   const isMobileScreen = useMobileScreen();
   const { onDragStart } = useDragDocument();
   const [showModal, setShowModal] = useRecoilState(showDocumentState);
-  const shouldTightBorder =
-    config.tightBorder && !isMobileScreen && !getClientConfig()?.isApp;
+  const shouldTightBorder = getClientConfig()?.isApp || !isMobileScreen;
 
   useEffect(() => {
     loadAsyncGoogleFont();
   }, []);
 
-  if (sessionLoading) {
-    return <Loading />;
-  }
-
-  const isAuth = !session?.user;
-
-  const renderMobileView = () => {
-    if (!showModal) return null;
-
+  if (isArtifact) {
     return (
-      <div className={`${styles.document} ${styles.modal}`}>
-        <FullPad chat={true} />
-        <div className={styles.close}>
-          <IconButton
-            icon={<CloseIcon />}
-            bordered
-            onClick={() => setShowModal(false)}
-          />
-        </div>
-      </div>
+      <Routes>
+        <Route path="/artifacts/:id" element={<Artifacts />} />
+      </Routes>
+    );
+  }
+  const renderContent = () => {
+    if (isAuth) return <AuthPage />;
+    if (isSd) return <Sd />;
+    if (isSdNew) return <Sd />;
+    return (
+      <>
+        <SideBar className={isHome ? styles["sidebar-show"] : ""} />
+        <WindowContent>
+          <Routes>
+            <Route path={Path.Home} element={<Chat />} />
+            <Route path={Path.NewChat} element={<NewChat />} />
+            <Route path={Path.Masks} element={<MaskPage />} />
+            <Route path={Path.Plugins} element={<PluginPage />} />
+            <Route path={Path.SearchChat} element={<SearchChat />} />
+            <Route path={Path.Chat} element={<Chat />} />
+            <Route path={Path.Settings} element={<Settings />} />
+            {/* Entry point for Liveo */}
+            {/* <Route path={Path.Document} element={<Document />} /> */}
+          </Routes>
+        </WindowContent>
+        {!isMobileScreen && (
+          <>
+            <div className={styles.document}>
+              <FullPad />
+            </div>
+            <div
+              className={`${styles.drag} drag-icon`}
+              onPointerDown={(e) => onDragStart(e as any)}
+            >
+              <DragIcon />
+            </div>
+          </>
+        )}
+      </>
     );
   };
 
-  const renderDesktopView = () => (
-    <>
-      <div className={styles.document}>
-        <FullPad chat={true} />
-      </div>
-      <div
-        className={`${styles.drag} drag-icon`}
-        onPointerDown={(e) => onDragStart(e as any)}
-      >
-        <DragIcon />
-      </div>
-    </>
-  );
-
   return (
     <div
-      className={
-        styles.container +
-        ` ${shouldTightBorder ? styles["tight-container"] : ""}`
-      }
+      className={`${styles.container} ${
+        shouldTightBorder ? styles["tight-container"] : styles.container
+      } ${getLang() === "ar" ? styles["rtl-screen"] : ""}`}
     >
-      {isAuth ? (
-        <AuthPage />
-      ) : (
-        <>
-          <SideBar className={isHome ? styles["sidebar-show"] : ""} />
-          {showChat ? (
-            <div className={styles["window-content-container"]}>
-              <div className={styles["window-content"]} id={SlotID.AppBody}>
-                <Routes>
-                  <Route path={Path.Home} element={<Chat />} />
-                  <Route path={Path.NewChat} element={<NewChat />} />
-                  <Route path={Path.Assistants} element={<MaskPage />} />
-                  <Route path={Path.Chat} element={<Chat />} />
-                  <Route path={Path.Settings} element={<Settings />} />
-                </Routes>
-              </div>
-            </div>
-          ) : (
-            <Document />
-          )}
-          {showChat &&
-            (isMobileScreen ? renderMobileView() : renderDesktopView())}
-        </>
-      )}
+      {renderContent()}
     </div>
   );
 }
 
 export function useLoadData() {
   const config = useAppConfig();
+
+  const api: ClientApi = getClientApi(config.modelConfig.providerName);
 
   useEffect(() => {
     (async () => {

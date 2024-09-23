@@ -1,11 +1,10 @@
 import { BUILTIN_MASKS } from "../masks";
 import { getLang, Lang } from "../locales";
-import { DEFAULT_TOPIC, ChatMessage, createMessage } from "./chat";
+import { DEFAULT_TOPIC, ChatMessage } from "./chat";
 import { ModelConfig, useAppConfig } from "./config";
 import { StoreKey } from "../constant";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
-import { useSyncStore } from "./sync";
 
 export type Mask = {
   id: string;
@@ -18,14 +17,18 @@ export type Mask = {
   modelConfig: ModelConfig;
   lang: Lang;
   builtin: boolean;
-  abilities?: string[];
+  plugin?: string[];
+  enableArtifacts?: boolean;
 };
 
 export const DEFAULT_MASK_STATE = {
   masks: {} as Record<string, Mask>,
+  language: undefined as Lang | undefined,
 };
 
-export type MaskState = typeof DEFAULT_MASK_STATE;
+export type MaskState = typeof DEFAULT_MASK_STATE & {
+  language?: Lang | undefined;
+};
 
 export const DEFAULT_MASK_AVATAR = "gpt-bot";
 export const createEmptyMask = () =>
@@ -40,6 +43,7 @@ export const createEmptyMask = () =>
     builtin: false,
     hideContext: true,
     createdAt: Date.now(),
+    plugin: [],
   }) as Mask;
 
 export const useMaskStore = createPersistStore(
@@ -58,7 +62,6 @@ export const useMaskStore = createPersistStore(
       };
 
       set(() => ({ masks }));
-      useSyncStore.getState().saveToRemote();
       get().markUpdate();
 
       return masks[id];
@@ -71,14 +74,12 @@ export const useMaskStore = createPersistStore(
       updater(updateMask);
       masks[id] = updateMask;
       set(() => ({ masks }));
-      useSyncStore.getState().saveToRemote();
       get().markUpdate();
     },
     delete(id: string) {
       const masks = get().masks;
       delete masks[id];
       set(() => ({ masks }));
-      useSyncStore.getState().saveToRemote();
       get().markUpdate();
     },
 
@@ -105,6 +106,11 @@ export const useMaskStore = createPersistStore(
     },
     search(text: string) {
       return Object.values(get().masks);
+    },
+    setLanguage(language: Lang | undefined) {
+      set({
+        language,
+      });
     },
   }),
   {

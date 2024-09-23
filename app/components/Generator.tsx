@@ -4,7 +4,6 @@ import {
   promptInputsState,
   inputValuesState,
   actionState,
-  currentUserState,
 } from "../state";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Tone from "./inputs/Tone";
@@ -21,16 +20,9 @@ import ClearIcon from "../icons/clear.svg";
 import StopIcon from "../icons/pause.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import ReactMarkdown from "react-markdown";
-import {
-  ParsedEvent,
-  ReconnectInterval,
-  createParser,
-} from "eventsource-parser";
-import error from "next/error";
-import { countTokens, updateUsage } from "../utils/usage";
+import { ParsedEvent, ReconnectInterval } from "eventsource-parser";
 
 export default function Generator() {
-  const user = useRecoilValue(currentUserState);
   const [tone, setTone] = useRecoilState(toneState);
   const [promptInputs, setPromptInputs] = useRecoilState(promptInputsState);
   const [output, setOutput] = React.useState("");
@@ -50,64 +42,64 @@ export default function Generator() {
     const controller = new AbortController();
     setAbortController(controller); // Store the controller in the state
 
-    try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          key: action,
-          payload: {
-            ...inputValues,
-            userId: user?.id,
-            userEmail: user?.email,
-          },
-          tone,
-        }),
-        signal: controller.signal,
-      });
+    // try {
+    //   const response = await fetch("/api/generate", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       key: action,
+    //       payload: {
+    //         ...inputValues,
+    //         userId: user?.id,
+    //         userEmail: user?.email,
+    //       },
+    //       tone,
+    //     }),
+    //     signal: controller.signal,
+    //   });
 
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+    //   if (!response.ok) {
+    //     throw new Error(response.statusText);
+    //   }
 
-      // This data is a ReadableStream
-      const data = response.body;
-      if (!data) {
-        return;
-      }
+    //   // This data is a ReadableStream
+    //   const data = response.body;
+    //   if (!data) {
+    //     return;
+    //   }
 
-      const onParse = onParseGPT;
-      const reader = data.getReader();
-      const decoder = new TextDecoder();
-      const parser = createParser(onParse);
-      let done = false;
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        const chunkValue = decoder.decode(value);
-        parser.feed(chunkValue);
-        if (done) {
-          await updateUsage(
-            user?.id as string,
-            countTokens(chunkValue) as number,
-          );
-        }
-      }
-      setLoading(false);
-      if (error) {
-        console.error("[update usage error]: ", error);
-      }
-    } catch (error: any) {
-      if (error.name === "AbortError") {
-        console.log("Fetch aborted");
-      } else {
-        console.log(error);
-      }
-    } finally {
-      setLoading(false);
-    }
+    //   const onParse = onParseGPT;
+    //   const reader = data.getReader();
+    //   const decoder = new TextDecoder();
+    //   const parser = createParser(onParse);
+    //   let done = false;
+    //   while (!done) {
+    //     const { value, done: doneReading } = await reader.read();
+    //     done = doneReading;
+    //     const chunkValue = decoder.decode(value);
+    //     parser.feed(chunkValue);
+    //     if (done) {
+    //       await updateUsage(
+    //         user?.id as string,
+    //         countTokens(chunkValue) as number,
+    //       );
+    //     }
+    //   }
+    //   setLoading(false);
+    //   if (error) {
+    //     console.error("[update usage error]: ", error);
+    //   }
+    // } catch (error: any) {
+    //   if (error.name === "AbortError") {
+    //     console.log("Fetch aborted");
+    //   } else {
+    //     console.log(error);
+    //   }
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const reset = () => {
