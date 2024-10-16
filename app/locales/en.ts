@@ -1,7 +1,6 @@
 import { DeepPartial } from "react-hook-form";
 import { getClientConfig } from "../config/client";
 import { SubmitKey } from "../store/config";
-
 // if you are adding a new translation, please use PartialLocaleType instead of LocaleType
 
 const isApp = !!getClientConfig()?.isApp;
@@ -13,12 +12,16 @@ const en = {
       : "**Chat Disabled:** Please input a valid access code or OpenAI API Key in the [settings](/#/settings).",
   },
   Auth: {
+    Return: "Return",
     Title: "Need Access Code",
     Tips: "Please enter access code below",
     SubTips: "Or enter your OpenAI or Google API Key",
     Input: "access code",
     Confirm: "Confirm",
     Later: "Later",
+    SaasTips: "Too Complex, Use Immediately Now",
+    TopTips:
+      "🥳 NextChat AI launch promotion: Instantly unlock the latest models like OpenAI o1, GPT-4o, Claude-3.5!",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
@@ -49,6 +52,8 @@ const en = {
       FullScreen: "FullScreen",
       RefreshTitle: "Refresh Title",
       RefreshToast: "Title refresh request sent",
+      Speech: "Play",
+      StopSpeech: "Stop",
     },
     Commands: {
       new: "Start a new chat",
@@ -56,6 +61,7 @@ const en = {
       next: "Next Chat",
       prev: "Previous Chat",
       clear: "Clear Context",
+      fork: "Copy Chat",
       del: "Delete Chat",
     },
     InputActions: {
@@ -82,6 +88,8 @@ const en = {
       return inputHints + ", / to search prompts, : to use commands";
     },
     Send: "Send",
+    StartSpeak: "Start Speak",
+    StopSpeak: "Stop Speak",
     Config: {
       Reset: "Reset to Default",
       SaveAs: "Save as Virtual Assistant",
@@ -194,6 +202,8 @@ const en = {
       IsChecking: "Checking update...",
       FoundUpdate: (x: string) => `Found new version: ${x}`,
       GoToUpdate: "Update",
+      Success: "Update Successful.",
+      Failed: "Update Failed.",
     },
     SendKey: "Send Key",
     Theme: "Theme",
@@ -300,6 +310,14 @@ const en = {
       NoAccess: "Enter API Key to check balance",
     },
     Access: {
+      SaasStart: {
+        Title: "Use NextChat AI",
+        Label: " (Most Cost-Effective Option)",
+        SubTitle:
+          "Maintained by NextChat, zero setup needed, unlock OpenAI o1, GPT-4o," +
+          " Claude-3.5 and more",
+        ChatNow: "Start Now",
+      },
       AccessCode: {
         Title: "Access Code",
         SubTitle: "Access control Enabled",
@@ -460,7 +478,7 @@ const en = {
         ApiKey: {
           Title: "API Key",
           SubTitle: "Obtain your API Key from Google AI",
-          Placeholder: "Enter your Google AI Studio API Key",
+          Placeholder: "Google AI API Key",
         },
 
         Endpoint: {
@@ -481,8 +499,8 @@ const en = {
 
     Model: "Model",
     CompressModel: {
-      Title: "Compression Model",
-      SubTitle: "Model used to compress history",
+      Title: "Summary Model",
+      SubTitle: "Model used to compress history and generate title",
     },
     Temperature: {
       Title: "Temperature",
@@ -505,6 +523,27 @@ const en = {
       Title: "Frequency Penalty",
       SubTitle:
         "A larger value decreasing the likelihood to repeat the same line",
+    },
+    TTS: {
+      Enable: {
+        Title: "Enable TTS",
+        SubTitle: "Enable text-to-speech service",
+      },
+      Autoplay: {
+        Title: "Enable Autoplay",
+        SubTitle:
+          "Automatically generate speech and play, you need to enable the text-to-speech switch first",
+      },
+      Model: "Model",
+      Voice: {
+        Title: "Voice",
+        SubTitle: "The voice to use when generating the audio",
+      },
+      Speed: {
+        Title: "Speed",
+        SubTitle: "The speed of the generated audio",
+      },
+      Engine: "TTS Engine",
     },
   },
   Store: {
@@ -634,6 +673,11 @@ const en = {
       Artifacts: {
         Title: "Enable Artifacts",
         SubTitle: "Can render HTML page when enable artifacts.",
+      },
+      CodeFold: {
+        Title: "Enable CodeFold",
+        SubTitle:
+          "Automatically collapse/expand overly long code blocks when CodeFold is enabled",
       },
       Share: {
         Title: "Share This Virtual Assistant",
