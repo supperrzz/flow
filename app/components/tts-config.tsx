@@ -30,7 +30,7 @@ export function TTSConfigList(props: {
           }
         ></input>
       </ListItem>
-      <ListItem
+      {/* <ListItem
         title={Locale.Settings.TTS.Autoplay.Title}
         subTitle={Locale.Settings.TTS.Autoplay.SubTitle}
       >
@@ -43,7 +43,7 @@ export function TTSConfigList(props: {
             )
           }
         ></input>
-      </ListItem>
+      </ListItem> */}
       <ListItem title={Locale.Settings.TTS.Engine}>
         <Select
           value={props.ttsConfig.engine}
