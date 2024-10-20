@@ -9,7 +9,6 @@ import CopyIcon from "../icons/copy.svg";
 import ClearIcon from "../icons/clear.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import EditIcon from "../icons/edit.svg";
-import FireIcon from "../icons/fire.svg";
 import EyeIcon from "../icons/eye.svg";
 import DownloadIcon from "../icons/download.svg";
 import UploadIcon from "../icons/upload.svg";
@@ -19,7 +18,7 @@ import ConfirmIcon from "../icons/confirm.svg";
 import ConnectionIcon from "../icons/connection.svg";
 import CloudSuccessIcon from "../icons/cloud-success.svg";
 import CloudFailIcon from "../icons/cloud-fail.svg";
-import { trackSettingsPageGuideToCPaymentClick } from "../utils/auth-settings-events";
+
 import {
   Input,
   List,
@@ -43,8 +42,14 @@ import {
   useAppConfig,
 } from "../store";
 
-import Locale from "../locales";
-import { copyToClipboard, semverCompare } from "../utils";
+import Locale, {
+  AllLangs,
+  ALL_LANG_OPTIONS,
+  changeLang,
+  getLang,
+} from "../locales";
+import { copyToClipboard } from "../utils";
+import Link from "next/link";
 import {
   Anthropic,
   Azure,
@@ -64,7 +69,6 @@ import {
   UPDATE_URL,
   Stability,
   Iflytek,
-  SAAS_CHAT_URL,
 } from "../constant";
 import { Prompt, SearchService, usePromptStore } from "../store/prompt";
 import { ErrorBoundary } from "./error";
@@ -574,24 +578,6 @@ export function Settings() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const config = useAppConfig();
   const updateConfig = config.update;
-
-  const updateStore = useUpdateStore();
-  const [checkingUpdate, setCheckingUpdate] = useState(false);
-  const currentVersion = updateStore.formatVersion(updateStore.version);
-  const remoteId = updateStore.formatVersion(updateStore.remoteVersion);
-  const hasNewVersion = semverCompare(currentVersion, remoteId) === -1;
-  const updateUrl = getClientConfig()?.isApp ? RELEASE_URL : UPDATE_URL;
-
-  function checkUpdate(force = false) {
-    setCheckingUpdate(true);
-    updateStore.getLatestVersion(force).then(() => {
-      setCheckingUpdate(false);
-    });
-
-    console.log("[Update] local version ", updateStore.version);
-    console.log("[Update] remote version ", updateStore.remoteVersion);
-  }
-
   const accessStore = useAccessStore();
   const shouldHideBalanceQuery = useMemo(() => {
     const isOpenAiUrl = accessStore.openaiUrl.includes(OPENAI_BASE_URL);
@@ -607,10 +593,7 @@ export function Settings() {
     accessStore.provider,
   ]);
 
-  const usage = {
-    used: updateStore.used,
-    subscription: updateStore.subscription,
-  };
+  const usage = {};
   const [loadingUsage, setLoadingUsage] = useState(false);
   function checkUsage(force = false) {
     if (shouldHideBalanceQuery) {
@@ -618,9 +601,6 @@ export function Settings() {
     }
 
     setLoadingUsage(true);
-    updateStore.updateUsage(force).finally(() => {
-      setLoadingUsage(false);
-    });
   }
 
   const enabledAccessControl = useMemo(
@@ -635,12 +615,6 @@ export function Settings() {
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
 
   const showUsage = accessStore.isAuthorized();
-  useEffect(() => {
-    // checks per minutes
-    checkUpdate();
-    showUsage && checkUsage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const keydownEvent = (e: KeyboardEvent) => {
@@ -677,31 +651,6 @@ export function Settings() {
           accessStore.update(
             (access) => (access.accessCode = e.currentTarget.value),
           );
-        }}
-      />
-    </ListItem>
-  );
-
-  const saasStartComponent = (
-    <ListItem
-      className={styles["subtitle-button"]}
-      title={
-        Locale.Settings.Access.SaasStart.Title +
-        `${Locale.Settings.Access.SaasStart.Label}`
-      }
-      subTitle={Locale.Settings.Access.SaasStart.SubTitle}
-    >
-      <IconButton
-        aria={
-          Locale.Settings.Access.SaasStart.Title +
-          Locale.Settings.Access.SaasStart.ChatNow
-        }
-        icon={<FireIcon />}
-        type={"primary"}
-        text={Locale.Settings.Access.SaasStart.ChatNow}
-        onClick={() => {
-          trackSettingsPageGuideToCPaymentClick();
-          window.location.href = SAAS_CHAT_URL;
         }}
       />
     </ListItem>
@@ -1351,17 +1300,9 @@ export function Settings() {
             {checkingUpdate ? (
               <LoadingIcon />
             ) : hasNewVersion ? (
-              clientConfig?.isApp ? (
-                <IconButton
-                  icon={<ResetIcon></ResetIcon>}
-                  text={Locale.Settings.Update.GoToUpdate}
-                  onClick={() => clientUpdate()}
-                />
-              ) : (
-                <Link href={updateUrl} target="_blank" className="link">
-                  {Locale.Settings.Update.GoToUpdate}
-                </Link>
-              )
+              <Link href={updateUrl} target="_blank" className="link">
+                {Locale.Settings.Update.GoToUpdate}
+              </Link>
             ) : (
               <IconButton
                 icon={<ResetIcon></ResetIcon>}
@@ -1493,25 +1434,9 @@ export function Settings() {
                 )
               }
             ></input>
-          </ListItem>
+          </ListItem> */}
 
-          <ListItem
-            title={Locale.Mask.Config.Artifacts.Title}
-            subTitle={Locale.Mask.Config.Artifacts.SubTitle}
-          >
-            <input
-              aria-label={Locale.Mask.Config.Artifacts.Title}
-              type="checkbox"
-              checked={config.enableArtifacts}
-              onChange={(e) =>
-                updateConfig(
-                  (config) =>
-                    (config.enableArtifacts = e.currentTarget.checked),
-                )
-              }
-            ></input>
-          </ListItem>
-          <ListItem
+          {/* <ListItem
             title={Locale.Mask.Config.CodeFold.Title}
             subTitle={Locale.Mask.Config.CodeFold.SubTitle}
           >
@@ -1526,7 +1451,7 @@ export function Settings() {
                 )
               }
             ></input>
-          </ListItem>
+          </ListItem> */}
         </List>
 
         <SyncItems />
@@ -1603,7 +1528,6 @@ export function Settings() {
         </List>
 
         <List id={SlotID.CustomModel}>
-          {saasStartComponent}
           {accessCodeComponent}
 
           {!accessStore.hideUserApiKey && (
@@ -1650,32 +1574,6 @@ export function Settings() {
               }
             </>
           )}
-
-          {!shouldHideBalanceQuery && !clientConfig?.isApp ? (
-            <ListItem
-              title={Locale.Settings.Usage.Title}
-              subTitle={
-                showUsage
-                  ? loadingUsage
-                    ? Locale.Settings.Usage.IsChecking
-                    : Locale.Settings.Usage.SubTitle(
-                        usage?.used ?? "[?]",
-                        usage?.subscription ?? "[?]",
-                      )
-                  : Locale.Settings.Usage.NoAccess
-              }
-            >
-              {!showUsage || loadingUsage ? (
-                <div />
-              ) : (
-                <IconButton
-                  icon={<ResetIcon></ResetIcon>}
-                  text={Locale.Settings.Usage.Check}
-                  onClick={() => checkUsage(true)}
-                />
-              )}
-            </ListItem>
-          ) : null}
 
           <ListItem
             title={Locale.Settings.Access.CustomModel.Title}
