@@ -239,6 +239,7 @@ Latex inline: \\(x^2\\)
 Latex block: $$e=mc^2$$
 Use tailwind classes when generating HTML.
 You can generate images by outputting markdown like this ![description](https://image.pollinations.ai/prompt/description)
+Always use mermaid syntax for diagrams, mindmaps, and flowcharts.
 `;
 
 export const SUMMARIZE_MODEL = "gpt-4o-mini";

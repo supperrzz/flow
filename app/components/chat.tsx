@@ -9,7 +9,7 @@ import React, {
   RefObject,
 } from "react";
 
-import SendWhiteIcon from "../icons/send-white.svg";
+import SendWhiteIcon from "../icons/chatgpt.svg";
 import BrainIcon from "../icons/brain.svg";
 import RenameIcon from "../icons/rename.svg";
 import ExportIcon from "../icons/share.svg";
@@ -1631,7 +1631,7 @@ function _Chat() {
               }}
             />
           </div>
-          {showMaxIcon && (
+          {/* {showMaxIcon && (
             <div className="window-action-button">
               <IconButton
                 icon={config.tightBorder ? <MinIcon /> : <MaxIcon />}
@@ -1645,7 +1645,7 @@ function _Chat() {
                 }}
               />
             </div>
-          )}
+          )} */}
         </div>
 
         <PromptToast
@@ -1933,7 +1933,7 @@ function _Chat() {
             id="chat-input"
             ref={inputRef}
             className={styles["chat-input"]}
-            placeholder={Locale.Chat.Input(submitKey)}
+            placeholder={Locale.Chat.Input}
             onInput={(e) => onInput(e.currentTarget.value)}
             value={userInput}
             onKeyDown={onInputKeyDown}

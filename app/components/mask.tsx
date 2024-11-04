@@ -166,7 +166,7 @@ export function MaskConfig(props: {
           ></input>
         </ListItem>
 
-        {globalConfig.enableArtifacts && (
+        {/* {globalConfig.enableArtifacts && (
           <ListItem
             title={Locale.Mask.Config.Artifacts.Title}
             subTitle={Locale.Mask.Config.Artifacts.SubTitle}
@@ -182,8 +182,8 @@ export function MaskConfig(props: {
               }}
             ></input>
           </ListItem>
-        )}
-        {globalConfig.enableCodeFold && (
+        )} */}
+        {/* {globalConfig.enableCodeFold && (
           <ListItem
             title={Locale.Mask.Config.CodeFold.Title}
             subTitle={Locale.Mask.Config.CodeFold.SubTitle}
@@ -199,7 +199,7 @@ export function MaskConfig(props: {
               }}
             ></input>
           </ListItem>
-        )}
+        )} */}
 
         {!props.shouldSyncFromGlobal ? (
           <ListItem

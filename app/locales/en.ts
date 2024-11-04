@@ -80,13 +80,7 @@ const en = {
     },
     Rename: "Rename Chat",
     Typing: "Typing…",
-    Input: (submitKey: string) => {
-      var inputHints = `${submitKey} to send`;
-      if (submitKey === String(SubmitKey.Enter)) {
-        inputHints += ", Shift + Enter to wrap";
-      }
-      return inputHints + ", / to search prompts, : to use commands";
-    },
+    Input: "Type a message...",
     Send: "Send",
     StartSpeak: "Start Speak",
     StopSpeak: "Stop Speak",
